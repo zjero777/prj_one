@@ -1,0 +1,19 @@
+{
+    "terrain_type": [
+        {
+            "id": 0,
+            "name": "space",
+            "pic": "img/s1.png"
+        }, 
+        {
+            "id": 1,
+            "name": "ground",
+            "pic": "img/e1.png"
+        },
+        {
+            "id": 2,
+            "name": "hyperspace",
+            "pic": "img/hs.png"
+        } 
+    ]
+}    

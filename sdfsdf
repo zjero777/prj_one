@@ -1,0 +1,15 @@
+# Importing the library
+import pygame as pg
+  
+# Initializing Pygame
+pg.init()
+  
+# Initializing surface
+surface = pg.display.set_mode((400,300))
+  
+# Initialing Color
+color = (255,0,0)
+  
+# Drawing Rectangle
+pg.draw.rect(surface, color, pg.Rect(30, 30, 60, 60))
+pg.display.flip()
