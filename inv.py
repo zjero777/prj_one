@@ -5,6 +5,7 @@ from options import *
 class inv:
     def __init__(self, app):
         self.app = app
+        self.backpack = []
         # self.surface = pg.Surface((INV_WIDTH, INV_HIGHT))
         # INV_RECT = (0,SC_HIGHT-P_BOTTOM,SC_WIDTH-P_INFO-1,SC_HIGHT)
 
@@ -22,5 +23,28 @@ class inv:
         pass
         # self.surface.fill(pg.Color(255,0,0))
         # self.app.screen.blit(self.surface, INV_RECT)
+        
+    def incomplete_stack(self, item):
+        idx=-1
+        if self.backpack == []: return(False, idx)
+        for i in self.backpack:
+            idx += 1
+            if i['item'] == int(item):
+                return(True, idx)
+        return(False, idx)
+            
+    def append(self, item):
+        self.backpack.append({'item':int(item), 'count':1})
+        
+    def stack(self, item, stack_number):
+        self.backpack[stack_number]['item'] = item
+        self.backpack[stack_number]['count'] += 1
+        
+    def add(self, item):
+        isIncomplete, stack_number = self.incomplete_stack(item)
+        if isIncomplete:
+            self.stack(item, stack_number)
+        else:
+            self.append(item)
     
     

@@ -3,17 +3,20 @@
         {
             "id": 0,
             "name": "space",
-            "pic": "img/s1.png"
+            "pic": "img/s1.png",
+            "allow_dig": "False"
         }, 
         {
             "id": 1,
             "name": "ground",
-            "pic": "img/e1.png"
+            "pic": "img/e1.png",
+            "allow_dig": "True"
         },
         {
             "id": 2,
             "name": "hyperspace",
-            "pic": "img/hs.png"
+            "pic": "img/hs.png",
+            "allow_dig": "False"
         } 
     ]
 }    
