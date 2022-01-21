@@ -20,9 +20,9 @@ class game:
         self.info = info(self)
         self.mouse = mouse(self)
         self.is_runing = True
-        
                 
     def update(self):
+        self.player.update()
         self.field.update() 
         self.mouse.update()
         self.info.update()
@@ -33,8 +33,10 @@ class game:
         self.field.draw() 
         self.player.draw()
         self.manager.draw_ui(self.screen)
+        self.player.draw()
         self.info.draw()
-        self.mouse.draw()        
+        self.mouse.draw()  
+              
         
     def run(self):
         while self.is_runing:
@@ -52,11 +54,12 @@ class game:
                 # self.field.process_events(event)
                 self.manager.process_events(event)
          
-            self.update()
-            self.draw()
             dt = self.clock.tick(60)/1000.0
             self.manager.update(dt)                   
-            
+            self.update()
+            self.draw()
+            fps = self.clock.get_fps()
+            self.info.debug((0,0), f'FPS:{int(fps)}')
             pg.display.update()
     
 if __name__ == '__main__':

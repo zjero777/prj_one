@@ -8,7 +8,17 @@ class mouse:
         self.cursors = []
         self.cursors.append(pg.image.load(path.join(img_dir, "cur1.png")).convert_alpha())
         self.cursors.append(pg.image.load(path.join(img_dir, "cur2.png")).convert_alpha())
-        self.cursor = 0;
+        self.cursor = 0
+        
+        self.item = -1
+
+    def setcursor_with_item(self, item):
+        self.item = int(item['item'])
+    
+    def setcursor_noitem(self):
+        self.item = -1
+        
+            
 
     def update(self):
         self.pos = pg.mouse.get_pos()
@@ -23,6 +33,8 @@ class mouse:
         
     
     def draw(self):
+        if  self.item > -1:
+            self.app.screen.blit(self.app.field.field_img[self.item], pg.Rect(self.pos,self.pos).move(10,20), area=(0,0,32,32))
         self.app.screen.blit(self.cursors[self.cursor], self.pos)
     
     

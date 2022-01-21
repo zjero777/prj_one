@@ -7,18 +7,22 @@ from inv import *
 class player:
     def __init__(self, app):
         self.app = app
-        self.inv = inv(self.app)
+        self.inv = inv(self.app, self)
         self.dig = False
         self.timer = app.timer
         self.start_dig = 0
+        self.is_openinv = False
         
     def update(self):
         self.inv.update()
     
     def draw(self):
-        self.inv.draw()
+        if self.is_openinv:
+            self.inv.draw()
         # self.surface.fill(pg.Color(255,0,0))
         # self.app.screen.blit(self.surface, INV_RECT)
+    
+       
     
     def manual_dig(self, field, tilepos):
         if not self.dig:
@@ -49,3 +53,6 @@ class player:
     def pickup(self, loot):
         self.inv.add(loot)
      
+    def use_selected(self):
+        self.inv.delete()
+        

@@ -1,5 +1,4 @@
 from distutils.util import strtobool
-from typing import Mapping
 import numpy as np
 from numpy.lib.function_base import append, select
 import pygame as pg
@@ -10,8 +9,6 @@ from pygame.event import Event
 
 from info import info
 from options import *
-from utils import pointInRect
-
 
 class field:
     def __init__(self, app, width, height, pos=[50, 50]):
@@ -24,7 +21,14 @@ class field:
         self.surface = pg.Surface((FIELD_WIDTH, FIELD_HIGHT))
         self.field = np.zeros((height, width), dtype='i')
         self.building_map = np.zeros((height, width), dtype='i')
-        self.field.fill(1)
+        self.first_click = True
+        
+        f = open('data/data.json',)
+        self.data = json.load(f)
+        f.close
+        
+        
+        self.field.fill(self.FindInfo("id", "ground"))
 
         # for i in range(100):
         #     self.field[rnd.randint(0,99), rnd.randint(0,99)] = 0
@@ -39,29 +43,27 @@ class field:
         #    self.field[0,i] = 1
         #   self.field[99,i] = 1
 
-        self.field_img = []
-        self.field_img = append(self.field_img, 0)
-        self.field_img = append(self.field_img, pg.image.load(
-            path.join(img_dir, "e1.png")).convert())
-        self.field_rect = self.field_img[1].get_rect()
+        
+        self.field_img = [0 for i in self.data['terrain_type']]
+        for img in self.data['terrain_type']:
+            self.field_img[img['id']] = (pg.image.load(path.join(img_dir, img['pic'])).convert())
+        self.field_rect = self.field_img[0].get_rect()
 
-        self.building_img = []
-        self.building_img = append(self.building_img, 0)
-        self.building_img = append(self.building_img, pg.image.load(
-            path.join(img_dir, "b1.png")).convert_alpha())
-        self.building_img = append(self.building_img, pg.image.load(
-            path.join(img_dir, "b2.png")).convert_alpha())
+        self.building_img = [0 for i in self.data['building_type']]
+        for img in self.data['building_type']:
+            self.building_img[img['id']] = (pg.image.load(path.join(img_dir, img['pic'])).convert_alpha())
         self.building_img_rect = self.building_img[1].get_rect()
 
         self.field_bg = pg.image.load(path.join(img_dir, "bg.jpg")).convert()
         self.field_bgrect = self.field_bg.get_rect()
 
-        f = open('data/data.json',)
-        self.data = json.load(f)
-        f.close
 
     def mapping(self, scPos):
-        return (self.pos[0]+(scPos[1]-P_UP)//TILE-HALF_HIGHT, self.pos[1]+scPos[0]//TILE-HALF_WIDTH)
+        tilepos = (self.pos[0]+(scPos[1]-P_UP)//TILE-HALF_HIGHT, self.pos[1]+scPos[0]//TILE-HALF_WIDTH)
+        if tilepos[0] < 0 or tilepos[1] < 0 or tilepos[0] > PLANET_WIDTH-1 or tilepos[1] > PLANET_HIGHT-1:
+            return ()
+        else:
+            return (tilepos)
 
     def select(self, mouse_coord):
         a = self.mapping(mouse_coord)
@@ -74,7 +76,7 @@ class field:
 
         # self.app.info.set(self.text, pic)
     def GetTileInfo(self, name, tilepos):
-        if tilepos[0] < 0 or tilepos[1] < 0 or tilepos[0] > PLANET_WIDTH-1 or tilepos[1] > PLANET_HIGHT-1:
+        if not tilepos:
             pic_idx = self.FindInfo("id", "hyperspace")
             return (self.GetInfo(name, pic_idx))
 
@@ -83,13 +85,18 @@ class field:
     def GetInfo(self, name, id):
         return(self.data.get("terrain_type")[id][name])
 
+    def FindBInfo(self, name, stroke):
+        for item in self.data.get("building_type"):
+            if item['name'] == stroke:
+                return(item[name])
+
     def FindInfo(self, name, stroke):
         for item in self.data.get("terrain_type"):
             if item['name'] == stroke:
                 return(item[name])
 
     def view_Tileinfo(self, tilepos):
-        if tilepos[0] < 0 or tilepos[1] < 0 or tilepos[0] > PLANET_WIDTH-1 or tilepos[1] > PLANET_HIGHT-1:
+        if not tilepos:
             pic_idx = self.FindInfo("id", "hyperspace")
             data = self.GetInfo("name", pic_idx)
             self.text = f'(???,???)<br>{data}'
@@ -138,19 +145,43 @@ class field:
         mouse_button = pg.mouse.get_pressed()
         mouse_pos = pg.mouse.get_pos()
 
-        if pointInRect(mouse_pos, VIEW_RECT):
-            tile_pos = self.mapping(mouse_pos)
-            self.view_Tileinfo(tile_pos)
-            if mouse_button[0]:
-                # dig
-                if self.building_map[tile_pos[0], tile_pos[1]] == 0 and strtobool(self.GetTileInfo('allow_dig', tile_pos)):
-                    self.app.player.manual_dig(self, tile_pos)
-                    self.dig_site = tile_pos
+        if pg.Rect(VIEW_RECT).collidepoint(mouse_pos) and not self.app.player.is_openinv:
+            self.tile_pos = self.mapping(mouse_pos)
+            
+            self.view_Tileinfo(self.tile_pos)
+            
+            if not mouse_button[0]: self.first_click = True
+            self.app.info.debug((0,60), f'{self.first_click}')
+            if mouse_button[0] and len(self.tile_pos)>0:
+                if self.app.player.inv.selected_Item>-1:
+                    
+                    if self.first_click:
+                        self.first_click = False 
+
+                        # build
+                        if self.building_map[self.tile_pos[0], self.tile_pos[1]] == 0:
+                            self.build(self.app.player, self.tile_pos)
+                    
+                        
+                        
+                else:
+                    if self.first_click:
+                        # dig
+                        if self.building_map[self.tile_pos[0], self.tile_pos[1]] == 0 and strtobool(self.GetTileInfo('allow_dig', self.tile_pos)):
+                            self.app.player.manual_dig(self, self.tile_pos)
+                            self.dig_site = self.tile_pos
 
                 # building select
             else:
                 self.app.player.stop_dig()
                 self.dig_site = ()
+                
+                
+            if mouse_button[2] and not mouse_button[0] and len(self.tile_pos)>0:
+                self.app.player.inv.selected_Item=-1
+                self.app.player.inv.item = {}
+            
+            
 
     def draw(self):
         # draw bg
@@ -158,10 +189,10 @@ class field:
         # draw field and buildings
         for y in range(self.pos[0]-HALF_HIGHT, self.pos[0]+HALF_HIGHT+1):
             for x in range(self.pos[1]-HALF_WIDTH, self.pos[1]+HALF_WIDTH+1):
-                xyRect = pg.Rect(
-                    (x-self.pos[1]+HALF_WIDTH)*TILE, (y-self.pos[0]+HALF_HIGHT)*TILE, TILE, TILE)
                 if (x < 0) or (y < 0) or (x >= self.field.shape[1]) or (y >= self.field.shape[0]):
                     continue
+                xyRect = pg.Rect(
+                    (x-self.pos[1]+HALF_WIDTH)*TILE, (y-self.pos[0]+HALF_HIGHT)*TILE, TILE, TILE)
                 if self.field[y, x] != 0:
                     self.surface.blit(self.field_img[self.field[y, x]], xyRect)
                 if self.building_map[y, x] != 0:
@@ -173,17 +204,46 @@ class field:
             xyRect = pg.Rect((self.selection[1]-self.pos[1]+HALF_WIDTH)*TILE,
                              (self.selection[0]-self.pos[0]+HALF_HIGHT)*TILE, TILE, TILE)
             pg.draw.rect(self.surface, pg.Color('yellow'), xyRect, 3)
+            
 
         # draw dig_site
-        if self.dig_site != ():
+        if self.dig_site:
             xyRect = pg.Rect((self.dig_site[1]-self.pos[1]+HALF_WIDTH)*TILE,
                              (self.dig_site[0]-self.pos[0]+HALF_HIGHT)*TILE, TILE, TILE)
             pg.draw.rect(self.surface, pg.Color('gray'), xyRect, 1)
+            
+        # draw pointed field
+        # if self.app.player.inv.selected_Item:
+        if self.tile_pos:
+            xyRect = pg.Rect((self.tile_pos[1]-self.pos[1]+HALF_WIDTH)*TILE,
+                             (self.tile_pos[0]-self.pos[0]+HALF_HIGHT)*TILE, TILE, TILE)
+            if self.app.player.inv.selected_Item==-1:
+                pg.draw.rect(self.surface, pg.Color('gray'), xyRect, 1)
+            else:
+                img = self.field_img[self.app.player.inv.item['item']].copy()
+                img.set_alpha(95)
+                self.surface.blit(img, xyRect)
+        
 
         # draw in viewport
         self.app.screen.blit(self.surface, VIEW_RECT)
 
     def dig_succes(self, player, tile_pos):
-        loot = self.app.field.field[tile_pos[0], tile_pos[1]]
-        self.app.field.field[tile_pos[0], tile_pos[1]] = self.FindInfo("id", "space")
+        loot = self.field[tile_pos[0], tile_pos[1]]
+        self.field[tile_pos[0], tile_pos[1]] = self.FindInfo("id", "pit")
         player.pickup(loot)
+        
+    def build(self, player, tile_pos):
+        if player.inv.selected_Item>-1:
+            if player.inv.item['item']==self.FindInfo("id", "ground"):
+                match self.field[tile_pos[0], tile_pos[1]]:
+                    case 2: 
+                        self.building_map[tile_pos[0], tile_pos[1]] = self.FindBInfo("id", "block")
+                        player.use_selected()
+                    case 3:
+                        self.field[tile_pos[0], tile_pos[1]] = self.FindInfo("id", "ground")
+                        player.use_selected()
+                    
+                    
+                
+            

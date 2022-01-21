@@ -3,20 +3,42 @@
         {
             "id": 0,
             "name": "space",
-            "pic": "img/s1.png",
+            "pic": "s1.png",
             "allow_dig": "False"
         }, 
         {
             "id": 1,
-            "name": "ground",
-            "pic": "img/e1.png",
-            "allow_dig": "True"
+            "name": "hyperspace",
+            "pic": "hs.png",
+            "allow_dig": "False"
         },
         {
             "id": 2,
-            "name": "hyperspace",
-            "pic": "img/hs.png",
+            "name": "ground",
+            "pic": "e1.png",
+            "allow_dig": "True"
+        },
+        {
+            "id": 3,
+            "name": "pit",
+            "pic": "pit.png",
             "allow_dig": "False"
-        } 
+        }
+
+    ],
+
+    "building_type": [
+        {
+            "id": 0,
+            "name": "none",
+            "pic": "b1.png"
+        }, 
+        {
+            "id": 1,
+            "name": "block",
+            "pic": "b2.png"
+        }
+
     ]
+
 }    

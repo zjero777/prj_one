@@ -22,15 +22,9 @@ class info:
         #self.start_button = gui.elements.UIButton(relative_rect=self.text_rect,
         #                                                 text='Start',
         #                                                 manager=self.app.manager)
-        
-        self.field_img = []
-        self.field_img = append(self.field_img, pg.image.load(path.join(img_dir, "s1.png")).convert())
-        self.field_img = append(self.field_img, pg.image.load(path.join(img_dir, "e1.png")).convert())
-        self.field_img = append(self.field_img, pg.image.load(path.join(img_dir, "hs.png")).convert())
-        self.field_rect = self.field_img[1].get_rect()        
-        
+
         self.pic_rect = pg.Rect((5, 0), (63, 63))
-        self.pic_info = gui.elements.UIImage(self.pic_rect,  self.field_img[0], self.app.manager, container=self.panel_info)
+        self.pic_info = gui.elements.UIImage(self.pic_rect,  self.app.field.field_img[0], self.app.manager, container=self.panel_info)
 
 
         # debuf info
@@ -51,7 +45,7 @@ class info:
     
     def set(self, text, img_index):
         self.text_info.html_text = f'<font face=fira_code size=4 color=#FFFFFF><b>Info:</b><br><br>{text}</font><br><img src="img/s1.png"></img>'
-        self.pic_info.set_image(self.field_img[img_index])
+        self.pic_info.set_image(self.app.field.field_img[img_index])
         self.text_info.rebuild()
         
     def debug(self, pos,text):
