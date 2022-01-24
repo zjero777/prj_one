@@ -1,3 +1,4 @@
+from distutils.command import build
 from distutils.util import strtobool
 import numpy as np
 from numpy.lib.function_base import append, select
@@ -27,11 +28,11 @@ class field:
         self.data = json.load(f)
         f.close
         
-        
-        self.field.fill(self.FindInfo("id", "ground"))
+       
+        self.field.fill(self.FindTInfo("id", "ground"))
 
-        # for i in range(100):
-        #     self.field[rnd.randint(0,99), rnd.randint(0,99)] = 0
+        for i in range(100):
+            self.field[rnd.randint(0,99), rnd.randint(0,99)] = 0
 
         # for i in range(100):
         #     self.building_map[rnd.randint(0,99), rnd.randint(0,99)] = rnd.randrange(1, 3)
@@ -77,7 +78,7 @@ class field:
         # self.app.info.set(self.text, pic)
     def GetTileInfo(self, name, tilepos):
         if not tilepos:
-            pic_idx = self.FindInfo("id", "hyperspace")
+            pic_idx = self.FindTInfo("id", "hyperspace")
             return (self.GetInfo(name, pic_idx))
 
         return(self.data.get("terrain_type")[self.field[tilepos[0], tilepos[1]]][name])
@@ -90,14 +91,37 @@ class field:
             if item['name'] == stroke:
                 return(item[name])
 
-    def FindInfo(self, name, stroke):
+    def FindTInfo(self, name, stroke):
         for item in self.data.get("terrain_type"):
             if item['name'] == stroke:
                 return(item[name])
+            
+    def FindInfo(self, name, stroke, build_type):
+        if build_type=='building':
+            return(self.FindBInfo(name, stroke))
+        elif build_type=='terrain':
+            return(self.FindTInfo(name, stroke))
+        
+    def Get_info_build_placed(self, use_item, place):
+        for item in self.data.get("terrain_type"):
+            if item['id']==use_item['item']: 
+                type_result = ''
+                rule = item.get('build',False)
+                if rule:
+                    for item_rule in rule:
+                        if place in item_rule:
+                            type_result = item_rule.get('type_result','terrain')
+                            result_item_idx = self.FindInfo('id', item_rule[place], type_result)
+                            return({'item':result_item_idx}, type_result)
+                    else:
+                        return(use_item, type_result)
+                else:
+                    return(use_item, type_result)
+           
 
     def view_Tileinfo(self, tilepos):
         if not tilepos:
-            pic_idx = self.FindInfo("id", "hyperspace")
+            pic_idx = self.FindTInfo("id", "hyperspace")
             data = self.GetInfo("name", pic_idx)
             self.text = f'(???,???)<br>{data}'
             self.app.info.set(self.text, pic_idx)
@@ -122,6 +146,12 @@ class field:
     #             # self.select(event.pos)
     #             self.view_Tileinfo(self.mapping(event.pos))
 
+    def Get_img(self, item, build_type):
+        if build_type=='terrain':
+            return(self.field_img[item['item']])
+        elif build_type=='building':
+            return(self.building_img[item['item']])
+    
     def update(self):
         keystate = pg.key.get_pressed()
         if keystate[pg.K_a]:
@@ -180,7 +210,10 @@ class field:
             if mouse_button[2] and not mouse_button[0] and len(self.tile_pos)>0:
                 self.app.player.inv.selected_Item=-1
                 self.app.player.inv.item = {}
-            
+        else:
+            self.app.player.stop_dig()
+            self.dig_site = ()
+                
             
 
     def draw(self):
@@ -220,9 +253,23 @@ class field:
             if self.app.player.inv.selected_Item==-1:
                 pg.draw.rect(self.surface, pg.Color('gray'), xyRect, 1)
             else:
-                img = self.field_img[self.app.player.inv.item['item']].copy()
-                img.set_alpha(95)
-                self.surface.blit(img, xyRect)
+                # Ghost cursor
+                item = self.app.player.inv.item
+                place = self.GetInfo('name', self.field[self.tile_pos[0], self.tile_pos[1]])
+                build_item, build_type = self.Get_info_build_placed(item, place)
+                
+                if build_type:
+                    img = self.Get_img(build_item, build_type).copy()
+                    img.set_alpha(172)
+                    self.surface.blit(img, xyRect, special_flags=pg.BLEND_MULT)
+                else:
+                    img = self.Get_img(build_item, 'terrain').copy()
+                    img.set_alpha(172)
+                    colorImage = pg.Surface(img.get_size()).convert_alpha()
+                    colorImage.fill(pg.Color('red'))
+                    img.blit(colorImage, (0,0), special_flags = pg.BLEND_RGBA_MULT)
+                    self.surface.blit(img, xyRect, special_flags=pg.BLEND_MULT)
+                    
         
 
         # draw in viewport
@@ -230,19 +277,27 @@ class field:
 
     def dig_succes(self, player, tile_pos):
         loot = self.field[tile_pos[0], tile_pos[1]]
-        self.field[tile_pos[0], tile_pos[1]] = self.FindInfo("id", "pit")
+        self.field[tile_pos[0], tile_pos[1]] = self.FindTInfo("id", "pit")
         player.pickup(loot)
         
+    # Place the item selected from the inventory on the ground
+    # player.inv.selected_Item - selected inventory item 
+    # tile_pos - place for installation
     def build(self, player, tile_pos):
         if player.inv.selected_Item>-1:
-            if player.inv.item['item']==self.FindInfo("id", "ground"):
-                match self.field[tile_pos[0], tile_pos[1]]:
-                    case 2: 
-                        self.building_map[tile_pos[0], tile_pos[1]] = self.FindBInfo("id", "block")
-                        player.use_selected()
-                    case 3:
-                        self.field[tile_pos[0], tile_pos[1]] = self.FindInfo("id", "ground")
-                        player.use_selected()
+            item = self.app.player.inv.item
+            place = self.GetInfo('name', self.field[self.tile_pos[0], self.tile_pos[1]])
+            build_item, build_type = self.Get_info_build_placed(item, place)   
+            if build_type=='terrain':
+                self.field[tile_pos[0], tile_pos[1]] = build_item['item']
+                player.use_selected()
+            elif build_type=='building':
+                self.building_map[tile_pos[0], tile_pos[1]]=build_item['item']
+                player.use_selected()
+                
+            
+
+                    
                     
                     
                 

@@ -16,7 +16,11 @@
             "id": 2,
             "name": "ground",
             "pic": "e1.png",
-            "allow_dig": "True"
+            "allow_dig": "True",
+            "build": [
+                {"pit":"ground"},
+                {"ground":"block", "type_result":"building"}
+            ]
         },
         {
             "id": 3,

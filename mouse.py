@@ -1,16 +1,37 @@
+from numpy import mat
 import pygame as pg
 from options import *
+from animatedsprite import *
+
+        
 
 class mouse:
     def __init__(self, app):
+        
         self.app = app
         pg.mouse.set_visible(False)
-        self.cursors = []
-        self.cursors.append(pg.image.load(path.join(img_dir, "cur1.png")).convert_alpha())
-        self.cursors.append(pg.image.load(path.join(img_dir, "cur2.png")).convert_alpha())
-        self.cursor = 0
+        self.pos = pg.mouse.get_pos()
         
-        self.item = -1
+        self.cursors = [0 for cursor in cursor_type]
+
+        ss = spritesheet(path.join(img_dir, 'cur1.png'))
+        ani_cur_dig = ss.load_strip(ss.sheet.get_rect(), 1)
+        self.cursors[cursor_type.normal.value] = AnimatedSprite(self.pos, ani_cur_dig)
+                
+        ss = spritesheet(path.join(img_dir, 'anicurdig.png'))
+        ani_cur_dig = ss.load_strip((0,0,24,24), 5)
+        self.cursors[cursor_type.dig.value] = AnimatedSprite(self.pos, ani_cur_dig)
+            
+      
+        
+        # self.cursor.append(pg.image.load(path.join(img_dir, "cur2.png")).convert_alpha())
+        
+        
+
+        self.setcursor(cursor_type.normal)
+        
+        
+        self.setcursor_noitem() #item on cursor
 
     def setcursor_with_item(self, item):
         self.item = int(item['item'])
@@ -22,8 +43,17 @@ class mouse:
 
     def update(self):
         self.pos = pg.mouse.get_pos()
+        self.cursors[cursor_type.normal.value].SetRect(self.pos)
+        self.cursors[cursor_type.dig.value].SetRect(self.pos)
+        
         
     def setcursor(self, idx):
+        match idx:
+            case cursor_type.normal: 
+                self.app.allsprites = pg.sprite.Group(self.cursors[cursor_type.normal.value])
+            case cursor_type.dig: 
+                self.app.allsprites = pg.sprite.Group(self.cursors[cursor_type.dig.value])
+            
         self.cursor = idx
         
 
@@ -35,6 +65,9 @@ class mouse:
     def draw(self):
         if  self.item > -1:
             self.app.screen.blit(self.app.field.field_img[self.item], pg.Rect(self.pos,self.pos).move(10,20), area=(0,0,32,32))
-        self.app.screen.blit(self.cursors[self.cursor], self.pos)
+        # i=self.cursor.value
+        # self.app.screen.blit(self.cursors[i], self.pos)
     
+    
+            
     

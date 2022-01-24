@@ -1,3 +1,4 @@
+from enum import Enum
 from os import path
 
 img_dir = path.join(path.dirname(__file__), 'img')
@@ -40,3 +41,6 @@ INV_SIZE = (INV_WIDTH, INV_HIGHT)
 INV_POS = (FIELD_WIDTH // 2 - INV_WIDTH // 2+INV_MARGIN, FIELD_HIGHT // 2 - INV_HIGHT // 2+INV_MARGIN)
 INV_RECT = (INV_POS[0], INV_POS[1], INV_WIDTH, INV_HIGHT)
 
+class cursor_type(Enum):
+    normal = 0
+    dig = 1

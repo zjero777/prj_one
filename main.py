@@ -15,32 +15,36 @@ class game:
         self.manager = pygame_gui.UIManager(WIN_SIZE)
         self.clock = pg.time.Clock()
         self.timer = pg.time
+        self.allsprites = pg.sprite.Group()
         self.field = field(self, PLANET_WIDTH, PLANET_HIGHT, [10,10])
         self.player = player(self)
         self.info = info(self)
-        self.mouse = mouse(self)
         self.is_runing = True
+        self.mouse = mouse(self)
                 
-    def update(self):
+    def update(self, dt):
         self.player.update()
         self.field.update() 
+        self.allsprites.update(dt)
         self.mouse.update()
         self.info.update()
     
     def draw(self):
-        self.surface.fill(pg.Color('cyan'))
+        self.surface.fill(pg.Color('cyan'))        
         self.screen.blit(self.surface, (0,0))
         self.field.draw() 
         self.player.draw()
         self.manager.draw_ui(self.screen)
         self.player.draw()
-        self.info.draw()
         self.mouse.draw()  
+        self.allsprites.draw(self.screen)
+        self.info.draw()
+        
               
         
     def run(self):
         while self.is_runing:
-            self.clock.tick(FPS)
+            dt = self.clock.tick(FPS)/1000
             for event in pg.event.get():
                 # check for closing window
                 if event.type == pg.QUIT:
@@ -56,7 +60,7 @@ class game:
          
             dt = self.clock.tick(60)/1000.0
             self.manager.update(dt)                   
-            self.update()
+            self.update(dt)
             self.draw()
             fps = self.clock.get_fps()
             self.info.debug((0,0), f'FPS:{int(fps)}')

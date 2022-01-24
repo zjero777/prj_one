@@ -29,11 +29,11 @@ class player:
             self.tile_pos = tilepos
             self.dig = True
             self.hp = 100
-            self.app.mouse.setcursor(1)
+            self.app.mouse.setcursor(cursor_type.dig)
             self.start_dig = self.timer.get_ticks()
         else:
             dt = self.timer.get_ticks()-self.start_dig
-            if dt>10:
+            if dt>100:
                 if tilepos==self.tile_pos:
                     self.start_dig = self.timer.get_ticks()
                     self.hp -= 20
@@ -45,7 +45,7 @@ class player:
     
     def stop_dig(self):
         if self.dig:
-            self.app.mouse.setcursor(0)
+            self.app.mouse.setcursor(cursor_type.normal)
             self.dig = False
             self.hp = 100
             self.app.info.debug((0,30), f'{self.hp} - dig: {self.dig}')

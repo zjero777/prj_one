@@ -2,7 +2,7 @@ from ctypes.wintypes import POINT
 from random import randrange
 import pygame as pg
 import pygame_gui as gui
-from mouse import mouse
+from mouse import *
 from options import *
 
 class inv:
