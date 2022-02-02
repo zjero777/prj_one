@@ -1,3 +1,4 @@
+from dataclasses import field
 from hmac import digest
 import pygame as pg
 import pygame_gui as gui
@@ -12,6 +13,8 @@ class player:
         self.timer = app.timer
         self.start_dig = 0
         self.is_openinv = False
+        self.demolition = False
+        self.warmup = 0        
         
     def update(self):
         self.inv.update()
@@ -51,8 +54,10 @@ class player:
                     self.hp -= 20
                     if self.hp<0:
                         field.dig_succes(self, tilepos)
+                        return(True)
                 else:
-                    self.dig = False
+                    self.stop_dig()
+                    
             self.app.info.debug((0,0), f'{self.hp} - {self.start_dig}:{dt} - dig: {self.dig}')
     
     def stop_dig(self):
@@ -60,7 +65,37 @@ class player:
             self.app.mouse.setcursor(cursor_type.normal)
             self.dig = False
             self.hp = 100
+            
+            
+
             self.app.info.debug((0,30), f'{self.hp} - dig: {self.dig}')
+       
+    def manual_demolition(self, field, tilepos, time):
+        if not self.demolition:
+            self.tile_pos = tilepos
+            self.demolition = True
+            self.warmup = self.timer.get_ticks()
+            self.app.mouse.setcursor(cursor_type.dig)
+            return(False)
+        else:
+            dt = self.timer.get_ticks()-self.warmup
+            if tilepos==self.tile_pos:
+                if dt>time*1000:
+                    self.warmup = self.timer.get_ticks()
+                    field.demolition_succes(self, tilepos)
+                    self.stop_demolition()
+                    return(True)
+            else:
+                self.stop_demolition()
+                
+                
+
+    def stop_demolition(self):
+        if self.demolition:
+            self.app.mouse.setcursor(cursor_type.normal)
+            self.demolition = False
+            self.warmup = 0
+
             
     def pickup(self, loot, count=1):
         self.inv.add(loot, count)

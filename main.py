@@ -3,7 +3,7 @@ import pygame_gui
 from inv import *
 from mouse import mouse 
 from options import *
-from field import *
+from terrain import * 
 from info import *
 from player import *
 from factory import *
@@ -17,7 +17,7 @@ class game:
         self.clock = pg.time.Clock()
         self.timer = pg.time
         self.allsprites = pg.sprite.Group()
-        self.field = field(self, PLANET_WIDTH, PLANET_HIGHT, [10,10])
+        self.terrain = terrain(self, PLANET_WIDTH, PLANET_HIGHT, [10,10])
         self.player = player(self)
         self.info = info(self)
         self.is_runing = True
@@ -26,7 +26,7 @@ class game:
                 
     def update(self, dt):
         self.player.update()
-        self.field.update() 
+        self.terrain.update() 
         self.allsprites.update(dt)
         self.mouse.update()
         self.info.update()
@@ -34,7 +34,7 @@ class game:
     def draw(self):
         self.surface.fill(pg.Color('cyan'))        
         self.screen.blit(self.surface, (0,0))
-        self.field.draw() 
+        self.terrain.draw() 
         self.player.draw()
         self.manager.draw_ui(self.screen)
         self.player.draw()

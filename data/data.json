@@ -41,6 +41,7 @@
             "id": 1,
             "name": "mound",
             "pic": "mound.png",
+            "demolition":2,
             "build": [
                 {
                     "pit": "ground",
@@ -57,6 +58,7 @@
             "id": 2,
             "name": "brick",
             "pic": "b2.png", 
+            "demolition":2,
             "build": [
                 {
                     "ground": "brick",
@@ -88,7 +90,8 @@
                 "id": 2, 
                 "count": 1,
                 "time": 5
-            } 
+            },
+            "demolition":2
         },
         {
             "id": 1,
@@ -112,7 +115,8 @@
                 "id": 2, 
                 "count": 1,
                 "time": 5
-            } 
+            },
+            "demolition":2
         }
 
     ]

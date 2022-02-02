@@ -99,7 +99,7 @@ class inv:
             pos = (i%10*INV_CELL_W+i%INV_CELL_CW+INV_MARGIN, i//INV_CELL_CH*INV_CELL_H+i//INV_CELL_CH+INV_MARGIN)
             item_pos = (pos[0]+8, pos[1]+8)
             #img
-            pic = pg.transform.scale(self.app.field.block_img[item['item']], (32, 32))
+            pic = pg.transform.scale(self.app.terrain.block_img[item['item']], (32, 32))
             self.surface.blit(pic, item_pos)
             #count
             text = self.font.render(str(item['count']),True, pg.Color('white'))

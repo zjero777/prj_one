@@ -24,7 +24,7 @@ class info:
         #                                                 manager=self.app.manager)
 
         self.pic_rect = pg.Rect((5, 0), (63, 63))
-        self.pic_info = gui.elements.UIImage(self.pic_rect,  self.app.field.field_img[0], self.app.manager, container=self.panel_info)
+        self.pic_info = gui.elements.UIImage(self.pic_rect,  self.app.terrain.field_img[0], self.app.manager, container=self.panel_info)
 
 
         # debuf info
@@ -45,7 +45,7 @@ class info:
     
     def set(self, text, img_index):
         self.text_info.html_text = f'<font face=fira_code size=4 color=#FFFFFF><b>Info:</b><br><br>{text}</font><br><img src="img/s1.png"></img>'
-        self.pic_info.set_image(self.app.field.field_img[img_index])
+        self.pic_info.set_image(self.app.terrain.field_img[img_index])
         self.text_info.rebuild()
         
     def debug(self, pos,text):

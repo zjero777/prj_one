@@ -7,8 +7,8 @@ class factory:
         self.app = app
         self.active = []
 
-        self.factory_img = [0 for i in app.field.data['factory_type']]
-        for img in app.field.data['factory_type']:
+        self.factory_img = [0 for i in app.terrain.data['factory_type']]
+        for img in app.terrain.data['factory_type']:
             self.factory_img[img['id']] = (pg.image.load(
                 path.join(img_dir, img['pic'])).convert_alpha())
         self.factory_img_rect = self.factory_img[0].get_rect()
@@ -22,10 +22,14 @@ class factory:
         for i in range(x, x+width):
             for j in range(y, y+hight):
                 b_map[i, j] = -1
+                
+    def delete(self, b_map, x, y):
+        pass
+        
 
     def draw(self, surface: pg.Surface):
         for f in self.active:
-            screen_pos = self.app.field.demapping(f['coord'])
+            screen_pos = self.app.terrain.demapping(f['coord'])
             f_rect = pg.Rect(screen_pos, (f['wh'][0]*TILE, f['wh'][1]*TILE))
             if pg.Rect(VIEW_RECT).colliderect(f_rect):
                 surface.blit(self.factory_img[int(

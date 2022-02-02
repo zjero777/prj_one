@@ -11,19 +11,15 @@ from factory import factory
 from info import info
 from options import *
 
-class field:
+class terrain:
     def __init__(self, app, width, height, pos=[50, 50]):
         self.app = app
         self.pos = [pos[0], pos[1]]
         self.selection = [-1, -1]
-        self.dig_site = ()
-        # self.mouseclick = 0,0
-        # self.mousebutton = 0
         self.surface = pg.Surface((FIELD_WIDTH, FIELD_HIGHT))
         self.field = np.zeros((height, width), dtype='i')
         self.building_map = np.zeros((height, width), dtype='i')
         self.first_click = True
-        
         f = open('data/data.json',)
         self.data = json.load(f)
         f.close
@@ -202,6 +198,7 @@ class field:
 
         mouse_button = pg.mouse.get_pressed()
         mouse_pos = pg.mouse.get_pos()
+        
 
         if pg.Rect(VIEW_RECT).collidepoint(mouse_pos) and not self.app.player.is_openinv:
             self.tile_pos = self.mapping(mouse_pos)
@@ -225,15 +222,36 @@ class field:
                         
                 else:
                     if self.first_click:
+                        select_building = self.building_map[self.tile_pos[0], self.tile_pos[1]]
+                        
+                        
                         # dig
-                        if self.building_map[self.tile_pos[0], self.tile_pos[1]] == 0 and strtobool(self.GetTileInfo('allow_dig', self.tile_pos)):
-                            self.app.player.manual_dig(self, self.tile_pos)
-                            self.dig_site = self.tile_pos
+                        if select_building == 0 and strtobool(self.GetTileInfo('allow_dig', self.tile_pos)):
+                            # self.dig_site = self.tile_pos
+                            if self.app.player.manual_dig(self, self.tile_pos):
+                                self.first_click = False
+                        # demolition
+                        elif select_building > 0:
+                            # self.app.terrain.dig_site = ()
+                            data = self.data['block_type'][select_building]
+                            time = data['demolition']
+                            if self.app.player.manual_demolition(self, self.tile_pos, time):
+                                self.first_click = False
+                            # self.dig_site = self.tile_pos
+                        elif select_building == -1:
+                            pass
+                        else:
+                            self.app.player.stop_dig()
+                            self.app.player.stop_demolition()                            
 
                         # building select
+                    else:
+                        self.app.player.stop_dig()
+                        self.app.player.stop_demolition()                            
             else:
                 self.app.player.stop_dig()
-                self.dig_site = ()
+                self.app.player.stop_demolition()
+                
                 
                 
             if mouse_button[2] and not mouse_button[0] and len(self.tile_pos)>0:
@@ -241,8 +259,7 @@ class field:
                 self.app.player.inv.item = {}
         else:
             self.app.player.stop_dig()
-            self.dig_site = ()
-                
+            self.app.player.stop_demolition()
             
 
     def draw(self):
@@ -273,10 +290,10 @@ class field:
             
 
         # draw dig_site
-        if self.dig_site:
-            xyRect = pg.Rect((self.dig_site[1]-self.pos[1]+HALF_WIDTH)*TILE,
-                             (self.dig_site[0]-self.pos[0]+HALF_HIGHT)*TILE, TILE, TILE)
-            pg.draw.rect(self.surface, pg.Color('gray'), xyRect, 1)
+        # if self.dig_site:
+        #     xyRect = pg.Rect((self.dig_site[1]-self.pos[1]+HALF_WIDTH)*TILE,
+        #                      (self.dig_site[0]-self.pos[0]+HALF_HIGHT)*TILE, TILE, TILE)
+        #     pg.draw.rect(self.surface, pg.Color('gray'), xyRect, 1)
             
         # draw pointed field
         # if self.app.player.inv.selected_Item:
@@ -284,7 +301,8 @@ class field:
             xyRect = pg.Rect((self.tile_pos[1]-self.pos[1]+HALF_WIDTH)*TILE,
                              (self.tile_pos[0]-self.pos[0]+HALF_HIGHT)*TILE, TILE, TILE)
             if self.app.player.inv.selected_Item==-1:
-                pg.draw.rect(self.surface, pg.Color('gray'), xyRect, 1)
+                if not self.app.player.is_openinv:
+                    pg.draw.rect(self.surface, pg.Color('gray'), xyRect, 1)
             else:
                 # Ghost cursor
                 item = self.app.player.inv.item
@@ -309,12 +327,29 @@ class field:
         self.app.screen.blit(self.surface, VIEW_RECT)
 
     def dig_succes(self, player, tile_pos):
+        self.app.player.stop_dig()
         site = self.field[tile_pos[0], tile_pos[1]]
         diginfo = self.GetInfo('dig',site)
         loot =  self.FindBInfo('id', diginfo['loot'])
         self.field[tile_pos[0], tile_pos[1]] = self.FindTInfo("id", diginfo['after'])
         player.pickup(loot, diginfo['count'])
         
+        
+    def demolition_succes(self, player, tile_pos):
+        site = self.building_map[tile_pos[0], tile_pos[1]]
+        if site == -1: #demolition factory
+            pass
+        
+        if site > 0: #demolition block
+            player.pickup(site, 1)
+            self.building_map[tile_pos[0], tile_pos[1]] = 0
+        
+        
+        # diginfo = self.GetBInfo('dig',site)
+        
+        # loot =  self.FindBInfo('id', diginfo['loot'])
+        # self.field[tile_pos[0], tile_pos[1]] = self.FindTInfo("id", diginfo['after'])
+        # player.pickup(loot, diginfo['count'])
 
                 
             
