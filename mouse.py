@@ -64,7 +64,8 @@ class mouse:
     
     def draw(self):
         if  self.item > -1:
-            self.app.screen.blit(self.app.field.field_img[self.item], pg.Rect(self.pos,self.pos).move(10,20), area=(0,0,32,32))
+            pic = pg.transform.scale(self.app.field.block_img[self.item], (32, 32))
+            self.app.screen.blit(pic, pg.Rect(self.pos,self.pos).move(10,20))
         # i=self.cursor.value
         # self.app.screen.blit(self.cursors[i], self.pos)
     

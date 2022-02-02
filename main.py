@@ -6,6 +6,7 @@ from options import *
 from field import *
 from info import *
 from player import *
+from factory import *
 
 class game:
     def __init__(self):
@@ -21,6 +22,7 @@ class game:
         self.info = info(self)
         self.is_runing = True
         self.mouse = mouse(self)
+        self.factory = factory(self)
                 
     def update(self, dt):
         self.player.update()

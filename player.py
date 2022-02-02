@@ -22,7 +22,19 @@ class player:
         # self.surface.fill(pg.Color(255,0,0))
         # self.app.screen.blit(self.surface, INV_RECT)
     
-       
+    # Place the item selected from the inventory on titlepos the ground
+    # player.inv.selected_Item - selected inventory item 
+    def build(self, field):
+        if self.inv.selected_Item>-1:
+            item = self.inv.item
+            place = field.GetInfo('name', field.field[field.tile_pos[0], field.tile_pos[1]])
+            build_item, build_type = field.Get_info_block_placed(item, place)   
+            if build_type=='terrain':
+                field.field[field.tile_pos[0], field.tile_pos[1]] = build_item['item']
+                self.use_selected()
+            elif build_type=='block':
+                field.building_map[field.tile_pos[0], field.tile_pos[1]]=build_item['item']
+                self.use_selected()       
     
     def manual_dig(self, field, tilepos):
         if not self.dig:
@@ -50,8 +62,8 @@ class player:
             self.hp = 100
             self.app.info.debug((0,30), f'{self.hp} - dig: {self.dig}')
             
-    def pickup(self, loot):
-        self.inv.add(loot)
+    def pickup(self, loot, count=1):
+        self.inv.add(loot, count)
      
     def use_selected(self):
         self.inv.delete()

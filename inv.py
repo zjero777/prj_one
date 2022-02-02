@@ -99,7 +99,8 @@ class inv:
             pos = (i%10*INV_CELL_W+i%INV_CELL_CW+INV_MARGIN, i//INV_CELL_CH*INV_CELL_H+i//INV_CELL_CH+INV_MARGIN)
             item_pos = (pos[0]+8, pos[1]+8)
             #img
-            self.surface.blit(self.app.field.field_img[item['item']], item_pos, area=(0,0,32,32))
+            pic = pg.transform.scale(self.app.field.block_img[item['item']], (32, 32))
+            self.surface.blit(pic, item_pos)
             #count
             text = self.font.render(str(item['count']),True, pg.Color('white'))
             count_text_pos = (pos[0]+INV_CELL_W-text.get_width()-3, pos[1]+INV_CELL_H-text.get_height()-3)
@@ -117,19 +118,19 @@ class inv:
                 return(True, idx)
         return(False, idx)
             
-    def append(self, item):
-        self.backpack.append({'item':int(item), 'count':1})
+    def append(self, item, count=1):
+        self.backpack.append({'item':int(item), 'count':count})
         
-    def stack(self, item, stack_number):
+    def stack(self, item, stack_number, count=1):
         self.backpack[stack_number]['item'] = item
-        self.backpack[stack_number]['count'] += 1
+        self.backpack[stack_number]['count'] += count
         
-    def add(self, item):
+    def add(self, item, count=1):
         isIncomplete, stack_number = self.incomplete_stack(item)
         if isIncomplete:
-            self.stack(item, stack_number)
+            self.stack(item, stack_number, count)
         else:
-            self.append(item)
+            self.append(item, count)
     
     def delete(self):
         if self.backpack[self.selected_Item]['count'] == 1: 

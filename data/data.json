@@ -5,7 +5,7 @@
             "name": "space",
             "pic": "s1.png",
             "allow_dig": "False"
-        }, 
+        },
         {
             "id": 1,
             "name": "hyperspace",
@@ -17,10 +17,12 @@
             "name": "ground",
             "pic": "e1.png",
             "allow_dig": "True",
-            "build": [
-                {"pit":"ground"},
-                {"ground":"block", "type_result":"building"}
-            ]
+            "dig": {
+                "time": 2,
+                "loot": "mound",
+                "count": 1,
+                "after": "pit"
+            }
         },
         {
             "id": 3,
@@ -28,21 +30,90 @@
             "pic": "pit.png",
             "allow_dig": "False"
         }
-
     ],
-
-    "building_type": [
+    "block_type": [
         {
             "id": 0,
             "name": "none",
             "pic": "b1.png"
-        }, 
+        },
         {
             "id": 1,
-            "name": "block",
-            "pic": "b2.png"
+            "name": "mound",
+            "pic": "mound.png",
+            "build": [
+                {
+                    "pit": "ground",
+                    "type_result": "terrain"
+                },
+                {
+                    "ground": "mound",
+                    "type_result": "block"
+                }
+            ]
+
+        },
+        {
+            "id": 2,
+            "name": "brick",
+            "pic": "b2.png", 
+            "build": [
+                {
+                    "ground": "brick",
+                    "type_result": "block"
+                }
+            ]
+        }
+    ],
+    "factory_type": [
+        {
+            "id": 0,
+            "name": "brickyard",
+            "dim": {
+                "w": 2,
+                "h": 2
+            },
+            "plan": [
+                [1,1],
+                [1,1]
+            ],
+            "pic": "brickyard.png",
+            "in": 
+            {
+                "id": 1,
+                "count": 2
+            },
+            "out":
+            {
+                "id": 2, 
+                "count": 1,
+                "time": 5
+            } 
+        },
+        {
+            "id": 1,
+            "name": "career",
+            "dim": {
+                "w": 2,
+                "h": 2
+            },
+            "plan": [
+                [2,2],
+                [2,2]
+            ],
+            "pic": "career.png",
+            "in": 
+            {
+                "id": 0,
+                "count": 0
+            },
+            "out":
+            {
+                "id": 2, 
+                "count": 1,
+                "time": 5
+            } 
         }
 
     ]
-
-}    
+}
