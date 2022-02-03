@@ -1,5 +1,3 @@
-from dataclasses import field
-from hmac import digest
 import pygame as pg
 import pygame_gui as gui
 from options import *
@@ -39,26 +37,23 @@ class player:
                 field.building_map[field.tile_pos[0], field.tile_pos[1]]=build_item['item']
                 self.use_selected()       
     
-    def manual_dig(self, field, tilepos):
+    def manual_dig(self, field, tilepos, time):
         if not self.dig:
             self.tile_pos = tilepos
             self.dig = True
-            self.hp = 100
+            self.warmup = self.timer.get_ticks()
             self.app.mouse.setcursor(cursor_type.dig)
-            self.start_dig = self.timer.get_ticks()
         else:
-            dt = self.timer.get_ticks()-self.start_dig
-            if dt>100:
-                if tilepos==self.tile_pos:
-                    self.start_dig = self.timer.get_ticks()
-                    self.hp -= 20
-                    if self.hp<0:
-                        field.dig_succes(self, tilepos)
-                        return(True)
-                else:
+            dt = self.timer.get_ticks()-self.warmup
+            if tilepos==self.tile_pos:
+                if dt>time*1000:
+                    self.warmup = self.timer.get_ticks()
+                    field.dig_succes(self, tilepos)
                     self.stop_dig()
+                    return(True)
+            else:
+                self.stop_dig()
                     
-            self.app.info.debug((0,0), f'{self.hp} - {self.start_dig}:{dt} - dig: {self.dig}')
     
     def stop_dig(self):
         if self.dig:

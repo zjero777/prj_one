@@ -1,8 +1,42 @@
 import pygame as pg
 from options import *
+import random as rnd
+import numpy as np
 
 
 class factory:
+    def __init__(self, list, app, blueprint,  x, y):
+        self.app = app
+        self.list = list
+        self.id = blueprint['id']
+        self.name = blueprint['name']
+        self.tile_pos = (x, y)
+        self.size = (blueprint['dim']['w'], blueprint['dim']['h'])
+        self.plan = np.array(blueprint['plan'])
+        self.demolition = blueprint['demolition']
+        self.pic = list.factory_img[blueprint['id']]
+        self.incom = blueprint['in']
+        self.outcom = blueprint['out']
+        
+    def get_resources(self, minproc, maxproc):
+        if minproc==maxproc: 
+            proc=maxproc
+        else:
+            proc = rnd.randrange(minproc, maxproc)
+        res, count = np.unique(self.plan, return_counts=True)
+        all_res = (res, np.int64(count*(proc/100)))
+        return(all_res)
+    
+    def draw(self, surface):
+        screen_pos = self.app.terrain.demapping(self.tile_pos)
+        f_rect = pg.Rect(screen_pos, (self.size[0]*TILE, self.size[1]*TILE))
+        if pg.Rect(VIEW_RECT).colliderect(f_rect):
+            surface.blit(self.pic, f_rect)
+            
+    def update(self):
+        pass
+
+class factory_list:
     def __init__(self, app):
         self.app = app
         self.active = []
@@ -11,26 +45,39 @@ class factory:
         for img in app.terrain.data['factory_type']:
             self.factory_img[img['id']] = (pg.image.load(
                 path.join(img_dir, img['pic'])).convert_alpha())
-        self.factory_img_rect = self.factory_img[0].get_rect()
+        # self.factory_img_rect = self.factory_img[0].get_rect()
 
     def add(self, bp, b_map, x, y):
         width = bp['dim']['w']
         hight = bp['dim']['h']
-        id = bp['id']
-        self.active.append({'id': id, 'coord': (x, y), 'wh': (width, hight)})
-        # b_map[x,y]=1
         for i in range(x, x+width):
             for j in range(y, y+hight):
                 b_map[i, j] = -1
-                
-    def delete(self, b_map, x, y):
-        pass
+
+        new_factory = factory(self, self.app, bp, x, y)
+        self.active.append(new_factory)
         
 
-    def draw(self, surface: pg.Surface):
+    def delete(self, b_map, factory):
+        width, hight = factory.size
+        x, y = factory.tile_pos
+        for i in range(x, x+width):
+            for j in range(y, y+hight):
+                b_map[i, j] = 0
+        self.active.remove(factory)
+
+        
+    def factory(self, tile_pos):
         for f in self.active:
-            screen_pos = self.app.terrain.demapping(f['coord'])
-            f_rect = pg.Rect(screen_pos, (f['wh'][0]*TILE, f['wh'][1]*TILE))
-            if pg.Rect(VIEW_RECT).colliderect(f_rect):
-                surface.blit(self.factory_img[int(
-                    f['id'])], f_rect)
+            if pg.Rect(f.tile_pos,f.size).collidepoint(tile_pos):
+                return(f)
+        return()
+
+    def draw(self, surface):
+        for f in self.active:
+            f.draw(surface)
+            
+    def update(self):
+        pass
+
+

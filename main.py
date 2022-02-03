@@ -22,7 +22,7 @@ class game:
         self.info = info(self)
         self.is_runing = True
         self.mouse = mouse(self)
-        self.factory = factory(self)
+        self.factories = factory_list(self)
                 
     def update(self, dt):
         self.player.update()

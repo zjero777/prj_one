@@ -6,7 +6,7 @@ import random as rnd
 import json
 
 from pygame.event import Event
-from factory import factory
+from factory import factory_list
 
 from info import info
 from options import *
@@ -59,8 +59,7 @@ class terrain:
         
 
     def complete_factory(self):
-        x=self.tile_pos[0]
-        y=self.tile_pos[1]
+        x,y=self.tile_pos
         for bp in self.data['factory_type']:
             factory_width = bp['dim']['w']
             factory_hight = bp['dim']['h']
@@ -71,7 +70,7 @@ class terrain:
                     if not self.onMap(find_x+factory_width, find_y+factory_hight): continue
                     lookup = self.building_map[find_x:find_x+factory_width, find_y:find_y+factory_hight]
                     if np.all(lookup==factory_plan):
-                        self.app.factory.add(bp, self.building_map, find_x, find_y)
+                        self.app.factories.add(bp, self.building_map, find_x, find_y)
                 
             
 
@@ -114,6 +113,23 @@ class terrain:
         for item in self.data.get("block_type"):
             if item['name'] == stroke:
                 return(item[name])
+            
+    def GetBData(self, key, stroke):
+        for item in self.data.get("block_type"):
+            if item[key] == stroke:
+                return(item)
+
+    def GetTData(self, key, stroke):
+        for item in self.data.get("terrain_type"):
+            if item[key] == stroke:
+                return(item)
+            
+    def GetFData(self, key, stroke):
+        for item in self.data.get("factory_type"):
+            if item[key] == stroke:
+                return(item)
+    
+
 
     def FindTInfo(self, name, stroke):
         for item in self.data.get("terrain_type"):
@@ -223,23 +239,25 @@ class terrain:
                 else:
                     if self.first_click:
                         select_building = self.building_map[self.tile_pos[0], self.tile_pos[1]]
-                        
-                        
+                        select_terrain = self.field[self.tile_pos[0], self.tile_pos[1]]
+                        select_factory = self.app.factories.factory(self.tile_pos)
                         # dig
                         if select_building == 0 and strtobool(self.GetTileInfo('allow_dig', self.tile_pos)):
-                            # self.dig_site = self.tile_pos
-                            if self.app.player.manual_dig(self, self.tile_pos):
-                                self.first_click = False
+                            data = self.GetTData('id', select_terrain)
+                            time = data['dig']['time']
+                            if self.app.player.manual_dig(self, self.tile_pos, time):
+                                self.first_click = True
                         # demolition
                         elif select_building > 0:
-                            # self.app.terrain.dig_site = ()
-                            data = self.data['block_type'][select_building]
-                            time = data['demolition']
+                            data = self.GetBData('id', select_building)
+                            time = data['demolition']    
                             if self.app.player.manual_demolition(self, self.tile_pos, time):
                                 self.first_click = False
-                            # self.dig_site = self.tile_pos
-                        elif select_building == -1:
-                            pass
+                        elif select_factory:
+                            time = select_factory.demolition
+                            if self.app.player.manual_demolition(self, self.tile_pos, time):
+                                self.first_click = False
+                            
                         else:
                             self.app.player.stop_dig()
                             self.app.player.stop_demolition()                            
@@ -279,7 +297,7 @@ class terrain:
                         self.block_img[self.building_map[y, x]], xyRect)
         
         # draw factory
-        self.app.factory.draw(self.surface)
+        self.app.factories.draw(self.surface)
         
 
         # draw selection
@@ -338,7 +356,15 @@ class terrain:
     def demolition_succes(self, player, tile_pos):
         site = self.building_map[tile_pos[0], tile_pos[1]]
         if site == -1: #demolition factory
-            pass
+            select_factory = self.app.factories.factory(tile_pos)
+            resourses = select_factory.get_resources(100, 100)
+            i=-1
+            for count in resourses[1]:
+                i+=1
+                player.pickup(resourses[0][i], count)
+                
+            self.app.factories.delete(self.building_map, select_factory)
+            
         
         if site > 0: #demolition block
             player.pickup(site, 1)
