@@ -81,16 +81,20 @@
             ],
             "pic": "brickyard.png",
             "in": 
-            {
-                "id": 1,
-                "count": 2
-            },
+            [
+                {
+                    "id": 1,
+                    "count": 2
+                }
+            ],
             "out":
-            {
-                "id": 2, 
-                "count": 1,
-                "time": 5
-            },
+            [
+                {
+                    "id": 2, 
+                    "count": 1
+                }
+            ],
+            "time": 5,
             "demolition":2
         },
         {
@@ -106,16 +110,20 @@
             ],
             "pic": "career.png",
             "in": 
-            {
-                "id": 0,
-                "count": 0
-            },
+            [
+                {
+                    "id": 0,
+                    "count": 0
+                }
+            ],
             "out":
-            {
-                "id": 2, 
-                "count": 1,
-                "time": 5
-            },
+            [
+                {
+                    "id": 1, 
+                    "count": 1
+                }
+            ],
+            "time": 5,
             "demolition":2
         }
 

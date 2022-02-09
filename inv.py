@@ -1,4 +1,7 @@
+from ast import Return
+import copy
 from ctypes.wintypes import POINT
+from itertools import count
 from random import randrange
 import pygame as pg
 import pygame_gui as gui
@@ -9,7 +12,7 @@ class inv:
     def __init__(self, app, player):
         self.app = app
         self.player = player
-        self.backpack = []
+        self.backpack = [{'id':1, 'count':7}]
         self.selected_Item = -1
         self.item = {}
         # for item in range(3):
@@ -99,7 +102,7 @@ class inv:
             pos = (i%10*INV_CELL_W+i%INV_CELL_CW+INV_MARGIN, i//INV_CELL_CH*INV_CELL_H+i//INV_CELL_CH+INV_MARGIN)
             item_pos = (pos[0]+8, pos[1]+8)
             #img
-            pic = pg.transform.scale(self.app.terrain.block_img[item['item']], (32, 32))
+            pic = pg.transform.scale(self.app.terrain.block_img[item['id']], (32, 32))
             self.surface.blit(pic, item_pos)
             #count
             text = self.font.render(str(item['count']),True, pg.Color('white'))
@@ -114,15 +117,15 @@ class inv:
         if self.backpack == []: return(False, idx)
         for i in self.backpack:
             idx += 1
-            if i['item'] == int(item):
+            if i['id'] == int(item):
                 return(True, idx)
         return(False, idx)
             
     def append(self, item, count=1):
-        self.backpack.append({'item':int(item), 'count':count})
+        self.backpack.append({'id':int(item), 'count':count})
         
     def stack(self, item, stack_number, count=1):
-        self.backpack[stack_number]['item'] = item
+        self.backpack[stack_number]['id'] = item
         self.backpack[stack_number]['count'] += count
         
     def add(self, item, count=1):
@@ -131,14 +134,55 @@ class inv:
             self.stack(item, stack_number, count)
         else:
             self.append(item, count)
-    
-    def delete(self):
+
+    def delete_selected_item(self):
         if self.backpack[self.selected_Item]['count'] == 1: 
             del self.backpack[self.selected_Item]
             self.selected_Item = -1
             self.item = {}
-            return
-        if self.backpack[self.selected_Item]['count'] > 1:
+        elif self.backpack[self.selected_Item]['count'] > 1:
             self.backpack[self.selected_Item]['count'] -= 1
-            return
+    
+    def item_exist(self, item):
+        use_item = 0
+        if self.item: use_item = (self.item['id']==item['id'])*1
+        finditem = next((x for x in self.backpack if x['id'] == item['id']), {'id':0,'count':0})
+        return(finditem['count']-use_item>item['count']-1)
+        
+    def exist(self, items):
+        for block in items:
+            if not self.item_exist(block):
+                return(False)
+        return(True)
+
+    def find_by_key(self, iterable, key, value):
+        for index, dict_ in enumerate(iterable):
+            if key in dict_ and dict_[key] == value:
+                return (index, dict_)
+        return -1, -1
+
+    def add_item(self, block):
+        index, item = self.find_by_key(self.backpack, 'id', block['id'])
+        if index>-1:
+            self.backpack[index] = {'id': block['id'], 'count': block['count']+item['count']}  
+        else:
+            self.backpack.append(block)
+            
+
+    def delete_item(self, block):
+        finditem = next((x for x in self.backpack if x['id'] == block['id']), False)
+        if not finditem: return
+        if finditem['count']==block['count']: 
+            self.backpack.remove(finditem)
+        elif finditem['count'] > block['count']:
+            finditem['count'] = finditem['count'] - block['count']
+
+    def delete(self, items):
+        for block in items:
+            self.delete_item(block)
+            
+    def insert(self, items):
+        for block in items:
+            self.add_item(block)
+            
             

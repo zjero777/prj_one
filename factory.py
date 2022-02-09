@@ -1,3 +1,4 @@
+from typing import Tuple
 import pygame as pg
 from options import *
 import random as rnd
@@ -16,7 +17,12 @@ class factory:
         self.demolition = blueprint['demolition']
         self.pic = list.factory_img[blueprint['id']]
         self.incom = blueprint['in']
-        self.outcom = blueprint['out']
+        self.outcom = (blueprint['out'])
+        self.process_time = blueprint['time']
+        self.working = False
+        self.timer = app.timer
+        self.time = 0
+        
         
     def get_resources(self, minproc, maxproc):
         if minproc==maxproc: 
@@ -34,7 +40,17 @@ class factory:
             surface.blit(self.pic, f_rect)
             
     def update(self):
-        pass
+        if not self.working:
+            if self.app.player.inv.exist(self.incom):
+                self.app.player.inv.delete(self.incom)
+                self.time = self.timer.get_ticks()
+                self.working = True
+        else:
+            if self.timer.get_ticks()-self.time>self.process_time*1000:
+                self.app.player.inv.insert(self.outcom)
+                self.working = False
+        
+        
 
 class factory_list:
     def __init__(self, app):
@@ -78,6 +94,8 @@ class factory_list:
             f.draw(surface)
             
     def update(self):
-        pass
+        for f in self.active:
+            f.update()
+        
 
 

@@ -1,0 +1,80 @@
+{
+    "defaults":
+    {
+        "colours":
+        {
+            "normal_bg":"#45494e",
+            "normal_text":"#c5cbd8"
+        },
+        "misc":
+        {
+            "border_width": "0",
+            "shadow_width": "0"
+        }        
+    },
+
+
+    "panel":
+    {
+        "colours":
+        {
+            
+        },
+        "misc":
+        {
+            "border_width": "0",
+            "shadow_width": "0"
+        }
+
+
+    },
+
+    "map_info":
+    {
+        "colours":
+        {
+       
+        },
+        "misc":
+        {
+            "border_width": "0",
+            "shadow_width": "1"
+        }
+
+
+    },
+
+    "panel_info":
+    {
+        "colours":
+        {
+            
+        },
+        "misc":
+        {
+            "border_width": "0",
+            "shadow_width": "1"
+        }
+
+
+    },
+
+    "textinfo":
+    {
+        "colours":
+        {
+            "normal_text":"#fbfbca"
+            
+        },
+
+        "misc":
+        {
+            
+            "text_horiz_alignment": "center",
+            "text_vert_alignment": "center",
+            "border_width": "0",
+            "shadow_width": "0"
+        }
+
+    }
+}

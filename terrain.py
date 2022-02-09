@@ -4,6 +4,7 @@ from numpy.lib.function_base import append, select
 import pygame as pg
 import random as rnd
 import json
+import pygame_gui as gui
 
 from pygame.event import Event
 from factory import factory_list
@@ -20,18 +21,19 @@ class terrain:
         self.field = np.zeros((height, width), dtype='i')
         self.building_map = np.zeros((height, width), dtype='i')
         self.first_click = True
+        self.tile_pos = ()
         f = open('data/data.json',)
         self.data = json.load(f)
         f.close
         
        
-        self.field.fill(self.FindTInfo("id", "ground"))
+        self.field.fill(self.FindTInfo('id', 'ground'))
 
         for i in range(100):
             self.field[rnd.randint(0,99), rnd.randint(0,99)] = 0
 
-        # for i in range(100):
-        #     self.building_map[rnd.randint(0,99), rnd.randint(0,99)] = rnd.randrange(1, 3)
+        for i in range(100):
+            self.building_map[rnd.randint(0,99), rnd.randint(0,99)] = rnd.randrange(1, 3)
 
         #self.field[50, 50] = 1
         # for i in range(100):
@@ -51,7 +53,7 @@ class terrain:
             self.block_img[img['id']] = (pg.image.load(path.join(img_dir, img['pic'])).convert_alpha())
         self.block_img_rect = self.block_img[1].get_rect()
 
-        self.field_bg = pg.image.load(path.join(img_dir, "bg.jpg")).convert()
+        self.field_bg = pg.image.load(path.join(img_dir, 'bg.jpg')).convert()
         self.field_bgrect = self.field_bg.get_rect()
     
     def onMap(self, tile_x,tile_y):
@@ -93,46 +95,46 @@ class terrain:
         a = self.mapping(mouse_coord)
         # self.selection[0] = self.pos[0]+a[0]-HALF_HIGHT
         # self.selection[1] = self.pos[1]+a[1]-HALF_WIDTH
-        # data = self.data.get("terrain_type")[self.field[self.selection[0], self.selection[1]]]['name']
-        # pic = self.data.get("terrain_type")[self.field[self.selection[0], self.selection[1]]]['id']
+        # data = self.data.get('terrain_type')[self.field[self.selection[0], self.selection[1]]]['name']
+        # pic = self.data.get('terrain_type')[self.field[self.selection[0], self.selection[1]]]['id']
 
         # self.text = f'Coordinate {self.selection}<br>{data}'
 
         # self.app.info.set(self.text, pic)
     def GetTileInfo(self, name, tilepos):
         if not tilepos:
-            pic_idx = self.FindTInfo("id", "hyperspace")
+            pic_idx = self.FindTInfo('id', 'hyperspace')
             return (self.GetInfo(name, pic_idx))
 
-        return(self.data.get("terrain_type")[self.field[tilepos[0], tilepos[1]]][name])
+        return(self.data.get('terrain_type')[self.field[tilepos[0], tilepos[1]]][name])
 
     def GetInfo(self, name, id):
-        return(self.data.get("terrain_type")[id][name])
+        return(self.data.get('terrain_type')[id][name])
 
     def FindBInfo(self, name, stroke):
-        for item in self.data.get("block_type"):
+        for item in self.data.get('block_type'):
             if item['name'] == stroke:
                 return(item[name])
             
     def GetBData(self, key, stroke):
-        for item in self.data.get("block_type"):
+        for item in self.data.get('block_type'):
             if item[key] == stroke:
                 return(item)
 
     def GetTData(self, key, stroke):
-        for item in self.data.get("terrain_type"):
+        for item in self.data.get('terrain_type'):
             if item[key] == stroke:
                 return(item)
             
     def GetFData(self, key, stroke):
-        for item in self.data.get("factory_type"):
+        for item in self.data.get('factory_type'):
             if item[key] == stroke:
                 return(item)
     
 
 
     def FindTInfo(self, name, stroke):
-        for item in self.data.get("terrain_type"):
+        for item in self.data.get('terrain_type'):
             if item['name'] == stroke:
                 return(item[name])
             
@@ -143,8 +145,8 @@ class terrain:
             return(self.FindTInfo(name, stroke))
         
     def Get_info_block_placed(self, use_item, place):
-        for item in self.data.get("block_type"):
-            if item['id']==use_item['item']: 
+        for item in self.data.get('block_type'):
+            if item['id']==use_item['id']: 
                 type_result = ''
                 rule = item.get('build',False)
                 if rule:
@@ -152,7 +154,7 @@ class terrain:
                         if place in item_rule:
                             type_result = item_rule.get('type_result','terrain')
                             result_item_idx = self.FindInfo('id', item_rule[place], type_result)
-                            return({'item':result_item_idx}, type_result)
+                            return({'id':result_item_idx}, type_result)
                     else:
                         return(use_item, type_result)
                 else:
@@ -161,16 +163,39 @@ class terrain:
 
     def view_Tileinfo(self, tilepos):
         if not tilepos:
-            pic_idx = self.FindTInfo("id", "hyperspace")
-            data = self.GetInfo("name", pic_idx)
+            pic_idx = self.FindTInfo('id', 'hyperspace')
+            data = self.GetInfo('name', pic_idx)
             self.text = f'(???,???)<br>{data}'
             self.app.info.set(self.text, pic_idx)
             return
 
-        data = self.GetTileInfo("name", tilepos)
-        pic_idx = self.GetTileInfo("id", tilepos)
-
-        self.text = f'{tilepos}<br>{data}'
+        
+        pic_idx = self.GetTileInfo('id', tilepos)
+        
+        select_terrain = self.field[tilepos[0], tilepos[1]]
+        select_building = self.building_map[tilepos[0], tilepos[1]]
+        terrain_data = self.GetTData('id', select_terrain)
+        terrain_name = terrain_data['name']
+        
+        dig_txt = ''
+        demolition_txt = ''
+        if strtobool(self.GetTileInfo('allow_dig', tilepos)) and select_building==0:
+            time = terrain_data['dig']['time']
+            loot = terrain_data['dig']['loot']
+            lootcount = terrain_data['dig']['count']
+            dig_txt = f'Ожидаемые ресурсы: {loot} - {lootcount} шт.<br>Время добычи: {time} сек.'
+            
+        if select_building>0:
+            block_data = self.GetBData('id', select_building)
+            block_name = block_data['name']
+            time = block_data['demolition']
+            loot = block_data['name']
+            lootcount = 1
+            
+            demolition_txt = f'Ресурсы при разборе: {loot} - {lootcount} шт.<br>Время разбора: {time} сек.'
+            
+        self.text = f'<b>{terrain_name}</b><br>{dig_txt}<br>{tilepos}<br>{demolition_txt}'
+        self.text = f'{self.text}dfsdf'
 
         self.app.info.set(self.text, pic_idx)
 
@@ -188,9 +213,9 @@ class terrain:
 
     def Get_img(self, item, b_type):
         if b_type=='terrain':
-            return(self.field_img[item['item']])
+            return(self.field_img[item['id']])
         elif b_type=='block':
-            return(self.block_img[item['item']])
+            return(self.block_img[item['id']])
     
     def update(self):
         keystate = pg.key.get_pressed()
@@ -330,7 +355,7 @@ class terrain:
                 if b_type:
                     img = self.Get_img(build_item, b_type).copy()
                     img.set_alpha(172)
-                    self.surface.blit(img, xyRect, special_flags=pg.BLEND_MULT)
+                    self.surface.blit(img, xyRect)
                 else:
                     img = self.Get_img(build_item, 'terrain').copy()
                     img.set_alpha(172)
@@ -349,7 +374,7 @@ class terrain:
         site = self.field[tile_pos[0], tile_pos[1]]
         diginfo = self.GetInfo('dig',site)
         loot =  self.FindBInfo('id', diginfo['loot'])
-        self.field[tile_pos[0], tile_pos[1]] = self.FindTInfo("id", diginfo['after'])
+        self.field[tile_pos[0], tile_pos[1]] = self.FindTInfo('id', diginfo['after'])
         player.pickup(loot, diginfo['count'])
         
         
@@ -374,7 +399,7 @@ class terrain:
         # diginfo = self.GetBInfo('dig',site)
         
         # loot =  self.FindBInfo('id', diginfo['loot'])
-        # self.field[tile_pos[0], tile_pos[1]] = self.FindTInfo("id", diginfo['after'])
+        # self.field[tile_pos[0], tile_pos[1]] = self.FindTInfo('id', diginfo['after'])
         # player.pickup(loot, diginfo['count'])
 
                 

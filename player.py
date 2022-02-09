@@ -31,10 +31,10 @@ class player:
             place = field.GetInfo('name', field.field[field.tile_pos[0], field.tile_pos[1]])
             build_item, build_type = field.Get_info_block_placed(item, place)   
             if build_type=='terrain':
-                field.field[field.tile_pos[0], field.tile_pos[1]] = build_item['item']
+                field.field[field.tile_pos[0], field.tile_pos[1]] = build_item['id']
                 self.use_selected()
             elif build_type=='block':
-                field.building_map[field.tile_pos[0], field.tile_pos[1]]=build_item['item']
+                field.building_map[field.tile_pos[0], field.tile_pos[1]]=build_item['id']
                 self.use_selected()       
     
     def manual_dig(self, field, tilepos, time):
@@ -96,5 +96,5 @@ class player:
         self.inv.add(loot, count)
      
     def use_selected(self):
-        self.inv.delete()
+        self.inv.delete_selected_item()
         

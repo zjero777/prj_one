@@ -13,7 +13,7 @@ class game:
         pg.init()
         self.screen = pg.display.set_mode(WIN_SIZE)
         self.surface = pg.Surface(WIN_SIZE)
-        self.manager = pygame_gui.UIManager(WIN_SIZE)
+        self.manager = pygame_gui.UIManager(WIN_SIZE, path.join(data_dir, 'theme.json'))
         self.clock = pg.time.Clock()
         self.timer = pg.time
         self.allsprites = pg.sprite.Group()
@@ -28,6 +28,7 @@ class game:
         self.player.update()
         self.terrain.update() 
         self.allsprites.update(dt)
+        self.factories.update()
         self.mouse.update()
         self.info.update()
     

@@ -18,8 +18,8 @@ class mouse:
         ani_cur_dig = ss.load_strip(ss.sheet.get_rect(), 1)
         self.cursors[cursor_type.normal.value] = AnimatedSprite(self.pos, ani_cur_dig)
                 
-        ss = spritesheet(path.join(img_dir, 'anicurdig.png'))
-        ani_cur_dig = ss.load_strip((0,0,24,24), 5)
+        ss = spritesheet(path.join(img_dir, 'anicurdigV2.png'))
+        ani_cur_dig = ss.load_strip((0,0,29,32), 5)
         self.cursors[cursor_type.dig.value] = AnimatedSprite(self.pos, ani_cur_dig)
             
       
@@ -34,7 +34,7 @@ class mouse:
         self.setcursor_noitem() #item on cursor
 
     def setcursor_with_item(self, item):
-        self.item = int(item['item'])
+        self.item = int(item['id'])
     
     def setcursor_noitem(self):
         self.item = -1
