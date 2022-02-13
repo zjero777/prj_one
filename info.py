@@ -1,85 +1,248 @@
+from functools import singledispatchmethod
+from pydoc import classname
+from unicodedata import name
 from numpy.lib.function_base import append, select
 import pygame as pg
 import pygame_gui as gui
 from options import *
 
+
 class info:
+
     def __init__(self, app):
         self.app = app
+        self.msg_text = ''
         # self.surface = pg.Surface(WIN_SIZE)
         pg.font.init()
         #self.win_info = gui.elements.UIWindow(pg.Rect((0, 0), (SC_WIDTH, SC_HIGHT)), self.app.manager)
-        self.main_panel_info = gui.elements.UIPanel(relative_rect=pg.Rect((FIELD_WIDTH,0),(P_INFO, SC_HIGHT)), 
-                                               starting_layer_height=0, 
-                                               manager=self.app.manager, 
-                                               margins={'left':0,'top':3,'right':0,'bottom':3}
-                                               #container=self.win_info
-                                               )
+        self.main_panel_info = gui.elements.UIPanel(relative_rect=pg.Rect((FIELD_WIDTH, 0), (P_INFO, SC_HIGHT)),
+                                                    starting_layer_height=0,
+                                                    manager=self.app.manager,
+                                                    margins={
+                                                        'left': 0, 'top': 3, 'right': 0, 'bottom': 3}
+                                                    # container=self.win_info
+                                                    )
 
+        self.map_panel_info = gui.elements.UIPanel(relative_rect=pg.Rect((0, 0), (P_INFO, 320)),
+                                                   starting_layer_height=1,
+                                                   manager=self.app.manager,
+                                                   margins={
+                                                       'left': 0, 'top': 3, 'right': 0, 'bottom': 3},
+                                                   container=self.main_panel_info,
+                                                   element_id='map_info'
+                                                   )
 
-        self.map_panel_info = gui.elements.UIPanel(relative_rect=pg.Rect((0,0),(P_INFO, 320)), 
-                                               starting_layer_height=1, 
-                                               manager=self.app.manager, 
-                                               margins={'left':0,'top':3,'right':0,'bottom':3},
-                                               container=self.main_panel_info,
-                                               element_id='map_info'
-                                               )
-
-        self.panel_info = gui.elements.UIPanel(relative_rect=pg.Rect((0,320),(P_INFO, 400)), 
-                                               starting_layer_height=0, 
-                                               manager=self.app.manager, 
-                                               margins={'left':0,'top':3,'right':0,'bottom':3},
+        self.panel_info = gui.elements.UIPanel(relative_rect=pg.Rect((0, 320), (P_INFO, 400)),
+                                               starting_layer_height=0,
+                                               manager=self.app.manager,
+                                               margins={
+                                                   'left': 0, 'top': 3, 'right': 0, 'bottom': 3},
                                                container=self.main_panel_info,
                                                element_id='panel_info'
                                                )
-        
-        
-        self.text_rect = pg.Rect((0, 64), (INFO_WIDTH, 150))
-        self.text_info = gui.elements.UITextBox(
-                                    f'',
-                                    relative_rect=self.text_rect, manager=self.app.manager, container=self.panel_info, object_id='textinfo')
-        #self.start_button = gui.elements.UIButton(relative_rect=self.text_rect,
+
+        # self.text_rect = pg.Rect((0, 64), (INFO_WIDTH, 150))
+        # text
+        # pic pic.rect
+        # list items [{'id:1, 'count':45},{'id':12, 'count':1},{'id':1, 'count':1}]
+
+        self.msg_line = 0
+        self.top = 0
+        self.msg_info_list = []
+        # gui.elements.UITextBox(
+        # f'',
+        # relative_rect=self.text_rect, manager=self.app.manager, container=self.panel_info, object_id='textinfo')
+        # self.start_button = gui.elements.UIButton(relative_rect=self.text_rect,
         #                                                 text='Start',
         #                                                 manager=self.app.manager)
 
-        self.pic_rect = pg.Rect((0+INFO_WIDTH//2-63//2, 0), (63, 63))
-        self.pic_info = gui.elements.UIImage(self.pic_rect,  self.app.terrain.field_img[0], self.app.manager, container=self.panel_info)
-
+        # self.pic_rect = pg.Rect((0+INFO_WIDTH//2-63//2, 0), (63, 63))
+        # self.pic_info = gui.elements.UIImage(self.pic_rect,  self.app.terrain.field_img[0], self.app.manager, container=self.panel_info)
 
         # debuf info
         self.debug_font = pg.font.SysFont('arial', 36)
         self.debug_textlist = []
-        
+
         # self.panels = []
         # self.panels.append(self.building_panel_info)
         # self.panels.append(self.terrain_panel_info)
 
+    def start(self):
+        self.msg_line = 0
+        self.top = 0
 
-        
-        
+    def stop(self):
+        if self.msg_line > len(self.msg_info_list)-1:
+            return
+        while self.msg_line < len(self.msg_info_list):
+            item = self.msg_info_list.pop()
+            item['ui'].kill()
+            # self.app.manager
+            del item['ui']
+        self.msg_line = 0
+        self.top = 0
+        # self.panel_info.rebuild()
+
     def update(self):
         pass
-    
+
     def draw(self):
         # self.surface.fill(pg.Color(255,0,0))
         for item in self.debug_textlist:
-            self.text_surface = self.debug_font.render(item['text'], True, (255, 0, 0))
+            self.text_surface = self.debug_font.render(
+                item['text'], True, (255, 0, 0))
             self.app.screen.blit(self.text_surface, item['pos'])
         self.debug_textlist.clear()
-    
+
     def set(self, text, img_index):
-        
-        self.text_info.html_text = f'<font face=fira_code size=4>{text}</font>'
-        self.pic_info.set_image(self.app.terrain.field_img[img_index])
+        self.msg_text = text
+        # self.text_info.html_text = f'<font face=fira_code size=4>{self.msg_text}</font>'
+        # self.pic_info.set_image(self.app.terrain.field_img[img_index])
 
-        self.text_info.rebuild()
-        
-        
-    def debug(self, pos,text):
+        # self.text_info.rebuild()
+
+    def _tohtml(self, html_text):
+        pass
+        # top = 0
+        # for list_item in self.msg_info_list:
+        #     if gui.elements.UITextBox(list_item).html_text==html_text:
+        #         pass
+        #     else:
+        #         top += gui.elements.UITextBox(list_item).rect[1]
+
+        # self.msg_info_list.append(
+        #     gui.elements.UITextBox(
+        #         f'<font face=fira_code size=4>{html_text}</font>',
+        #         relative_rect=self.text_rect,
+        #         manager=self.app.manager,
+        #         container=self.panel_info,
+        #         object_id='textinfo'
+        #     )
+        # )
+
+    def clear(self):
+        self.msg_line = 0
+        for item in self.msg_info_list:
+            del item
+
+        self.msg_info_list = []
+
+    def debug(self, pos, text):
         debugtext = f'{text}'
-        self.debug_textlist.append({'pos':pos,'text':debugtext})
+        self.debug_textlist.append({'pos': pos, 'text': debugtext})
+        
+    def _create_text_info(self, text, top_pos):
+        text_rect = pg.Rect((0, top_pos), (INFO_WIDTH, -1))
+        textui = gui.elements.UITextBox(
+            text,
+            relative_rect=text_rect,
+            wrap_to_height=True,
+            manager=self.app.manager,
+            container=self.panel_info,
+            object_id='textinfo'
+        )
+        return({'ui': textui, 'type': type(textui).__name__}, textui.get_relative_rect()[3])
+        
+    def _create_pic_info(self, pic, top_pos):
+        pic_rect = pg.Rect((INFO_WIDTH//2-64//2, top_pos), (64, 64))
+        picui = gui.elements.UIImage(
+            relative_rect=pic_rect,
+            image_surface=pic,
+            manager=self.app.manager,
+            container=self.panel_info
+            
+        )
+        return({'ui': picui, 'type': type(picui).__name__}, picui.get_relative_rect()[3])
 
+
+
+    def append_text(self, text):
+        html_text = f'<font face=fira_code size=3>{text}</font>'
+        if len(self.msg_info_list) < self.msg_line+1:
+            element, hight = self._create_text_info(html_text, self.top)
+            self.msg_info_list.append(element)
+            self.top += hight
+            self.msg_line += 1
+            return
+
+        if self.msg_info_list[self.msg_line]['type'] == 'UITextBox':
+            if self.msg_info_list[self.msg_line]['ui'].html_text == html_text:
+                self.top += self.msg_info_list[self.msg_line]['ui'].get_relative_rect()[
+                    3]
+                self.msg_line += 1
+            else:
+                oldtop = self.msg_info_list[self.msg_line]['ui'].get_relative_rect()[
+                    3]
+                self.msg_info_list[self.msg_line]['ui'].html_text = html_text
+                self.msg_info_list[self.msg_line]['ui'].rebuild()
+                newtop = self.msg_info_list[self.msg_line]['ui'].get_relative_rect()[
+                    3]
+                dtop = newtop - oldtop
+
+                self.top += newtop
+
+                for i in range(self.msg_line+1, len(self.msg_info_list)):
+                    item = self.msg_info_list[i]['ui']
+                    rect = item.get_relative_rect()
+                    # self.top += rect[1]+dtop
+                    item.set_relative_position((rect[0], rect[1]+dtop))
+
+                self.msg_line += 1
+
+        elif self.msg_info_list[self.msg_line]['type'] == 'UIImage':
+            self.msg_info_list[self.msg_line]['ui'].kill()
+            del self.msg_info_list[self.msg_line]['ui']
             
+
+            element, hight = self._create_text_info(html_text, self.top)
             
+            self.msg_info_list[self.msg_line] = element
+            self.top += hight
+            self.msg_line += 1
+
+            # self.pic_rect = pg.Rect((0+INFO_WIDTH//2-63//2, 0), (63, 63))
+            # self.pic_info = gui.elements.UIImage(self.pic_rect,  self.app.terrain.field_img[0], self.app.manager, container=self.panel_info)
+
+    
+    def append_pic(self, pic, pic_size: int=64):
+        if len(self.msg_info_list) < self.msg_line+1:
+            element, hight = self._create_pic_info(pic, self.top)
+            self.msg_info_list.append(element)
+            self.top += hight
+            self.msg_line += 1
+            return          
+        
+        if self.msg_info_list[self.msg_line]['type'] == 'UIImage':
+            oldtop = self.msg_info_list[self.msg_line]['ui'].get_relative_rect()[3]
+            self.msg_info_list[self.msg_line]['ui'].set_image(pic)
+            # self.msg_info_list[self.msg_line]['ui'].rebuild()
+            newtop = self.msg_info_list[self.msg_line]['ui'].get_relative_rect()[3]
+            dtop = newtop - oldtop
+
+            self.top += newtop
+
+            for i in range(self.msg_line+1, len(self.msg_info_list)):
+                item = self.msg_info_list[i]['ui']
+                rect = item.get_relative_rect()
+                # self.top += rect[1]+dtop
+                item.set_relative_position((rect[0], rect[1]+dtop))
+
+            self.msg_line += 1
+        elif self.msg_info_list[self.msg_line]['type'] == 'UITextBox':
+            self.msg_info_list[self.msg_line]['ui'].kill()
+            del self.msg_info_list[self.msg_line]['ui']
+
+            element, hight = self._create_pic_info(pic, self.top)
             
-            
+            self.msg_info_list[self.msg_line] = element
+            self.top += hight
+            self.msg_line += 1
+        
+          
+
+    def append_item(self, block_id: int, count: int):
+        self.msg_text = f'{self.msg_text}<br>{block_id}'
+        self._tohtml(self.msg_text)
+
+    def append_list_items(self, block_list):
+        pass

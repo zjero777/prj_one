@@ -165,8 +165,11 @@ class terrain:
         if not tilepos:
             pic_idx = self.FindTInfo('id', 'hyperspace')
             data = self.GetInfo('name', pic_idx)
-            self.text = f'(???,???)<br>{data}'
-            self.app.info.set(self.text, pic_idx)
+            # self.app.info.set(self.text, pic_idx)
+            self.app.info.start()
+            self.app.info.append_pic(self.field_img[pic_idx])
+            self.app.info.append_text(f'<b>{data}</b><br>(???,???)')
+            self.app.info.stop()
             return
 
         
@@ -176,28 +179,40 @@ class terrain:
         select_building = self.building_map[tilepos[0], tilepos[1]]
         terrain_data = self.GetTData('id', select_terrain)
         terrain_name = terrain_data['name']
+        terrain_pic = self.field_img[select_terrain]
+        
         
         dig_txt = ''
         demolition_txt = ''
+
+        self.app.info.start()
+        self.app.info.append_pic(terrain_pic)
+        self.app.info.append_text(f'<b>{terrain_name}</b><br>{tilepos}</b>')
+
         if strtobool(self.GetTileInfo('allow_dig', tilepos)) and select_building==0:
             time = terrain_data['dig']['time']
             loot = terrain_data['dig']['loot']
             lootcount = terrain_data['dig']['count']
             dig_txt = f'Ожидаемые ресурсы: {loot} - {lootcount} шт.<br>Время добычи: {time} сек.'
+            self.app.info.append_text(dig_txt)
+            # self.app.info.append_blockinfo(loot, lootcount)
             
         if select_building>0:
             block_data = self.GetBData('id', select_building)
             block_name = block_data['name']
+            block_pic = self.block_img[select_building]
             time = block_data['demolition']
             loot = block_data['name']
             lootcount = 1
-            
             demolition_txt = f'Ресурсы при разборе: {loot} - {lootcount} шт.<br>Время разбора: {time} сек.'
+            self.app.info.append_pic(block_pic)
+            self.app.info.append_text(f'<b>{block_name}</b>')
+            self.app.info.append_text(demolition_txt)
             
-        self.text = f'<b>{terrain_name}</b><br>{dig_txt}<br>{tilepos}<br>{demolition_txt}'
-        self.text = f'{self.text}dfsdf'
-
-        self.app.info.set(self.text, pic_idx)
+        self.app.info.stop()
+        # self.app.info.rebuild()
+        
+        
 
     # def process_events(self, event):
     #     if event.type == pg.MOUSEBUTTONDOWN:

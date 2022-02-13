@@ -69,7 +69,7 @@
 
         "misc":
         {
-            
+            "padding": "5,0",
             "text_horiz_alignment": "center",
             "text_vert_alignment": "center",
             "border_width": "0",
@@ -77,4 +77,7 @@
         }
 
     }
+
+
+
 }
