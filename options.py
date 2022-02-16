@@ -3,6 +3,7 @@ from os import path
 
 img_dir = path.join(path.dirname(__file__), 'img')
 data_dir = path.join(path.dirname(__file__), 'data')
+fonts_dir = path.join(path.dirname(__file__), 'fonts')
 
 SC_WIDTH = 1920
 SC_HIGHT = 1080

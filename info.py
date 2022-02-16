@@ -1,11 +1,8 @@
-from functools import singledispatchmethod
-from pydoc import classname
-from unicodedata import name
 from numpy.lib.function_base import append, select
 import pygame as pg
 import pygame_gui as gui
 from options import *
-
+from myui import *
 
 class info:
 
@@ -154,8 +151,25 @@ class info:
         )
         return({'ui': picui, 'type': type(picui).__name__}, picui.get_relative_rect()[3])
 
+    def _create_item_info(self, item, top_pos):
+        item_rect = pg.Rect((INFO_WIDTH//2-64//2, top_pos), (64, 64))
+        itemui= UIItem(
+            relative_rect=item_rect,
+            image_surface=self.app.terrain.block_img[item['id']],
+            count=item['count'],
+            manager=self.app.manager,
+            container=self.panel_info,
+            object_id='item_label_b'
+        )
+        return({'ui': itemui, 'type': type(itemui).__name__}, itemui.get_relative_rect()[3])
 
 
+    def _shift_next_position(self, delta_top):
+        for i in range(self.msg_line+1, len(self.msg_info_list)):
+            item = self.msg_info_list[i]['ui']
+            rect = item.get_relative_rect()
+            item.set_relative_position((rect[0], rect[1]+delta_top))
+            
     def append_text(self, text):
         html_text = f'<font face=fira_code size=3>{text}</font>'
         if len(self.msg_info_list) < self.msg_line+1:
@@ -178,30 +192,23 @@ class info:
                 newtop = self.msg_info_list[self.msg_line]['ui'].get_relative_rect()[
                     3]
                 dtop = newtop - oldtop
-
+                self._shift_next_position(dtop)
                 self.top += newtop
-
-                for i in range(self.msg_line+1, len(self.msg_info_list)):
-                    item = self.msg_info_list[i]['ui']
-                    rect = item.get_relative_rect()
-                    # self.top += rect[1]+dtop
-                    item.set_relative_position((rect[0], rect[1]+dtop))
-
                 self.msg_line += 1
 
-        elif self.msg_info_list[self.msg_line]['type'] == 'UIImage':
+        else:
+            oldtop = self.msg_info_list[self.msg_line]['ui'].get_relative_rect()[
+                    3]
             self.msg_info_list[self.msg_line]['ui'].kill()
             del self.msg_info_list[self.msg_line]['ui']
-            
 
-            element, hight = self._create_text_info(html_text, self.top)
-            
+            element, newtop = self._create_text_info(html_text, self.top)
             self.msg_info_list[self.msg_line] = element
-            self.top += hight
-            self.msg_line += 1
 
-            # self.pic_rect = pg.Rect((0+INFO_WIDTH//2-63//2, 0), (63, 63))
-            # self.pic_info = gui.elements.UIImage(self.pic_rect,  self.app.terrain.field_img[0], self.app.manager, container=self.panel_info)
+            dtop = newtop - oldtop
+            self.top += newtop
+            self._shift_next_position(dtop)             
+            self.msg_line += 1
 
     
     def append_pic(self, pic, pic_size: int=64):
@@ -215,34 +222,57 @@ class info:
         if self.msg_info_list[self.msg_line]['type'] == 'UIImage':
             oldtop = self.msg_info_list[self.msg_line]['ui'].get_relative_rect()[3]
             self.msg_info_list[self.msg_line]['ui'].set_image(pic)
-            # self.msg_info_list[self.msg_line]['ui'].rebuild()
             newtop = self.msg_info_list[self.msg_line]['ui'].get_relative_rect()[3]
             dtop = newtop - oldtop
-
             self.top += newtop
-
-            for i in range(self.msg_line+1, len(self.msg_info_list)):
-                item = self.msg_info_list[i]['ui']
-                rect = item.get_relative_rect()
-                # self.top += rect[1]+dtop
-                item.set_relative_position((rect[0], rect[1]+dtop))
-
+            self._shift_next_position(dtop)
             self.msg_line += 1
-        elif self.msg_info_list[self.msg_line]['type'] == 'UITextBox':
+        else:
+            oldtop = self.msg_info_list[self.msg_line]['ui'].get_relative_rect()[3]
             self.msg_info_list[self.msg_line]['ui'].kill()
             del self.msg_info_list[self.msg_line]['ui']
 
-            element, hight = self._create_pic_info(pic, self.top)
-            
+            element, newtop = self._create_pic_info(pic, self.top)
             self.msg_info_list[self.msg_line] = element
-            self.top += hight
+            self.top += newtop
+            dtop = newtop - oldtop
+            self._shift_next_position(dtop)
             self.msg_line += 1
         
           
 
-    def append_item(self, block_id: int, count: int):
-        self.msg_text = f'{self.msg_text}<br>{block_id}'
-        self._tohtml(self.msg_text)
+    def append_item(self, item):
+        item_pic = self.app.terrain.block_img[item['id']]
+        item_count = item['count']
+        if len(self.msg_info_list) < self.msg_line+1:
+            element, hight = self._create_item_info(item, self.top)
+            self.msg_info_list.append(element)
+            self.top += hight
+            self.msg_line += 1
+            return          
+
+# 
+        if self.msg_info_list[self.msg_line]['type'] == 'UIItem':
+            oldtop = self.msg_info_list[self.msg_line]['ui'].get_relative_rect()[3]
+            self.msg_info_list[self.msg_line]['ui'].set_item(item_pic, item_count)
+            newtop = self.msg_info_list[self.msg_line]['ui'].get_relative_rect()[3]
+            dtop = newtop - oldtop
+            self.top += newtop
+            self._shift_next_position(dtop)
+            self.msg_line += 1
+        else: 
+            oldtop = self.msg_info_list[self.msg_line]['ui'].get_relative_rect()[3]
+            self.msg_info_list[self.msg_line]['ui'].kill()
+            del self.msg_info_list[self.msg_line]['ui']
+
+            element, newtop = self._create_item_info(item, self.top)
+            self.msg_info_list[self.msg_line] = element
+            self.top += newtop
+            dtop = newtop - oldtop
+            self._shift_next_position(dtop)
+            self.msg_line += 1
+        
+        
 
     def append_list_items(self, block_list):
         pass

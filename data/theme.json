@@ -76,8 +76,44 @@
             "shadow_width": "0"
         }
 
+    },
+
+    "item_label_b":
+    {
+        "colours":
+        {
+            "normal_text": "#FFFFFF",
+            "text_shadow": "#FF0000"
+        },
+        "font":
+        {
+            "name": "ssp",
+            "size": "14",
+            "bold": "1",
+            "italic": "0",
+            "regular_path": "fonts/SourceSansPro-Regular.ttf"
+        }
+
+    },
+
+    "item_label_m":
+    {
+        "colours":
+        {
+            "normal_text": "#FFFFFF",
+            "text_shadow": "#FF0000"
+        },
+        "font":
+        {
+            "name": "ssp",
+            "size": "11",
+            "bold": "1",
+            "italic": "0",
+            "regular_path": "fonts/SourceSansPro-Regular.ttf"
+        }
+
     }
-
-
+    
+   
 
 }

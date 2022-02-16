@@ -14,6 +14,12 @@ class game:
         self.screen = pg.display.set_mode(WIN_SIZE)
         self.surface = pg.Surface(WIN_SIZE)
         self.manager = pygame_gui.UIManager(WIN_SIZE, path.join(data_dir, 'theme.json'))
+        # self.manager.add_font_paths('IBMPlex', path.join(fonts_dir, 'IBMPlexMono-ExtraLight.ttf'))
+        # fonts = [
+        #     {"name": "IBMPlex", "point_size": 12, "style": "regular"}
+        # ]
+        # self.manager.preload_fonts(fonts)        
+        
         self.clock = pg.time.Clock()
         self.timer = pg.time
         self.allsprites = pg.sprite.Group()

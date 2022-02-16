@@ -1,7 +1,3 @@
-from ast import Return
-import copy
-from ctypes.wintypes import POINT
-from itertools import count
 from random import randrange
 import pygame as pg
 import pygame_gui as gui
