@@ -152,7 +152,7 @@ class info:
         return({'ui': picui, 'type': type(picui).__name__}, picui.get_relative_rect()[3])
 
     def _create_item_info(self, item, top_pos):
-        item_rect = pg.Rect((INFO_WIDTH//2-64//2, top_pos), (64, 64))
+        item_rect = pg.Rect((INFO_WIDTH//2-64//2, top_pos), (-1, -1))
         itemui= UIItem(
             relative_rect=item_rect,
             image_surface=self.app.terrain.block_img[item['id']],
@@ -162,6 +162,25 @@ class info:
             object_id='item_label_b'
         )
         return({'ui': itemui, 'type': type(itemui).__name__}, itemui.get_relative_rect()[3])
+
+    def _create_items_list(self, block_list):
+        list = []
+        for item in block_list:
+            image_surface=self.app.terrain.block_img[int(item['id'])]
+            list.append({'img':image_surface, 'count': item['count']})
+        return(list)
+        
+    def _create_items_list_info(self, block_list, top_pos):  # blocklist [{"id":"1","count:"1"},...] items: [{"img":surf, "count": int},...]
+        items_list = self._create_items_list(block_list)
+        items_rect = pg.Rect((0, top_pos), (-1, -1))
+        itemsui= UIItemsList(
+            relative_rect=items_rect,
+            items_list=items_list,
+            manager=self.app.manager,
+            container=self.panel_info,
+            object_id='item_label_m'
+        )
+        return({'ui': itemsui, 'type': type(itemsui).__name__}, itemsui.get_relative_rect()[3])
 
 
     def _shift_next_position(self, delta_top):
@@ -251,7 +270,6 @@ class info:
             self.msg_line += 1
             return          
 
-# 
         if self.msg_info_list[self.msg_line]['type'] == 'UIItem':
             oldtop = self.msg_info_list[self.msg_line]['ui'].get_relative_rect()[3]
             self.msg_info_list[self.msg_line]['ui'].set_item(item_pic, item_count)
@@ -275,4 +293,31 @@ class info:
         
 
     def append_list_items(self, block_list):
-        pass
+        # [{"id":1,"count":3},{"id":3,"count":13}...]
+        if len(self.msg_info_list) < self.msg_line+1:
+            element, hight = self._create_items_list_info(block_list, self.top)
+            self.msg_info_list.append(element)
+            self.top += hight
+            self.msg_line += 1
+            return     
+        
+        if self.msg_info_list[self.msg_line]['type'] == 'UIItemsList':
+            oldtop = self.msg_info_list[self.msg_line]['ui'].get_relative_rect()[3]
+            self.msg_info_list[self.msg_line]['ui'].set_items_list(self._create_items_list(block_list))
+            newtop = self.msg_info_list[self.msg_line]['ui'].get_relative_rect()[3]
+            dtop = newtop - oldtop
+            self.top += newtop
+            self._shift_next_position(dtop)
+            self.msg_line += 1
+        else: 
+            oldtop = self.msg_info_list[self.msg_line]['ui'].get_relative_rect()[3]
+            self.msg_info_list[self.msg_line]['ui'].kill()
+            del self.msg_info_list[self.msg_line]['ui']
+
+            element, newtop = self._create_items_list_info(block_list, self.top)
+            self.msg_info_list[self.msg_line] = element
+            self.top += newtop
+            dtop = newtop - oldtop
+            self._shift_next_position(dtop)
+            self.msg_line += 1
+        

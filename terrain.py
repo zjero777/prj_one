@@ -182,11 +182,9 @@ class terrain:
         terrain_name = terrain_data['name']
         terrain_pic = self.field_img[select_terrain]
 
-        dig_txt = ''
-        demolition_txt = ''
-
         self.app.info.start()
         self.app.info.append_pic(terrain_pic)
+        self.app.info.append_list_items([{"id":"2", "count":"113"},{"id":"1", "count":"17"},{"id":"2", "count":"3"},{"id":"1", "count":"87"},{"id":"2", "count":"3"},{"id":"1", "count":"887"}])
         self.app.info.append_text(f'<b>{terrain_name}</b><br>{tilepos}</b>')
 
         if strtobool(self.GetTileInfo('allow_dig', tilepos)) and select_building == 0:
@@ -228,6 +226,7 @@ class terrain:
         self.app.info.start()
         # self.app.info.append_text(f'Строительство:')
         self.app.info.append_item(selected_item)
+        
         # self.app.info.append_pic(self.block_img[pic_idx])
         
         self.app.info.stop()
