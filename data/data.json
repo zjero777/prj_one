@@ -80,6 +80,19 @@
                 }
             ]
 
+        },
+        {
+            "id": 4,
+            "name": "moss",
+            "pic": "moss.png",
+            "demolition":1,
+            "build": [
+                {
+                    "ground": "moss",
+                    "type_result": "block"
+                }
+            ]
+
         }
     ],
     "factory_type": [
@@ -170,6 +183,37 @@
             ],
             "time": 8,
             "demolition":2
+        },
+        {
+            "id": 3,
+            "name": "moss_farm",
+            "dim": {
+                "w": 4,
+                "h": 4
+            },
+            "plan": [
+                [2,3,3,2],
+                [3,0,0,3],
+                [3,0,0,3],
+                [2,3,3,2]               
+            ],
+            "pic": "moss_farm.png",
+            "in": 
+            [
+                {
+                    "id": 0,
+                    "count": 0
+                }
+            ],
+            "out":
+            [
+                {
+                    "id": 4, 
+                    "count": 24
+                }
+            ],
+            "time": 40,
+            "demolition":8
         }
 
     ]

@@ -38,8 +38,8 @@ class terrain:
 
         #self.field[50, 50] = 1
         # for i in range(100):
-        self.building_map[7,7] = 2
-        self.building_map[8,7] = 1
+        self.building_map[9,7] = 2
+        self.building_map[10,7] = 1
         #    self.field[i,99] = 1
         #    self.field[0,i] = 1
         #   self.field[99,i] = 1
@@ -78,7 +78,7 @@ class terrain:
                     lookup = self.building_map[find_y:find_y + factory_hight,find_x:find_x+factory_width]
                     if np.all(lookup == factory_plan):
                         self.app.factories.add(
-                            bp, self.building_map, find_y, find_x)
+                            bp, self.building_map, find_x, find_y)
 
     def mapping(self, scPos):
         tilepos = (self.pos[0]+(scPos[1]-P_UP)//TILE -
@@ -458,8 +458,10 @@ class terrain:
             resourses = select_factory.get_resources(100, 100)
             i = -1
             for count in resourses[1]:
+                if resourses[0][i]!=0:
+                    player.pickup(resourses[0][i], count)
                 i += 1
-                player.pickup(resourses[0][i], count)
+                
 
             self.app.factories.delete(self.building_map, select_factory)
 

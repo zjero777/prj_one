@@ -39,7 +39,8 @@ class factory:
         list_items = []
         i=0
         for item in res[0]:
-            list_items.append({'id':item,'count':res[1][i]})
+            if item!=0:
+                list_items.append({'id':item,'count':res[1][i]})
             i+=1
         return(list_items)
     
@@ -88,7 +89,7 @@ class factory_list:
             
                 b_map[j,i] = -1
 
-        new_factory = factory(self, self.app, bp, x, y)
+        new_factory = factory(self, self.app, bp, y,x)
         self.active.append(new_factory)
         
 
