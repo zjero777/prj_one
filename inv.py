@@ -8,9 +8,9 @@ class inv:
     def __init__(self, app, player):
         self.app = app
         self.player = player
-        self.backpack = [{'id':1, 'count':7}]
-        self.selected_Item = -1
-        self.item = {}
+        self.backpack = [{'id':1, 'count':7}, {'id':2, 'count':7}]
+        self.selected_backpack_cell = -1
+        # self.item = {}
         # for item in range(3):
             # self.add(randrange(0,4))
         self.surface = pg.Surface(INV_SIZE)
@@ -31,6 +31,16 @@ class inv:
         self.text_rect = pg.Rect((0, 0), (300, 300))
         self.first_pressed = True
         self.first_click = True
+    
+    @property    
+    def item(self):
+        # if self.selected_backpack_cell>len(self.backpack)-1: 
+        #     return({})
+        if self.selected_backpack_cell!=-1:
+            return(self.backpack[self.selected_backpack_cell])
+        else:
+            return({})
+        
         
     def get_cell(self, pos):
         pos2=((pos[0]-INV_POS[0]-INV_MARGIN)//INV_CELL_W, (pos[1]-INV_POS[1]-INV_MARGIN)//INV_CELL_H)
@@ -41,10 +51,10 @@ class inv:
             return(-1, -1)
         else:
             if cell>-1 and cell<len(self.backpack):
-                item = self.backpack[cell]
+                block = self.backpack[cell]
             else:
-                item = -1
-            return(cell,item)
+                block = -1
+            return(cell,block)
         
     def update(self):
         keystate = pg.key.get_pressed()
@@ -58,25 +68,26 @@ class inv:
         mouse_button = pg.mouse.get_pressed()
         mouse_pos = pg.mouse.get_pos()
 
-        if self.selected_Item>-1:
-            self.app.mouse.setcursor_with_item(self.backpack[self.selected_Item])
-        else:
-            self.app.mouse.setcursor_noitem()    
-        
         if self.player.is_openinv:
-            self.cover, item = self.get_cell(mouse_pos)
-            # self.app.info.debug((0,60), f'{self.cover}')
+            self.backpack_cell_num, _item = self.get_cell(mouse_pos)
+            # self.app.info.debug((0,60), f'{self.backpack_cell_num}')
             if mouse_button[0]:
                 if self.first_click:
                     self.first_click = False 
-                    if self.cover>-1 and self.cover<len(self.backpack):
+                    if self.backpack_cell_num>-1 and self.backpack_cell_num<len(self.backpack):
                         # select item
-                        self.selected_Item = self.cover
-                        self.item = item
+                        self.selected_backpack_cell = self.backpack_cell_num
+                        self.app.mouse.setcursor_with_item(self.item)
             else:
                 self.first_click = True
         else:
             self.app.mouse.setcursor_noitem()    
+
+        if self.selected_backpack_cell>-1:
+            self.app.mouse.setcursor_with_item(self.backpack[self.selected_backpack_cell])
+        else:
+            self.app.mouse.setcursor_noitem()    
+
     
     def draw(self):
         self.surface.fill(pg.Color(33,40,45))
@@ -84,7 +95,7 @@ class inv:
         #  draw backpack cells
         for i in range(INV_CELL_COUNT):
             pos = (i%INV_CELL_CW*INV_CELL_W+i%INV_CELL_CW+INV_MARGIN, i//INV_CELL_CH*INV_CELL_H+i//INV_CELL_CH+INV_MARGIN)
-            if self.cover==i:
+            if self.backpack_cell_num==i:
                 # hover
                 self.surface.blit(self.bgimgactive, pos)
             else:
@@ -131,13 +142,13 @@ class inv:
         else:
             self.append(item, count)
 
-    def delete_selected_item(self):
-        if self.backpack[self.selected_Item]['count'] == 1: 
-            del self.backpack[self.selected_Item]
-            self.selected_Item = -1
-            self.item = {}
-        elif self.backpack[self.selected_Item]['count'] > 1:
-            self.backpack[self.selected_Item]['count'] -= 1
+    def delete_selected_backpack_cell(self):
+        if self.backpack[self.selected_backpack_cell]['count'] == 1: 
+            del self.backpack[self.selected_backpack_cell]
+            self.selected_backpack_cell = -1
+            # self.item = {}
+        elif self.backpack[self.selected_backpack_cell]['count'] > 1:
+            self.backpack[self.selected_backpack_cell]['count'] -= 1
     
     def item_exist(self, item):
         use_item = 0
@@ -169,7 +180,18 @@ class inv:
         finditem = next((x for x in self.backpack if x['id'] == block['id']), False)
         if not finditem: return
         if finditem['count']==block['count']: 
+            item = self.item
             self.backpack.remove(finditem)
+            self.selected_backpack_cell = -1
+            idx=0
+            for i in self.backpack:
+                if i==item:
+                    self.selected_backpack_cell = idx
+                idx=+1
+                    
+            
+            
+            
         elif finditem['count'] > block['count']:
             finditem['count'] = finditem['count'] - block['count']
 

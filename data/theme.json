@@ -70,7 +70,7 @@
         "misc":
         {
             "padding": "5,0",
-            "text_horiz_alignment": "center",
+            "text_horiz_alignment": "left",
             "text_vert_alignment": "center",
             "border_width": "0",
             "shadow_width": "0"
@@ -78,48 +78,78 @@
 
     },
 
-    "item_label_b":
+    "item":
     {
         "colours":
         {
             "normal_text": "#FFFFFF",
-            "text_shadow": "#FF0000"
+            "text_shadow": "#000000"
         },
         "font":
         {
             "name": "ssp",
-            "size": "14",
-            "bold": "1",
+            "size": "11",
+            "bold": "0",
             "italic": "0",
             "regular_path": "fonts/SourceSansPro-Regular.ttf"
         },
         "misc":{
-            "size": "64"
+            "text_shadow": "1",
+            "text_shadow_size": "1",
+            "text_shadow_offset": "0,0"            
+        }
+
+    },
+
+
+    "item_label_b":
+    {
+
+        "font":
+        {
+            "name": "ssp",
+            "size": "14"
+        },
+        "misc":{
+            "size": "64"         
         }
 
     },
 
     "item_label_m":
     {
-        "colours":
-        {
-            "normal_text": "#FFFFFF",
-            "text_shadow": "#FF0000"
-        },
+
         "font":
         {
             "name": "ssp",
             "size": "11",
-            "bold": "1",
+            "bold": "0",
             "italic": "0",
             "regular_path": "fonts/SourceSansPro-Regular.ttf"
         },
         "misc":{
             "size": "36",
-            "padding": "4,4"
+            "padding":"3,3"
         }
 
+    },
+
+    
+    "progress_bar":
+    {
+        "colours":
+        {
+            "normal_border": "#AAAAAA",
+            "filled_bar": "#00FF00",
+            "unfilled_bar": "#6C6C6C"
+        },
+        "misc":
+        {
+            "follow_sprite_offset": "10, 10",
+            "border_width": "0"
+        }
     }
+    
     
    
 

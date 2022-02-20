@@ -38,7 +38,8 @@ class terrain:
 
         #self.field[50, 50] = 1
         # for i in range(100):
-        #    self.field[i,0] = 1
+        self.building_map[7,7] = 2
+        self.building_map[8,7] = 1
         #    self.field[i,99] = 1
         #    self.field[0,i] = 1
         #   self.field[99,i] = 1
@@ -46,7 +47,7 @@ class terrain:
         self.field_img = [0 for i in self.data['terrain_type']]
         for img in self.data['terrain_type']:
             self.field_img[img['id']] = (pg.image.load(
-                path.join(img_dir, img['pic'])).convert())
+                path.join(img_dir, img['pic'])).convert_alpha())
         self.field_rect = self.field_img[0].get_rect()
 
         self.block_img = [0 for i in self.data['block_type']]
@@ -55,29 +56,29 @@ class terrain:
                 path.join(img_dir, img['pic'])).convert_alpha())
         self.block_img_rect = self.block_img[1].get_rect()
 
-        self.field_bg = pg.image.load(path.join(img_dir, 'bg.jpg')).convert()
+        self.field_bg = pg.image.load(path.join(img_dir, 'bg.jpg')).convert_alpha()
         self.field_bgrect = self.field_bg.get_rect()
 
     def onMap(self, tile_x, tile_y):
         return(not tile_x < 0 or tile_y < 0 or tile_x > PLANET_WIDTH-1 or tile_y > PLANET_HIGHT-1)
 
     def complete_factory(self):
-        x, y = self.tile_pos
+        y,x = self.tile_pos
         for bp in self.data['factory_type']:
             factory_width = bp['dim']['w']
             factory_hight = bp['dim']['h']
             factory_plan = np.array(bp['plan'])
             for find_x in range(x-factory_width+1, x+1):
                 for find_y in range(y-factory_hight+1, y+1):
-                    if not self.onMap(find_x, find_y):
+                
+                    if not self.onMap(find_y, find_x):
                         continue
-                    if not self.onMap(find_x+factory_width, find_y+factory_hight):
+                    if not self.onMap(find_y+factory_hight,find_x+factory_width):
                         continue
-                    lookup = self.building_map[find_x:find_x +
-                                               factory_width, find_y:find_y+factory_hight]
+                    lookup = self.building_map[find_y:find_y + factory_hight,find_x:find_x+factory_width]
                     if np.all(lookup == factory_plan):
                         self.app.factories.add(
-                            bp, self.building_map, find_x, find_y)
+                            bp, self.building_map, find_y, find_x)
 
     def mapping(self, scPos):
         tilepos = (self.pos[0]+(scPos[1]-P_UP)//TILE -
@@ -165,7 +166,15 @@ class terrain:
                 else:
                     return(use_item, type_result)
 
-    def view_Tileinfo(self, tilepos):
+    def view_invinfo(self, tilepos=()):
+        if not tilepos:
+            info = self.app.info
+            info.start()
+            info.append_text(f'<b>Инвентарь:</b>')
+            info.stop()
+            return
+
+    def view_Tileinfo(self, tilepos=()):
         if not tilepos:
             pic_idx = self.FindTInfo('id', 'hyperspace')
             data = self.GetInfo('name', pic_idx)
@@ -178,42 +187,77 @@ class terrain:
 
         select_terrain = self.field[tilepos[0], tilepos[1]]
         select_building = self.building_map[tilepos[0], tilepos[1]]
+        select_factory = self.app.factories.factory(tilepos)
+        self.app.info.start()
+
         terrain_data = self.GetTData('id', select_terrain)
         terrain_name = terrain_data['name']
         terrain_pic = self.field_img[select_terrain]
 
-        self.app.info.start()
         self.app.info.append_pic(terrain_pic)
-        self.app.info.append_list_items([{"id":"2", "count":"113"},{"id":"1", "count":"17"},{"id":"2", "count":"3"},{"id":"1", "count":"87"},{"id":"2", "count":"3"},{"id":"1", "count":"887"}])
         self.app.info.append_text(f'<b>{terrain_name}</b><br>{tilepos}</b>')
 
         if strtobool(self.GetTileInfo('allow_dig', tilepos)) and select_building == 0:
             time = terrain_data['dig']['time']
             loot = terrain_data['dig']['loot']
-            lootcount = terrain_data['dig']['count']
-            dig_txt = f'Ожидаемые ресурсы: {loot} - {lootcount} шт.<br>Время добычи: {time} сек.'
-            self.app.info.append_text(dig_txt)
-            # self.app.info.append_blockinfo(loot, lootcount)
+            self.app.info.append_text('Ожидаемые ресурсы:')
+            self.app.info.append_list_items(loot)
+            self.app.info.append_text(f'Время добычи(сек): {time}')
+
 
         if select_building > 0:
             block_data = self.GetBData('id', select_building)
             block_name = block_data['name']
-            block_pic = self.block_img[select_building]
             time = block_data['demolition']
-            loot = block_data['name']
+            loot = select_building
             lootcount = 1
-            demolition_txt = f'Ресурсы при разборе: {loot} - {lootcount} шт.<br>Время разбора: {time} сек.'
-            self.app.info.append_pic(block_pic)
+            self.app.info.append_item({'id':select_building, 'count':-1}, justify='center')
             self.app.info.append_text(f'<b>{block_name}</b>')
-            self.app.info.append_text(demolition_txt)
+            self.app.info.append_text('Ресурсы при разборе:')
+            self.app.info.append_item({'id':loot,'count':lootcount}, 'item_label_m')
+            self.app.info.append_text(f'Время разбора(сек): {time}')
+        
+        if select_building == -1:    
+            self.app.info.append_pic(select_factory.pic)
+            self.app.info.append_progress_bar(select_factory.progress)
+            if select_factory.working:
+                working_text = '(Работает)'
+            else:
+                working_text = '(Не работает)'
+                
+            self.app.info.append_text(f'<b>{select_factory.name}</b> - {working_text}')
+            self.app.info.append_text('Ресурсы при разборе:')
+            self.app.info.append_list_items(select_factory.demolition_list_items_100)
+            self.app.info.append_text(f'Время разбора(сек): {select_factory.demolition}')
+            self.app.info.append_text('Вход:')
+            self.app.info.append_list_items(select_factory.incom)
+            self.app.info.append_text('Выход:')
+            self.app.info.append_list_items(select_factory.outcom)
+            self.app.info.append_text(f'Время производства: {select_factory.process_time}')
+            
+            
 
+
+        # if  self.tile_pos==(0,0):
+        #     self.app.info.append_list_items([
+        #         {"id":"1", "count":"1"},
+        #         {"id":"2", "count":"2"},
+        #         {"id":"1", "count":"3"}
+        #     ])
+        # if  self.tile_pos==(0,1):
+        #     self.app.info.append_list_items([
+        #         {"id":"2", "count":"11"},
+        #         {"id":"1", "count":"12"},
+        #         {"id":"2", "count":"13"}
+        #     ])
+            
+            
         self.app.info.stop()
         
     def view_Build_info(self, tilepos):
         if not tilepos:
             pic_idx = self.FindTInfo('id', 'hyperspace')
             data = self.GetInfo('name', pic_idx)
-            # self.app.info.set(self.text, pic_idx)
             self.app.info.start()
             self.app.info.append_pic(self.field_img[pic_idx])
             self.app.info.append_text(f'<b>{data}</b><br>(???,???)')
@@ -224,11 +268,7 @@ class terrain:
         select_building = self.building_map[tilepos[0], tilepos[1]]
         
         self.app.info.start()
-        # self.app.info.append_text(f'Строительство:')
-        self.app.info.append_item(selected_item)
-        
-        # self.app.info.append_pic(self.block_img[pic_idx])
-        
+        self.app.info.append_item(selected_item, justify='center')
         self.app.info.stop()
         
         
@@ -240,6 +280,8 @@ class terrain:
             return(self.block_img[item['id']])
 
     def update(self):
+        
+        
         keystate = pg.key.get_pressed()
         if keystate[pg.K_a]:
             self.pos[1] += -1
@@ -261,20 +303,27 @@ class terrain:
 
         mouse_button = pg.mouse.get_pressed()
         mouse_pos = pg.mouse.get_pos()
+        self.tile_pos = self.mapping(mouse_pos)
+        
 
+        if self.app.player.is_openinv:
+            self.view_invinfo()
+        
+        
         if pg.Rect(VIEW_RECT).collidepoint(mouse_pos) and not self.app.player.is_openinv:
-            self.tile_pos = self.mapping(mouse_pos)
-            if self.app.player.inv.selected_Item == -1:
+
+            if self.app.player.inv.selected_backpack_cell == -1:
                 self.view_Tileinfo(self.tile_pos)
             else:
                 self.view_Build_info(self.tile_pos)
+
 
             if not mouse_button[0]:
                 self.first_click = True
             # self.app.info.debug((0,60), f'{self.first_click}')
 
             if mouse_button[0] and len(self.tile_pos) > 0:
-                if self.app.player.inv.selected_Item > -1:
+                if self.app.player.inv.selected_backpack_cell > -1:
 
                     if self.first_click:
                         self.first_click = False
@@ -323,8 +372,8 @@ class terrain:
                 self.app.player.stop_demolition()
 
             if mouse_button[2] and not mouse_button[0] and len(self.tile_pos) > 0:
-                self.app.player.inv.selected_Item = -1
-                self.app.player.inv.item = {}
+                self.app.player.inv.selected_backpack_cell = -1
+                # self.app.player.inv.item = {}
         else:
             self.app.player.stop_dig()
             self.app.player.stop_demolition()
@@ -361,20 +410,19 @@ class terrain:
         #     pg.draw.rect(self.surface, pg.Color('gray'), xyRect, 1)
 
         # draw pointed field
-        # if self.app.player.inv.selected_Item:
+        # if self.app.player.inv.selected_backpack_cell:
         if self.tile_pos:
             xyRect = pg.Rect((self.tile_pos[1]-self.pos[1]+HALF_WIDTH)*TILE,
                              (self.tile_pos[0]-self.pos[0]+HALF_HIGHT)*TILE, TILE, TILE)
-            if self.app.player.inv.selected_Item == -1:
+            if self.app.player.inv.selected_backpack_cell == -1:
                 if not self.app.player.is_openinv:
                     pg.draw.rect(self.surface, pg.Color('gray'), xyRect, 1)
             else:
                 if not self.app.player.is_openinv:
                     # Ghost cursor
-                    item = self.app.player.inv.item
                     place = self.GetInfo(
                         'name', self.field[self.tile_pos[0], self.tile_pos[1]])
-                    build_item, b_type = self.Get_info_block_placed(item, place)
+                    build_item, b_type = self.Get_info_block_placed(self.app.player.inv.item, place)
 
                     if b_type:
                         img = self.Get_img(build_item, b_type).copy()
@@ -397,10 +445,11 @@ class terrain:
         self.app.player.stop_dig()
         site = self.field[tile_pos[0], tile_pos[1]]
         diginfo = self.GetInfo('dig', site)
-        loot = self.FindBInfo('id', diginfo['loot'])
+        loot = diginfo['loot']
         self.field[tile_pos[0], tile_pos[1]] = self.FindTInfo(
             'id', diginfo['after'])
-        player.pickup(loot, diginfo['count'])
+        for iLoot in loot:
+            player.pickup(iLoot['id'], iLoot['count'])
 
     def demolition_succes(self, player, tile_pos):
         site = self.building_map[tile_pos[0], tile_pos[1]]

@@ -20,13 +20,11 @@ class player:
     def draw(self):
         if self.is_openinv:
             self.inv.draw()
-        # self.surface.fill(pg.Color(255,0,0))
-        # self.app.screen.blit(self.surface, INV_RECT)
     
     # Place the item selected from the inventory on titlepos the ground
-    # player.inv.selected_Item - selected inventory item 
+    # player.inv.selected_backpack_cell - selected inventory item 
     def build(self, field):
-        if self.inv.selected_Item>-1:
+        if self.inv.selected_backpack_cell>-1:
             item = self.inv.item
             place = field.GetInfo('name', field.field[field.tile_pos[0], field.tile_pos[1]])
             build_item, build_type = field.Get_info_block_placed(item, place)   
@@ -96,5 +94,5 @@ class player:
         self.inv.add(loot, count)
      
     def use_selected(self):
-        self.inv.delete_selected_item()
+        self.inv.delete_selected_backpack_cell()
         

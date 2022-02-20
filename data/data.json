@@ -19,9 +19,11 @@
             "allow_dig": "True",
             "dig": {
                 "time": 1,
-                "loot": "mound",
-                "count": 1,
-                "after": "pit"
+                "after": "pit",
+                "loot": [
+                    {"id":1,"count": 1},
+                    {"id":2,"count": 10}
+                ]
             }
         },
         {
@@ -65,6 +67,19 @@
                     "type_result": "block"
                 }
             ]
+        },
+        {
+            "id": 3,
+            "name": "beam",
+            "pic": "beam.png",
+            "demolition":1,
+            "build": [
+                {
+                    "ground": "beam",
+                    "type_result": "block"
+                }
+            ]
+
         }
     ],
     "factory_type": [
@@ -124,6 +139,36 @@
                 }
             ],
             "time": 5,
+            "demolition":2
+        },
+        {
+            "id": 2,
+            "name": "miller",
+            "dim": {
+                "w": 1,
+                "h": 3
+            },
+            "plan": [
+                [2],
+                [1],
+                [2]
+            ],
+            "pic": "miller.png",
+            "in": 
+            [
+                {
+                    "id": 2,
+                    "count": 1
+                }
+            ],
+            "out":
+            [
+                {
+                    "id": 3, 
+                    "count": 4
+                }
+            ],
+            "time": 8,
             "demolition":2
         }
 

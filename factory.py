@@ -12,7 +12,7 @@ class factory:
         self.id = blueprint['id']
         self.name = blueprint['name']
         self.tile_pos = (x, y)
-        self.size = (blueprint['dim']['w'], blueprint['dim']['h'])
+        self.size = (blueprint['dim']['h'], blueprint['dim']['w'])
         self.plan = np.array(blueprint['plan'])
         self.demolition = blueprint['demolition']
         self.pic = list.factory_img[blueprint['id']]
@@ -24,7 +24,7 @@ class factory:
         self.time = 0
         
         
-    def get_resources(self, minproc, maxproc):
+    def get_resources(self, minproc=100, maxproc=100):
         if minproc==maxproc: 
             proc=maxproc
         else:
@@ -32,6 +32,16 @@ class factory:
         res, count = np.unique(self.plan, return_counts=True)
         all_res = (res, np.int64(count*(proc/100)))
         return(all_res)
+    
+    @property
+    def demolition_list_items_100(self):
+        res = self.get_resources()
+        list_items = []
+        i=0
+        for item in res[0]:
+            list_items.append({'id':item,'count':res[1][i]})
+            i+=1
+        return(list_items)
     
     def draw(self, surface):
         screen_pos = self.app.terrain.demapping(self.tile_pos)
@@ -50,7 +60,14 @@ class factory:
                 self.app.player.inv.insert(self.outcom)
                 self.working = False
         
-        
+    @property
+    def progress(self):
+        if self.working:
+            now = self.timer.get_ticks()
+            return(((now-self.time)/self.process_time)//10)      
+        else:
+            return(0)
+
 
 class factory_list:
     def __init__(self, app):
@@ -66,9 +83,10 @@ class factory_list:
     def add(self, bp, b_map, x, y):
         width = bp['dim']['w']
         hight = bp['dim']['h']
-        for i in range(x, x+width):
-            for j in range(y, y+hight):
-                b_map[i, j] = -1
+        for j in range(y, y+hight):
+            for i in range(x, x+width):
+            
+                b_map[j,i] = -1
 
         new_factory = factory(self, self.app, bp, x, y)
         self.active.append(new_factory)

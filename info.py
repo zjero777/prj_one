@@ -1,3 +1,4 @@
+from ast import Str
 from numpy.lib.function_base import append, select
 import pygame as pg
 import pygame_gui as gui
@@ -21,7 +22,7 @@ class info:
                                                     )
 
         self.map_panel_info = gui.elements.UIPanel(relative_rect=pg.Rect((0, 0), (P_INFO, 320)),
-                                                   starting_layer_height=1,
+                                                   starting_layer_height=0,
                                                    manager=self.app.manager,
                                                    margins={
                                                        'left': 0, 'top': 3, 'right': 0, 'bottom': 3},
@@ -29,7 +30,7 @@ class info:
                                                    element_id='map_info'
                                                    )
 
-        self.panel_info = gui.elements.UIPanel(relative_rect=pg.Rect((0, 320), (P_INFO, 400)),
+        self.panel_info = gui.elements.UIPanel(relative_rect=pg.Rect((0, 320), (P_INFO, 600)),
                                                starting_layer_height=0,
                                                manager=self.app.manager,
                                                margins={
@@ -140,8 +141,13 @@ class info:
         )
         return({'ui': textui, 'type': type(textui).__name__}, textui.get_relative_rect()[3])
         
-    def _create_pic_info(self, pic, top_pos):
-        pic_rect = pg.Rect((INFO_WIDTH//2-64//2, top_pos), (64, 64))
+    def _create_pic_info(self, pic, top_pos, justify='center'):
+        pic_relativity_rect = pg.Rect(pic.get_rect())
+        if justify=='left': 
+            justify = 0
+        elif justify=='center':
+            justify = INFO_WIDTH//2-pic_relativity_rect.height//2
+        pic_rect = pg.Rect((justify, top_pos), pic_relativity_rect.size)
         picui = gui.elements.UIImage(
             relative_rect=pic_rect,
             image_surface=pic,
@@ -151,15 +157,20 @@ class info:
         )
         return({'ui': picui, 'type': type(picui).__name__}, picui.get_relative_rect()[3])
 
-    def _create_item_info(self, item, top_pos):
-        item_rect = pg.Rect((INFO_WIDTH//2-64//2, top_pos), (-1, -1))
+    def _create_item_info(self, item, top_pos, object_id, justify):
+        if justify=='left': 
+            justify = 0
+        elif justify=='center':
+            justify = INFO_WIDTH//2-64//2
+        
+        item_rect = pg.Rect((justify, top_pos), (-1, -1))
         itemui= UIItem(
             relative_rect=item_rect,
             image_surface=self.app.terrain.block_img[item['id']],
             count=item['count'],
             manager=self.app.manager,
             container=self.panel_info,
-            object_id='item_label_b'
+            object_id=object_id
         )
         return({'ui': itemui, 'type': type(itemui).__name__}, itemui.get_relative_rect()[3])
 
@@ -181,6 +192,17 @@ class info:
             object_id='item_label_m'
         )
         return({'ui': itemsui, 'type': type(itemsui).__name__}, itemsui.get_relative_rect()[3])
+
+    def _create_progress_bar_info(self, top_pos):  
+        bar_rect = pg.Rect((0, top_pos), (P_INFO, 7))
+        progressui = gui.elements.UIProgressBar(
+            relative_rect=bar_rect,
+            manager=self.app.manager,
+            container=self.panel_info
+            # object_id='progress_bar'
+        )
+        return({'ui': progressui, 'type': type(progressui).__name__}, progressui.get_relative_rect()[3])
+
 
 
     def _shift_next_position(self, delta_top):
@@ -230,9 +252,9 @@ class info:
             self.msg_line += 1
 
     
-    def append_pic(self, pic, pic_size: int=64):
+    def append_pic(self, pic, pic_size: int=64, justify='center'):
         if len(self.msg_info_list) < self.msg_line+1:
-            element, hight = self._create_pic_info(pic, self.top)
+            element, hight = self._create_pic_info(pic, self.top, justify=justify)
             self.msg_info_list.append(element)
             self.top += hight
             self.msg_line += 1
@@ -251,20 +273,19 @@ class info:
             self.msg_info_list[self.msg_line]['ui'].kill()
             del self.msg_info_list[self.msg_line]['ui']
 
-            element, newtop = self._create_pic_info(pic, self.top)
+            element, newtop = self._create_pic_info(pic, self.top, justify=justify)
             self.msg_info_list[self.msg_line] = element
             self.top += newtop
             dtop = newtop - oldtop
             self._shift_next_position(dtop)
             self.msg_line += 1
         
-          
 
-    def append_item(self, item):
+    def append_item(self, item, object_id='item_label_b', justify='left'):
         item_pic = self.app.terrain.block_img[item['id']]
         item_count = item['count']
         if len(self.msg_info_list) < self.msg_line+1:
-            element, hight = self._create_item_info(item, self.top)
+            element, hight = self._create_item_info(item, self.top, object_id, justify)
             self.msg_info_list.append(element)
             self.top += hight
             self.msg_line += 1
@@ -283,15 +304,42 @@ class info:
             self.msg_info_list[self.msg_line]['ui'].kill()
             del self.msg_info_list[self.msg_line]['ui']
 
-            element, newtop = self._create_item_info(item, self.top)
+            element, newtop = self._create_item_info(item, self.top, object_id, justify)
             self.msg_info_list[self.msg_line] = element
             self.top += newtop
             dtop = newtop - oldtop
             self._shift_next_position(dtop)
             self.msg_line += 1
-        
-        
+     
+    def append_progress_bar(self, procent):
+        if len(self.msg_info_list) < self.msg_line+1:
+            element, hight = self._create_progress_bar_info(self.top)
+            self.msg_info_list.append(element)
+            self.top += hight
+            self.msg_line += 1
+            return     
 
+        if self.msg_info_list[self.msg_line]['type'] == 'UIProgressBar':
+            oldtop = self.msg_info_list[self.msg_line]['ui'].get_relative_rect()[3]
+            self.msg_info_list[self.msg_line]['ui'].percent_full=procent
+            newtop = self.msg_info_list[self.msg_line]['ui'].get_relative_rect()[3]
+            dtop = newtop - oldtop
+            self.top += newtop
+            self._shift_next_position(dtop)
+            self.msg_line += 1
+        else: 
+            oldtop = self.msg_info_list[self.msg_line]['ui'].get_relative_rect()[3]
+            self.msg_info_list[self.msg_line]['ui'].kill()
+            del self.msg_info_list[self.msg_line]['ui']
+
+            element, newtop = self._create_progress_bar_info(self.top)
+            self.msg_info_list[self.msg_line] = element
+            self.top += newtop
+            dtop = newtop - oldtop
+            self._shift_next_position(dtop)
+            self.msg_line += 1     
+        
+    
     def append_list_items(self, block_list):
         # [{"id":1,"count":3},{"id":3,"count":13}...]
         if len(self.msg_info_list) < self.msg_line+1:
@@ -321,3 +369,4 @@ class info:
             self._shift_next_position(dtop)
             self.msg_line += 1
         
+
