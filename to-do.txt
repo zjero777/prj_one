@@ -18,12 +18,12 @@
         ??!
 
 
-    -factory
-        -2x2
-            -brickyard
-                -function(a, 5s, 1 mound = 1 brick)
-            -career
-                -function(a, 5s, = 1 moun) 
+    +factory
+        +2x2
+            +brickyard
+                +function(a, 5s, 1 mound = 1 brick)
+            +career
+                +function(a, 5s, = 1 moun) 
         +2x3
         +3x3
             
