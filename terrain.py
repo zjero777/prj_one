@@ -33,11 +33,12 @@ class terrain:
             self.field[rnd.randint(0, 99), rnd.randint(0, 99)] = 0
         for i in range(100):
             self.field[rnd.randint(0, 99), rnd.randint(0, 99)] = 4
+        for i in range(100):
+            self.field[rnd.randint(0, 99), rnd.randint(0, 99)] = 6
 
         for i in range(100):
             self.building_map[rnd.randint(0, 99), rnd.randint(
                 0, 99)] = rnd.randrange(1, 3)
-
         #self.field[50, 50] = 1
         # for i in range(100):
         self.building_map[9,7] = 2

@@ -30,7 +30,14 @@
             "id": 3,
             "name": "pit",
             "pic": "pit.png",
-            "allow_dig": "False"
+            "allow_dig": "True",
+            "dig": {
+                "time": 3,
+                "after": "deep_pit",
+                "loot": [
+                    {"id":6,"count": 1}
+                ]
+            }
         },
         {
             "id": 4,
@@ -41,11 +48,24 @@
                 "time": 1,
                 "after": "pit",
                 "loot": [
-                    {"id":1,"count": 1}
+                    {"id":5,"count": 1}
                 ]
             }
-        }       
-        
+        },
+        {
+            "id": 5,
+            "name": "deep_pit",
+            "pic": "d_pit.png",
+            "allow_dig": "False"
+        },
+        {
+            "id": 6,
+            "name": "water",
+            "pic": "water.png",
+            "allow_dig": "False"
+        }
+
+    
     ],
     "block_type": [
         {
@@ -123,7 +143,82 @@
                 }
             ]
 
+        },
+        {
+            "id": 5,
+            "name": "sand_mound",
+            "pic": "s_mound.png",
+            "demolition":1,
+            "build": [
+                {
+                    "ground": "sand_mound",
+                    "type_result": "block"
+                },
+                {
+                    "sand": "sand_mound",
+                    "type_result": "block"
+                },
+                {
+                    "pit": "sand",
+                    "type_result": "terrain"
+                }
+            ]
+
+        },
+        {
+            "id": 6,
+            "name": "stone",
+            "pic": "stone.png",
+            "demolition":3,
+            "build": [
+                {
+                    "ground": "stone",
+                    "type_result": "block"
+                },
+                {
+                    "sand": "stone",
+                    "type_result": "block"
+                },
+                {
+                    "deep_pit": "pit",
+                    "type_result": "terrain"
+                }
+            ]
+
+        },
+        {
+            "id": 7,
+            "name": "metall",
+            "pic": "metall.png",
+            "demolition":2,
+            "build": [
+                {
+                    "ground": "metall",
+                    "type_result": "block"
+                },
+                {
+                    "sand": "metall",
+                    "type_result": "block"
+                }
+            ]
+        },
+        {
+            "id": 8,
+            "name": "plastic",
+            "pic": "plastic.png",
+            "demolition":2,
+            "build": [
+                {
+                    "ground": "plastic",
+                    "type_result": "block"
+                },
+                {
+                    "sand": "plastic",
+                    "type_result": "block"
+                }
+            ]
         }
+
     ],
     "factory_type": [
         {
@@ -215,6 +310,36 @@
             "demolition":2
         },
         {
+            "id": 7,
+            "name": "roboport",
+            "dim": {
+                "w": 3,
+                "h": 3
+            },
+            "plan": [
+                [2,3,2],
+                [3,5,3],
+                [2,3,2]
+            ],
+            "pic": "roboport.png",
+            "in": 
+            [
+                {
+                    "id": 0,
+                    "count": 0
+                }
+            ],
+            "out":
+            [
+                {
+                    "id": 0, 
+                    "count": 0
+                }
+            ],
+            "time": 99999999999999999999999,
+            "demolition": 5
+        },
+        {
             "id": 3,
             "name": "moss_farm",
             "dim": {
@@ -244,6 +369,102 @@
             ],
             "time": 40,
             "demolition":8
+        },
+        {
+            "id": 4,
+            "name": "mine",
+            "dim": {
+                "w": 3,
+                "h": 2
+            },
+            "plan": [
+                [2,3,4],
+                [2,3,4]               
+            ],
+            "pic": "mine.png",
+            "in": 
+            [
+                {
+                    "id": 4,
+                    "count": 5
+                }
+            ],
+            "out":
+            [
+                {
+                    "id": 6, 
+                    "count": 5
+                }
+            ],
+            "time": 15,
+            "demolition":3
+        },
+        {
+            "id": 5,
+            "name": "forge",
+            "dim": {
+                "w": 4,
+                "h": 4
+            },
+            "plan": [
+                [6,2,2,6],
+                [6,6,6,6],
+                [6,6,6,6],
+                [6,2,2,6]                  
+            ],
+            "pic": "forge.png",
+            "in": 
+            [
+                {
+                    "id": 6,
+                    "count": 3
+                }
+            ],
+            "out":
+            [
+                {
+                    "id": 7, 
+                    "count": 1
+                }
+            ],
+            "time": 10,
+            "demolition": 8
+        },
+        {
+            "id": 6,
+            "name": "plastic_factory",
+            "dim": {
+                "w": 3,
+                "h": 5
+            },
+            "plan": [
+                [2,3,2],
+                [3,6,7],
+                [2,3,2],
+                [7,6,3],
+                [2,3,2]                  
+            ],
+            "pic": "plastic_f.png",
+            "in": 
+            [
+                {
+                    "id": 4,
+                    "count": 3
+                },
+                {
+                    "id": 5,
+                    "count": 1
+                }
+            ],
+            "out":
+            [
+                {
+                    "id": 8, 
+                    "count": 2
+                }
+            ],
+            "time": 25,
+            "demolition": 8
         }
 
     ]
