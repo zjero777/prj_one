@@ -30,10 +30,6 @@
         +4-moss
         +5-stone
 
-        
-        ??!
-
-
     -factory
         +brickyard
             +function(a, 5s, 1 mound = 1 brick)

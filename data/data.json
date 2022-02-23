@@ -57,8 +57,8 @@
             "name": "deep_pit",
             "pic": "d_pit.png",
             "allow_dig": "False"
-        }              
-        
+        }
+    
     ],
     "block_type": [
         {
@@ -178,6 +178,50 @@
                 }
             ]
 
+        },
+        {
+            "id": 7,
+            "name": "metall",
+            "pic": "metall.png",
+            "demolition":2,
+            "build": [
+                {
+                    "ground": "metall",
+                    "type_result": "block"
+                },
+                {
+                    "sand": "metall",
+                    "type_result": "block"
+                }
+            ]
+        },
+        {
+            "id": 8,
+            "name": "plastic",
+            "pic": "plastic.png",
+            "demolition":2,
+            "build": [
+                {
+                    "ground": "plastic",
+                    "type_result": "block"
+                },
+                {
+                    "sand": "plastic",
+                    "type_result": "block"
+                }
+            ]
+        },
+        {
+            "id": 9,
+            "name": "water",
+            "pic": "water.png",
+            "demolition":5,
+            "build": [    
+                {
+                    "pit": "water",
+                    "type_result": "block"
+                }
+            ]
         }
     ],
     "factory_type": [
@@ -270,6 +314,36 @@
             "demolition":2
         },
         {
+            "id": 6,
+            "name": "roboport",
+            "dim": {
+                "w": 3,
+                "h": 3
+            },
+            "plan": [
+                [2,3,2],
+                [3,0,3],
+                [2,3,2]
+            ],
+            "pic": "roboport.png",
+            "in": 
+            [
+                {
+                    "id": 0,
+                    "count": 0
+                }
+            ],
+            "out":
+            [
+                {
+                    "id": 0, 
+                    "count": 0
+                }
+            ],
+            "time": 99999999999999999999999,
+            "demolition": 5
+        },
+        {
             "id": 3,
             "name": "moss_farm",
             "dim": {
@@ -328,6 +402,73 @@
             ],
             "time": 15,
             "demolition":3
+        },
+        {
+            "id": 5,
+            "name": "forge",
+            "dim": {
+                "w": 4,
+                "h": 4
+            },
+            "plan": [
+                [6,2,2,6],
+                [6,6,6,6],
+                [6,6,6,6],
+                [6,2,2,6]                  
+            ],
+            "pic": "forge.png",
+            "in": 
+            [
+                {
+                    "id": 6,
+                    "count": 3
+                }
+            ],
+            "out":
+            [
+                {
+                    "id": 7, 
+                    "count": 1
+                }
+            ],
+            "time": 10,
+            "demolition": 8
+        },
+        {
+            "id": 6,
+            "name": "plastic_factory",
+            "dim": {
+                "w": 3,
+                "h": 5
+            },
+            "plan": [
+                [2,3,2],
+                [3,6,7],
+                [2,3,2],
+                [7,6,3],
+                [2,3,2]                  
+            ],
+            "pic": "plastic_f.png",
+            "in": 
+            [
+                {
+                    "id": 4,
+                    "count": 3
+                },
+                {
+                    "id": 5,
+                    "count": 1
+                }
+            ],
+            "out":
+            [
+                {
+                    "id": 8, 
+                    "count": 2
+                }
+            ],
+            "time": 25,
+            "demolition": 8
         }
 
     ]
