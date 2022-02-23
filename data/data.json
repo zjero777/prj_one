@@ -30,7 +30,14 @@
             "id": 3,
             "name": "pit",
             "pic": "pit.png",
-            "allow_dig": "False"
+            "allow_dig": "True",
+            "dig": {
+                "time": 3,
+                "after": "deep_pit",
+                "loot": [
+                    {"id":6,"count": 1}
+                ]
+            }
         },
         {
             "id": 4,
@@ -41,10 +48,16 @@
                 "time": 1,
                 "after": "pit",
                 "loot": [
-                    {"id":1,"count": 1}
+                    {"id":5,"count": 1}
                 ]
             }
-        }       
+        },
+        {
+            "id": 5,
+            "name": "deep_pit",
+            "pic": "d_pit.png",
+            "allow_dig": "False"
+        }              
         
     ],
     "block_type": [
@@ -120,6 +133,48 @@
                 {
                     "sand": "moss",
                     "type_result": "block"
+                }
+            ]
+
+        },
+        {
+            "id": 5,
+            "name": "sand_mound",
+            "pic": "s_mound.png",
+            "demolition":1,
+            "build": [
+                {
+                    "ground": "sand_mound",
+                    "type_result": "block"
+                },
+                {
+                    "sand": "sand_mound",
+                    "type_result": "block"
+                },
+                {
+                    "pit": "sand",
+                    "type_result": "terrain"
+                }
+            ]
+
+        },
+        {
+            "id": 6,
+            "name": "stone",
+            "pic": "stone.png",
+            "demolition":3,
+            "build": [
+                {
+                    "ground": "stone",
+                    "type_result": "block"
+                },
+                {
+                    "sand": "stone",
+                    "type_result": "block"
+                },
+                {
+                    "deep_pit": "pit",
+                    "type_result": "terrain"
                 }
             ]
 
@@ -244,6 +299,35 @@
             ],
             "time": 40,
             "demolition":8
+        },
+        {
+            "id": 4,
+            "name": "mine",
+            "dim": {
+                "w": 3,
+                "h": 2
+            },
+            "plan": [
+                [2,3,4],
+                [2,3,4]               
+            ],
+            "pic": "mine.png",
+            "in": 
+            [
+                {
+                    "id": 0,
+                    "count": 0
+                }
+            ],
+            "out":
+            [
+                {
+                    "id": 6, 
+                    "count": 5
+                }
+            ],
+            "time": 15,
+            "demolition":3
         }
 
     ]
