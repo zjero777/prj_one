@@ -201,6 +201,6 @@ class inv:
             
     def insert(self, items):
         for block in items:
-            self.add_item(block)
+            self.add_item(block.copy())
             
             
