@@ -40,8 +40,8 @@
         +career
             +function(a, 5s, = 1 mound) 
         +miller
-        -moss_farm
-            -texture
+        +moss_farm
+            +texture
         -mine
         -          
 
