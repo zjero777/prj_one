@@ -17,7 +17,7 @@
         +space
         +ground
         +pit
-        -sand
+        +sand
         -water
         -terrain generation
 
@@ -28,7 +28,7 @@
         +2-brick
         +3-beam
         +4-moss
-        -5-stone
+        +5-stone
 
         
         ??!
@@ -42,7 +42,7 @@
         +miller
         +moss_farm
             +texture
-        -mine
+        +mine
         -          
 
             
