@@ -18,7 +18,7 @@
             "pic": "e1.png",
             "allow_dig": "True",
             "dig": {
-                "time": 1,
+                "time": 2,
                 "after": "pit",
                 "loot": [
                     {"id":1,"count": 1},
@@ -31,7 +31,21 @@
             "name": "pit",
             "pic": "pit.png",
             "allow_dig": "False"
-        }
+        },
+        {
+            "id": 4,
+            "name": "sand",
+            "pic": "sand.png",
+            "allow_dig": "True",
+            "dig": {
+                "time": 1,
+                "after": "pit",
+                "loot": [
+                    {"id":1,"count": 1}
+                ]
+            }
+        }       
+        
     ],
     "block_type": [
         {
@@ -52,6 +66,10 @@
                 {
                     "ground": "mound",
                     "type_result": "block"
+                },
+                {
+                    "sand": "mound",
+                    "type_result": "block"
                 }
             ]
 
@@ -65,6 +83,10 @@
                 {
                     "ground": "brick",
                     "type_result": "block"
+                },
+                {
+                    "sand": "brick",
+                    "type_result": "block"
                 }
             ]
         },
@@ -76,6 +98,10 @@
             "build": [
                 {
                     "ground": "beam",
+                    "type_result": "block"
+                },
+                {
+                    "sand": "beam",
                     "type_result": "block"
                 }
             ]
@@ -89,6 +115,10 @@
             "build": [
                 {
                     "ground": "moss",
+                    "type_result": "block"
+                },
+                {
+                    "sand": "moss",
                     "type_result": "block"
                 }
             ]
