@@ -1,3 +1,4 @@
+from distutils.log import warn
 from random import randrange
 import pygame as pg
 import pygame_gui as gui
@@ -169,6 +170,9 @@ class inv:
         return -1, -1
 
     def add_item(self, block):
+        if block['id']==0: 
+            warn('try add block id=0')
+            return
         index, item = self.find_by_key(self.backpack, 'id', block['id'])
         if index>-1:
             self.backpack[index] = {'id': block['id'], 'count': block['count']+item['count']}  
@@ -201,6 +205,7 @@ class inv:
             
     def insert(self, items):
         for block in items:
-            self.add_item(block.copy())
+            if block['id']>0:
+                self.add_item(block.copy())
             
             

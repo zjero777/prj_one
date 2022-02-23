@@ -1,4 +1,5 @@
 from distutils.util import strtobool
+from time import process_time
 import numpy as np
 from numpy.lib.function_base import append, select
 import pygame as pg
@@ -20,6 +21,9 @@ class terrain:
         self.selection = [-1, -1]
         self.surface = pg.Surface((FIELD_WIDTH, FIELD_HIGHT))
         self.field = np.zeros((height, width), dtype='i')
+        self.dark_cover = np.ones((height, width), dtype=np.bool)
+        self.fog_of_war = np.ones((height, width), dtype=np.bool)
+        self.operate = np.zeros((height, width), dtype=np.bool)
         self.building_map = np.zeros((height, width), dtype='i')
         self.first_click = True
         self.tile_pos = ()
@@ -61,6 +65,10 @@ class terrain:
 
         self.field_bg = pg.image.load(path.join(img_dir, 'bg.jpg')).convert_alpha()
         self.field_bgrect = self.field_bg.get_rect()
+        
+    def go_pos(self, pos):
+        if self.onMap(pos[0],pos[1]):
+            self.pos = pos
 
     def onMap(self, tile_x, tile_y):
         return(not tile_x < 0 or tile_y < 0 or tile_x > PLANET_WIDTH-1 or tile_y > PLANET_HIGHT-1)
@@ -229,14 +237,18 @@ class terrain:
                 working_text = '(Не работает)'
                 
             self.app.info.append_text(f'<b>{select_factory.name}</b> - {working_text}')
-            self.app.info.append_text('Ресурсы при разборе:')
-            self.app.info.append_list_items(select_factory.demolition_list_items_100)
+            if select_factory.demolition_list_items_100:
+                self.app.info.append_text('Ресурсы при разборе:')
+                self.app.info.append_list_items(select_factory.demolition_list_items_100)
             self.app.info.append_text(f'Время разбора(сек): {select_factory.demolition}')
-            self.app.info.append_text('Вход:')
-            self.app.info.append_list_items(select_factory.incom)
-            self.app.info.append_text('Выход:')
-            self.app.info.append_list_items(select_factory.outcom)
-            self.app.info.append_text(f'Время производства: {select_factory.process_time}')
+            if select_factory.incom:
+                self.app.info.append_text('Вход:')
+                self.app.info.append_list_items(select_factory.incom)
+            if select_factory.outcom:
+                self.app.info.append_text('Выход:')
+                self.app.info.append_list_items(select_factory.outcom)
+            process_time_sec = select_factory.process_time/1000
+            self.app.info.append_text(f'Время производства (сек): {process_time_sec:10.3f}')
             
             
 
@@ -441,6 +453,18 @@ class terrain:
                         self.surface.blit(
                             img, xyRect, special_flags=pg.BLEND_RGBA_MIN)
 
+
+        for y in range(self.pos[0]-HALF_HIGHT, self.pos[0]+HALF_HIGHT+1):
+            for x in range(self.pos[1]-HALF_WIDTH, self.pos[1]+HALF_WIDTH+1):
+                if (x < 0) or (y < 0) or (x >= self.field.shape[1]) or (y >= self.field.shape[0]):
+                    continue
+                xyRect = pg.Rect(
+                    (x-self.pos[1]+HALF_WIDTH)*TILE, (y-self.pos[0]+HALF_HIGHT)*TILE, TILE, TILE)
+              
+                if self.dark_cover[y,x]:
+                    self.surface.blit(self.field_img[0], xyRect)
+
+
         # draw in viewport
         self.app.screen.blit(self.surface, VIEW_RECT)
 
@@ -459,7 +483,7 @@ class terrain:
         if site == -1:  # demolition factory
             select_factory = self.app.factories.factory(tile_pos)
             resourses = select_factory.get_resources(100, 100)
-            i = -1
+            i = 0
             for count in resourses[1]:
                 if resourses[0][i]!=0:
                     player.pickup(resourses[0][i], count)
@@ -477,3 +501,19 @@ class terrain:
         # loot =  self.FindBInfo('id', diginfo['loot'])
         # self.field[tile_pos[0], tile_pos[1]] = self.FindTInfo('id', diginfo['after'])
         # player.pickup(loot, diginfo['count'])
+
+
+    def set_discover(self, x, y, radius):
+        
+        for i in range(0, 2*radius+1):
+            for j in range(0, 2*radius+1):
+                if (i-radius)*(i-radius)+(j-radius)*(j-radius)<radius*radius+radius:
+                    self.dark_cover[i+x-radius,j+y-radius]=False
+        
+
+
+    def set_operate(self, x, y, radius):
+        for i in range(0, 2*radius+1):
+            for j in range(0, 2*radius+1):
+                if (i-radius)*(i-radius)+(j-radius)*(j-radius)<radius*radius+radius:
+                    self.operate[i+x-radius,j+y-radius]=True

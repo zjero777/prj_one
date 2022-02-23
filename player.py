@@ -96,3 +96,9 @@ class player:
     def use_selected(self):
         self.inv.delete_selected_backpack_cell()
         
+    def fall(self, pos):
+        self.app.terrain.go_pos(pos)
+        bp = self.app.terrain.GetFData('name', 'escape_pod')
+        b_map = self.app.terrain.building_map
+        self.app.factories.add(bp, b_map, pos[0], pos[1])
+        

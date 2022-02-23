@@ -16,9 +16,15 @@ class factory:
         self.plan = np.array(blueprint['plan'])
         self.demolition = blueprint['demolition']
         self.pic = list.factory_img[blueprint['id']]
-        self.incom = blueprint['in']
-        self.outcom = (blueprint['out'])
-        self.process_time = blueprint['time']
+        if 'in' in blueprint.keys():
+            self.incom = blueprint['in']
+        else:
+            self.incom = []
+        if 'out' in blueprint.keys():
+            self.outcom = (blueprint['out'])
+        else:
+            self.outcom = []
+        self.process_time = int(blueprint['time']*1000)
         self.working = False
         self.timer = app.timer
         self.time = 0
@@ -52,12 +58,16 @@ class factory:
             
     def update(self):
         if not self.working:
+            # to-do: resource translate begin
+            
             if self.app.player.inv.exist(self.incom):
                 self.app.player.inv.delete(self.incom)
                 self.time = self.timer.get_ticks()
                 self.working = True
         else:
-            if self.timer.get_ticks()-self.time>self.process_time*1000:
+            if self.timer.get_ticks()-self.time>self.process_time:
+                # to-do: resource translate end
+                
                 self.app.player.inv.insert(self.outcom)
                 self.working = False
         
@@ -65,7 +75,7 @@ class factory:
     def progress(self):
         if self.working:
             now = self.timer.get_ticks()
-            return(((now-self.time)/self.process_time)//10)      
+            return(((now-self.time)/self.process_time))      
         else:
             return(0)
 
@@ -86,11 +96,18 @@ class factory_list:
         hight = bp['dim']['h']
         for j in range(y, y+hight):
             for i in range(x, x+width):
-            
                 b_map[j,i] = -1
 
         new_factory = factory(self, self.app, bp, y,x)
         self.active.append(new_factory)
+        
+        if 'detect' in bp.keys():
+            discover_radius = bp['detect']
+            self.app.terrain.set_discover(x+width//2,y+hight//2, discover_radius)
+        if 'operate' in bp.keys():
+            operate_radius = bp['operate']
+            self.app.terrain.set_operate(x-width//2,y-hight//2, operate_radius)
+            
         
 
     def delete(self, b_map, factory):

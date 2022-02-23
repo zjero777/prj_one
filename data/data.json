@@ -262,13 +262,6 @@
                 [2,2]
             ],
             "pic": "career.png",
-            "in": 
-            [
-                {
-                    "id": 0,
-                    "count": 0
-                }
-            ],
             "out":
             [
                 {
@@ -310,36 +303,6 @@
             "demolition":2
         },
         {
-            "id": 7,
-            "name": "roboport",
-            "dim": {
-                "w": 3,
-                "h": 3
-            },
-            "plan": [
-                [2,3,2],
-                [3,5,3],
-                [2,3,2]
-            ],
-            "pic": "roboport.png",
-            "in": 
-            [
-                {
-                    "id": 0,
-                    "count": 0
-                }
-            ],
-            "out":
-            [
-                {
-                    "id": 0, 
-                    "count": 0
-                }
-            ],
-            "time": 99999999999999999999999,
-            "demolition": 5
-        },
-        {
             "id": 3,
             "name": "moss_farm",
             "dim": {
@@ -353,13 +316,6 @@
                 [2,3,3,2]               
             ],
             "pic": "moss_farm.png",
-            "in": 
-            [
-                {
-                    "id": 0,
-                    "count": 0
-                }
-            ],
             "out":
             [
                 {
@@ -465,7 +421,41 @@
             ],
             "time": 25,
             "demolition": 8
+        },
+        {
+            "id": 7,
+            "name": "roboport",
+            "dim": {
+                "w": 3,
+                "h": 3
+            },
+            "plan": [
+                [2,3,2],
+                [3,5,3],
+                [2,3,2]
+            ],
+            "pic": "roboport.png",
+            "time": 1,
+            "demolition": 5
+        },
+        {
+            "id": 8,
+            "name": "escape_pod",
+            "dim": {
+                "w": 3,
+                "h": 3
+            },
+            "plan": [
+                [0,0,0,0],
+                [0,0,0,0],
+                [0,0,0,0],
+                [0,0,0,0]
+            ],
+            "pic": "escape_pod.png",
+            "time": 10,
+            "demolition": 30,
+            "detect": 10,
+            "operate": 5
         }
-
     ]
 }
