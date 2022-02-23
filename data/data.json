@@ -57,7 +57,14 @@
             "name": "deep_pit",
             "pic": "d_pit.png",
             "allow_dig": "False"
+        },
+        {
+            "id": 6,
+            "name": "water",
+            "pic": "water.png",
+            "allow_dig": "False"
         }
+
     
     ],
     "block_type": [
@@ -210,19 +217,8 @@
                     "type_result": "block"
                 }
             ]
-        },
-        {
-            "id": 9,
-            "name": "water",
-            "pic": "water.png",
-            "demolition":5,
-            "build": [    
-                {
-                    "pit": "water",
-                    "type_result": "block"
-                }
-            ]
         }
+
     ],
     "factory_type": [
         {
@@ -314,7 +310,7 @@
             "demolition":2
         },
         {
-            "id": 6,
+            "id": 7,
             "name": "roboport",
             "dim": {
                 "w": 3,
@@ -322,7 +318,7 @@
             },
             "plan": [
                 [2,3,2],
-                [3,0,3],
+                [3,5,3],
                 [2,3,2]
             ],
             "pic": "roboport.png",
@@ -389,8 +385,8 @@
             "in": 
             [
                 {
-                    "id": 0,
-                    "count": 0
+                    "id": 4,
+                    "count": 5
                 }
             ],
             "out":
