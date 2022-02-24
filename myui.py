@@ -1,4 +1,3 @@
-from email import utils
 from sys import flags
 from typing import Union, Tuple, Dict
 import utils 
@@ -296,3 +295,8 @@ class UIItem(UIItemsList):
         item_list = [{'img':new_item_pic, 'count':new_item_count}]
         super().set_items_list(item_list)
 
+class myUIImage(pygame_gui.elements.UIImage):
+    
+    def set_image(self, pic):
+        super().set_image(pic) 
+        self.relative_rect.size = self.image.get_rect().size

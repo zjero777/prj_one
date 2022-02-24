@@ -78,7 +78,11 @@ class terrain:
         for bp in self.data['factory_type']:
             factory_width = bp['dim']['w']
             factory_hight = bp['dim']['h']
-            factory_plan = np.array(bp['plan'])
+            if 'plan' in bp.keys():
+                factory_plan = np.array(bp['plan'])
+                if np.sum(factory_plan)==0: continue
+            else:
+                continue
             for find_x in range(x-factory_width+1, x+1):
                 for find_y in range(y-factory_hight+1, y+1):
                 
@@ -160,22 +164,25 @@ class terrain:
             return(self.FindTInfo(name, stroke))
 
     def Get_info_block_placed(self, use_item, place):
+        result_item = use_item
+        result_type = ''
         for item in self.data.get('block_type'):
-            if item['id'] == use_item['id']:
-                type_result = ''
-                rule = item.get('build', False)
-                if rule:
-                    for item_rule in rule:
-                        if place in item_rule:
-                            type_result = item_rule.get(
-                                'type_result', 'terrain')
-                            result_item_idx = self.FindInfo(
-                                'id', item_rule[place], type_result)
-                            return({'id': result_item_idx}, type_result)
-                    else:
-                        return(use_item, type_result)
-                else:
-                    return(use_item, type_result)
+            if use_item['id'] == item['id']:
+                rules = item.get('build', False)
+                if rules:
+                    rule = rules.get(place)
+                    if rule: # {'id':'1','count':3}
+                        result_type = rule.get('type')
+                        if not result_type: result_type = 'block'
+                        result = rule.get('result')
+                        if not result: result = self.FindInfo('id', use_item['id'], result_type)
+                        result_item = self.FindInfo('id', result, result_type)
+                    elif rule=={}: # {}
+                        result_type = 'block'
+                        break
+                    else: # None
+                        break
+        return(result_item, result_type)
 
     def view_invinfo(self, tilepos=()):
         if not tilepos:
@@ -334,7 +341,7 @@ class terrain:
             self.view_invinfo()
         
         
-        if not pg.Rect(VIEW_RECT).collidepoint(mouse_pos) or not self.tile_pos:
+        if not pg.Rect(VIEW_RECT).collidepoint(mouse_pos):
             self.app.info.clear_info()
             
         if pg.Rect(VIEW_RECT).collidepoint(mouse_pos) and not self.app.player.is_openinv:
@@ -460,7 +467,7 @@ class terrain:
                         img.set_alpha(172)
                         self.surface.blit(img, xyRect)
                     else:
-                        img = self.Get_img(build_item, 'terrain').copy()
+                        img = self.Get_img(build_item, 'block').copy()
                         img.set_alpha(172)
                         colorImage = pg.Surface(img.get_size()).convert_alpha()
                         colorImage.fill(pg.Color('red'))
@@ -524,7 +531,7 @@ class terrain:
         for i in range(0, 2*radius+1):
             for j in range(0, 2*radius+1):
                 if (i-radius)*(i-radius)+(j-radius)*(j-radius)<radius*radius+radius:
-                    self.dark_cover[i+x-radius,j+y-radius]=False
+                    self.dark_cover[j+y-radius,i+x-radius]=False
         
 
 
