@@ -460,7 +460,7 @@ class terrain:
                         img.set_alpha(172)
                         self.surface.blit(img, xyRect)
                     else:
-                        img = self.Get_img(build_item, 'terrain').copy()
+                        img = self.Get_img(build_item, 'block').copy()
                         img.set_alpha(172)
                         colorImage = pg.Surface(img.get_size()).convert_alpha()
                         colorImage.fill(pg.Color('red'))
