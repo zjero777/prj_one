@@ -217,6 +217,30 @@
                     "type_result": "block"
                 }
             ]
+        },
+        {
+            "id": 9,
+            "name": "corall",
+            "pic": "corall.png",
+            "demolition":2,
+            "build": [
+                {
+                    "water": "corall",
+                    "type_result": "block"
+                }
+            ]
+        },
+        {
+            "id": 10,
+            "name": "not_growed_corall",
+            "pic": "n_g_corall.png",
+            "demolition":1.5,
+            "build": [
+                {
+                    "water": "not_growed_corall",
+                    "type_result": "block"
+                }
+            ]
         }
 
     ],
@@ -300,7 +324,7 @@
                 }
             ],
             "time": 8,
-            "demolition":2
+            "demolition":2.5
         },
         {
             "id": 3,
@@ -324,7 +348,7 @@
                 }
             ],
             "time": 40,
-            "demolition":8
+            "demolition":6
         },
         {
             "id": 4,
@@ -406,21 +430,17 @@
                 {
                     "id": 4,
                     "count": 3
-                },
-                {
-                    "id": 5,
-                    "count": 1
                 }
             ],
             "out":
             [
                 {
                     "id": 8, 
-                    "count": 2
+                    "count": 1
                 }
             ],
             "time": 25,
-            "demolition": 8
+            "demolition": 7.5
         },
         {
             "id": 7,
@@ -436,14 +456,15 @@
             ],
             "pic": "roboport.png",
             "time": 1,
-            "demolition": 5
+            "demolition": 4.5,
+            "operate": 10
         },
         {
             "id": 8,
             "name": "escape_pod",
             "dim": {
-                "w": 3,
-                "h": 3
+                "w": 4,
+                "h": 4
             },
             "plan": [
                 [0,0,0,0],
@@ -453,9 +474,58 @@
             ],
             "pic": "escape_pod.png",
             "time": 10,
-            "demolition": 30,
+            "demolition": 15,
             "detect": 10,
             "operate": 5
+        },
+        {
+            "id": 9,
+            "name": "labaratory",
+            "dim": {
+                "w": 4,
+                "h": 4
+            },
+            "plan": [
+                [6,6,7,8],
+                [6,7,7,7],
+                [6,7,7,7],
+                [6,6,7,8]
+            ],
+            "pic": "labaratory.png",
+            "time": 20,
+            "demolition": 8,
+            "detect": 1,
+            "in": 
+            [
+                {
+                    "id": 5,
+                    "count": 10
+                }
+            ],
+            "out":
+            [
+                {
+                    "id": 10, 
+                    "count": 1
+                }
+            ]
+        },
+        {
+            "id": 10,
+            "name": "radar",
+            "dim": {
+                "w": 3,
+                "h": 3
+            },
+            "plan": [
+                [2,7,2],
+                [7,8,7],
+                [2,7,2]
+            ],
+            "pic": "radar.png",
+            "time": 10,
+            "demolition": 4.5,
+            "detect": 15
         }
     ]
 }
