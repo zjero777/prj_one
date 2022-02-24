@@ -369,4 +369,7 @@ class info:
             self._shift_next_position(dtop)
             self.msg_line += 1
         
-
+    def clear_info(self):
+        self.app.info.start()
+        self.app.info.append_text(f'Территория не открыта')
+        self.app.info.stop()
