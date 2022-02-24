@@ -196,6 +196,12 @@ class terrain:
             self.app.info.stop()
             return
 
+        if self.dark_cover[self.tile_pos]: 
+            self.app.info.start()
+            self.app.info.append_text(f'Территория не открыта')
+            self.app.info.stop()
+            return
+        
         select_terrain = self.field[tilepos[0], tilepos[1]]
         select_building = self.building_map[tilepos[0], tilepos[1]]
         select_factory = self.app.factories.factory(tilepos)
@@ -278,6 +284,9 @@ class terrain:
             self.app.info.append_text(f'<b>{data}</b><br>(???,???)')
             self.app.info.stop()
             return
+        
+        if self.dark_cover[self.tile_pos]: return
+        
         selected_item = self.app.player.inv.item
         select_terrain = self.field[tilepos[0], tilepos[1]]
         select_building = self.building_map[tilepos[0], tilepos[1]]
@@ -325,8 +334,13 @@ class terrain:
             self.view_invinfo()
         
         
+        if not pg.Rect(VIEW_RECT).collidepoint(mouse_pos) or not self.tile_pos:
+            self.app.info.clear_info()
+            
         if pg.Rect(VIEW_RECT).collidepoint(mouse_pos) and not self.app.player.is_openinv:
-
+            
+            
+            #  view terrain info
             if self.app.player.inv.selected_backpack_cell == -1:
                 self.view_Tileinfo(self.tile_pos)
             else:
@@ -335,9 +349,9 @@ class terrain:
 
             if not mouse_button[0]:
                 self.first_click = True
-            # self.app.info.debug((0,60), f'{self.first_click}')
+            
 
-            if mouse_button[0] and len(self.tile_pos) > 0:
+            if mouse_button[0] and len(self.tile_pos) > 0 and not self.dark_cover[self.tile_pos]:
                 if self.app.player.inv.selected_backpack_cell > -1:
 
                     if self.first_click:
@@ -385,6 +399,7 @@ class terrain:
             else:
                 self.app.player.stop_dig()
                 self.app.player.stop_demolition()
+                
 
             if mouse_button[2] and not mouse_button[0] and len(self.tile_pos) > 0:
                 self.app.player.inv.selected_backpack_cell = -1
@@ -392,6 +407,7 @@ class terrain:
         else:
             self.app.player.stop_dig()
             self.app.player.stop_demolition()
+            
 
     def draw(self):
         # draw bg
