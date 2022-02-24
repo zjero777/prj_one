@@ -78,20 +78,17 @@
             "name": "mound",
             "pic": "mound.png",
             "demolition":2,
-            "build": [
+            "build": {
+                "pit":
                 {
-                    "pit": "ground",
-                    "type_result": "terrain"
+                    "result": "ground",
+                    "type":"terrain"
                 },
-                {
-                    "ground": "mound",
-                    "type_result": "block"
+                "sand": {
                 },
-                {
-                    "sand": "mound",
-                    "type_result": "block"
+                "ground": {
                 }
-            ]
+            }
 
         },
         {
@@ -99,150 +96,121 @@
             "name": "brick",
             "pic": "b2.png", 
             "demolition":2,
-            "build": [
+            "build": {
+                "ground":
                 {
-                    "ground": "brick",
-                    "type_result": "block"
                 },
-                {
-                    "sand": "brick",
-                    "type_result": "block"
+                "sand": {
                 }
-            ]
+            }
         },
         {
             "id": 3,
             "name": "beam",
             "pic": "beam.png",
             "demolition":1,
-            "build": [
+            "build": {
+                "ground":
                 {
-                    "ground": "beam",
-                    "type_result": "block"
                 },
-                {
-                    "sand": "beam",
-                    "type_result": "block"
+                "sand": {
                 }
-            ]
-
+            }
         },
         {
             "id": 4,
             "name": "moss",
             "pic": "moss.png",
             "demolition":1,
-            "build": [
+            "build": {
+                "ground":
                 {
-                    "ground": "moss",
-                    "type_result": "block"
                 },
-                {
-                    "sand": "moss",
-                    "type_result": "block"
+                "sand": {
                 }
-            ]
-
+            }
         },
         {
             "id": 5,
             "name": "sand_mound",
             "pic": "s_mound.png",
             "demolition":1,
-            "build": [
-                {
-                    "ground": "sand_mound",
-                    "type_result": "block"
+            "build": {
+                "ground": {
                 },
-                {
-                    "sand": "sand_mound",
-                    "type_result": "block"
+                "sand": {
                 },
-                {
-                    "pit": "sand",
-                    "type_result": "terrain"
+                "pit": {
+                    "result": "sand",
+                    "type":"terrain"
                 }
-            ]
-
+            }
         },
         {
             "id": 6,
             "name": "stone",
             "pic": "stone.png",
             "demolition":3,
-            "build": [
+            "build": {
+                "ground":
                 {
-                    "ground": "stone",
-                    "type_result": "block"
                 },
-                {
-                    "sand": "stone",
-                    "type_result": "block"
+                "sand": {
                 },
-                {
-                    "deep_pit": "pit",
-                    "type_result": "terrain"
+                "deep_pit": {
+                    "result": "pit",
+                    "type":"terrain"
                 }
-            ]
-
+            }
         },
         {
             "id": 7,
             "name": "metall",
             "pic": "metall.png",
             "demolition":2,
-            "build": [
+            "build": {
+                "ground":
                 {
-                    "ground": "metall",
-                    "type_result": "block"
                 },
-                {
-                    "sand": "metall",
-                    "type_result": "block"
+                "sand": {
                 }
-            ]
+            }
         },
         {
             "id": 8,
             "name": "plastic",
             "pic": "plastic.png",
             "demolition":2,
-            "build": [
+            "build": {
+                "ground":
                 {
-                    "ground": "plastic",
-                    "type_result": "block"
                 },
-                {
-                    "sand": "plastic",
-                    "type_result": "block"
+                "sand": {
                 }
-            ]
+            }
         },
         {
             "id": 9,
             "name": "corall",
             "pic": "corall.png",
             "demolition":2,
-            "build": [
+            "build": {
+                "water":
                 {
-                    "water": "corall",
-                    "type_result": "block"
                 }
-            ]
+            }
         },
         {
             "id": 10,
             "name": "not_growed_corall",
             "pic": "n_g_corall.png",
             "demolition":1.5,
-            "build": [
+            "build": {
+                "water":
                 {
-                    "water": "not_growed_corall",
-                    "type_result": "block"
                 }
-            ]
+            }
         }
-
     ],
     "factory_type": [
         {
@@ -466,12 +434,6 @@
                 "w": 4,
                 "h": 4
             },
-            "plan": [
-                [0,0,0,0],
-                [0,0,0,0],
-                [0,0,0,0],
-                [0,0,0,0]
-            ],
             "pic": "escape_pod.png",
             "time": 10,
             "demolition": 15,

@@ -13,7 +13,10 @@ class factory:
         self.name = blueprint['name']
         self.tile_pos = (x, y)
         self.size = (blueprint['dim']['h'], blueprint['dim']['w'])
-        self.plan = np.array(blueprint['plan'])
+        if 'plan' in blueprint.keys():
+            self.plan = np.array(blueprint['plan'])
+        else:
+            self.plan = None
         self.demolition = blueprint['demolition']
         self.pic = list.factory_img[blueprint['id']]
         if 'in' in blueprint.keys():
@@ -45,7 +48,7 @@ class factory:
         list_items = []
         i=0
         for item in res[0]:
-            if item!=0:
+            if item and item!=0:
                 list_items.append({'id':item,'count':res[1][i]})
             i+=1
         return(list_items)

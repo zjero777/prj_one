@@ -191,7 +191,8 @@ class inv:
             for i in self.backpack:
                 if i==item:
                     self.selected_backpack_cell = idx
-                idx=+1
+                    break
+                idx+=1
                     
             
             

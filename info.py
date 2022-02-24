@@ -120,6 +120,7 @@ class info:
 
     def clear(self):
         self.msg_line = 0
+        self.top = 0
         for item in self.msg_info_list:
             del item
 
@@ -148,7 +149,7 @@ class info:
         elif justify=='center':
             justify = INFO_WIDTH//2-pic_relativity_rect.height//2
         pic_rect = pg.Rect((justify, top_pos), pic_relativity_rect.size)
-        picui = gui.elements.UIImage(
+        picui = myUIImage(
             relative_rect=pic_rect,
             image_surface=pic,
             manager=self.app.manager,
@@ -272,6 +273,7 @@ class info:
             oldtop = self.msg_info_list[self.msg_line]['ui'].get_relative_rect()[3]
             self.msg_info_list[self.msg_line]['ui'].kill()
             del self.msg_info_list[self.msg_line]['ui']
+            
 
             element, newtop = self._create_pic_info(pic, self.top, justify=justify)
             self.msg_info_list[self.msg_line] = element
@@ -371,5 +373,5 @@ class info:
         
     def clear_info(self):
         self.app.info.start()
-        self.app.info.append_text(f'Территория не открыта')
+        self.app.info.append_text(f'')
         self.app.info.stop()

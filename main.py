@@ -23,7 +23,7 @@ class game:
         self.is_runing = True
         self.mouse = mouse(self)
         self.factories = factory_list(self)
-        self.player.fall([10,10])
+        self.player.fall([10,20])
                 
     def update(self, dt):
         self.player.update()
