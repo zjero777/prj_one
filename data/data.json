@@ -21,8 +21,7 @@
                 "time": 2,
                 "after": "pit",
                 "loot": [
-                    {"id":1,"count": 1},
-                    {"id":2,"count": 10}
+                    {"id":1,"count": 1}
                 ]
             }
         },
@@ -63,6 +62,19 @@
             "name": "water",
             "pic": "water.png",
             "allow_dig": "False"
+        },
+        {
+            "id": 7,
+            "name": "scorhed ground",
+            "pic": "scorhed_g.png",
+            "allow_dig": "True",
+            "dig": {
+                "time": 2,
+                "after": "pit",
+                "loot": [
+                    {"id":1,"count": 1}
+                ]
+            }
         }
 
     
@@ -87,6 +99,11 @@
                 "sand": {
                 },
                 "ground": {
+                },
+                "water":
+                {
+                    "result": "sand",
+                    "type":"terrain"
                 }
             }
 
@@ -436,9 +453,9 @@
             },
             "pic": "escape_pod.png",
             "time": 10,
-            "demolition": 15,
-            "detect": 5,
-            "operate": 5
+            "demolition": 30,
+            "detect": 12,
+            "operate": 8
         },
         {
             "id": 9,
@@ -456,7 +473,8 @@
             "pic": "labaratory.png",
             "time": 20,
             "demolition": 8,
-            "detect": 1,
+            "detect": 3,
+            "operate": 2,
             "in": 
             [
                 {
@@ -488,6 +506,37 @@
             "time": 10,
             "demolition": 4.5,
             "detect": 15
+        },
+        {
+            "id": 11,
+            "name": "corall_farm",
+            "dim": {
+                "w": 4,
+                "h": 4
+            },
+            "plan": [
+                [8,8,  8,8],
+                [8,10,10,8],
+                [8,10,10,8],
+                [8,8,  8,8]
+            ],
+            "pic": "corall_f.png",
+            "time": 20,
+            "demolition": 8,
+            "in": 
+            [
+                {
+                    "id": 10,
+                    "count": 4
+                }
+            ],
+            "out":
+            [
+                {
+                    "id": 9, 
+                    "count": 4
+                }
+            ]
         }
     ]
 }
