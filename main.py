@@ -7,6 +7,7 @@ from terrain import *
 from info import *
 from player import *
 from factory import *
+from waterfall import *
 
 class game:
     def __init__(self):
@@ -24,6 +25,7 @@ class game:
         self.mouse = mouse(self)
         self.factories = factory_list(self)
         self.player.fall((PLANET_WIDTH//2,PLANET_HIGHT//2))
+        self.water_falls = waterfalls(self)
                 
     def update(self, dt):
         self.player.update()
@@ -32,6 +34,7 @@ class game:
         self.factories.update()
         self.mouse.update()
         self.info.update()
+        self.water_falls.update()
     
     def draw(self):
         self.surface.fill(pg.Color('cyan'))        

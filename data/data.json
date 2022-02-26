@@ -65,8 +65,8 @@
         },
         {
             "id": 7,
-            "name": "scorhed ground",
-            "pic": "scorhed_g.png",
+            "name": "scorched_ground",
+            "pic": "scorched_g.png",
             "allow_dig": "True",
             "dig": {
                 "time": 2,
