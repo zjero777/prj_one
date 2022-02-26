@@ -1,3 +1,4 @@
+from numpy import cos, sin
 import pygame as pg
 import pygame_gui as gui
 from options import *
@@ -104,6 +105,8 @@ class player:
         b_map = terra.building_map
         factory=self.app.factories.add(bp, b_map, pos[0], pos[1])
         pos = (pos[0]+factory.size[0]//2, pos[1]+factory.size[1]//2)
+        self.scorch_ground(pos, 4)
+        self.add_water(pos, 7)
         self.go_pos(terra, pos)
         self.set_spawn(pos)
         
@@ -117,3 +120,18 @@ class player:
     def go_spawn(self):
         terra = self.app.terrain
         self.go_pos(terra, self.pos)
+        
+    def scorch_ground(self, pos, rad):
+        for angle in range(0, 360,2):
+            r = randrange(0, rad)
+            x = r * cos(angle)
+            y = r * sin(angle)
+            self.app.terrain.field[round(pos[0]+x-0.5),round(pos[1]+y-0.5)] = self.app.terrain.GetTData('name', 'scorched_ground')['id']
+            
+    def add_water(self, pos, rad):
+        angle = randrange(0, 360)
+        x = rad * cos(angle)
+        y = rad * sin(angle)
+        self.app.terrain.field[round(pos[0]+x-0.5),round(pos[1]+y-0.5)] = self.app.terrain.GetTData('name', 'water')['id']
+        
+            

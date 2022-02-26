@@ -1,4 +1,3 @@
-from typing import Tuple
 import pygame as pg
 from options import *
 import random as rnd
