@@ -13,7 +13,8 @@ class player:
         self.start_dig = 0
         self.is_openinv = False
         self.demolition = False
-        self.warmup = 0        
+        self.warmup = 0
+        self.pos = ()        
         
     def update(self):
         self.inv.update()
@@ -99,11 +100,20 @@ class player:
         
     def fall(self, pos):
         terra = self.app.terrain
-        self.go_pos(terra, pos)
         bp = terra.GetFData('name', 'escape_pod')
         b_map = terra.building_map
-        self.app.factories.add(bp, b_map, pos[0], pos[1])
+        factory=self.app.factories.add(bp, b_map, pos[0], pos[1])
+        pos = (pos[0]+factory.size[0]//2, pos[1]+factory.size[1]//2)
+        self.go_pos(terra, pos)
+        self.set_spawn(pos)
         
     def go_pos(self, terra, pos):
         if terra.onMap(pos[0],pos[1]):
             terra.pos = pos
+            
+    def set_spawn(self, pos):
+        self.pos = pos
+        
+    def go_spawn(self):
+        terra = self.app.terrain
+        self.go_pos(terra, self.pos)

@@ -1,4 +1,5 @@
 from distutils.util import strtobool
+from math import ceil, trunc
 from time import process_time
 import numpy as np
 from numpy.lib.function_base import append, select
@@ -6,12 +7,15 @@ import pygame as pg
 import random as rnd
 import json
 import pygame_gui as gui
+import cv2
 
 from pygame.event import Event
 from factory import factory_list
 
 from info import info
 from options import *
+from utils import convert_opencv_img_to_pygame, cvimage_grayscale
+
 
 
 class terrain:
@@ -50,12 +54,19 @@ class terrain:
         #    self.field[i,99] = 1
         #    self.field[0,i] = 1
         #   self.field[99,i] = 1
+    
+    
+        
 
-        self.field_img = [0 for i in self.data['terrain_type']]
+        self.field_img = [[0,0] for i in self.data['terrain_type']]
         for img in self.data['terrain_type']:
-            self.field_img[img['id']] = (pg.image.load(
-                path.join(img_dir, img['pic'])).convert_alpha())
-        self.field_rect = self.field_img[0].get_rect()
+            pic = pg.image.load(
+                path.join(img_dir, img['pic'])).convert_alpha()
+            cvimg = cv2.imread(path.join(img_dir, img['pic']))
+            gray_image = cvimage_grayscale(cvimg)
+            pic_gray = convert_opencv_img_to_pygame(gray_image)
+            self.field_img[img['id']][0] = pic
+            self.field_img[img['id']][1] = pic_gray
 
         self.block_img = [0 for i in self.data['block_type']]
         for img in self.data['block_type']:
@@ -170,9 +181,10 @@ class terrain:
                     if rule: # {'id':'1','count':3}
                         result_type = rule.get('type')
                         if not result_type: result_type = 'block'
-                        result = rule.get('result')
-                        if not result: result = self.FindInfo('id', use_item['id'], result_type)
-                        result_item = self.FindInfo('id', result, result_type)
+                        result_item_name = rule.get('result')
+                        # if not result: result = self.FindInfo('id', use_item['id'], result_type)
+                        result_item = {'id':self.FindInfo('id', result_item_name, result_type), 'count':1}
+                        
                     elif rule=={}: # {}
                         result_type = 'block'
                         break
@@ -194,7 +206,7 @@ class terrain:
             data = self.GetInfo('name', pic_idx)
             # self.app.info.set(self.text, pic_idx)
             self.app.info.start()
-            self.app.info.append_pic(self.field_img[pic_idx])
+            self.app.info.append_pic(self.field_img[pic_idx][0])
             self.app.info.append_text(f'<b>{data}</b><br>(???,???)')
             self.app.info.stop()
             return
@@ -211,7 +223,7 @@ class terrain:
 
         terrain_data = self.GetTData('id', select_terrain)
         terrain_name = terrain_data['name']
-        terrain_pic = self.field_img[select_terrain]
+        terrain_pic = self.field_img[select_terrain][0]
 
         self.app.info.append_pic(terrain_pic)
         self.app.info.append_text(f'<b>{terrain_name}</b><br>{tilepos}</b>')
@@ -288,7 +300,7 @@ class terrain:
             pic_idx = self.FindTInfo('id', 'hyperspace')
             data = self.GetInfo('name', pic_idx)
             self.app.info.start()
-            self.app.info.append_pic(self.field_img[pic_idx])
+            self.app.info.append_pic(self.field_img[pic_idx][0])
             self.app.info.append_text(f'<b>{data}</b><br>(???,???)')
             self.app.info.stop()
             return
@@ -307,7 +319,7 @@ class terrain:
     
     def Get_img(self, item, b_type):
         if b_type == 'terrain':
-            return(self.field_img[item['id']])
+            return(self.field_img[item['id']][0])
         elif b_type == 'block':
             return(self.block_img[item['id']])
 
@@ -325,19 +337,23 @@ class terrain:
             dy = 0
             pos_change = True
             # self.pos[0] += 1
+
         if keystate[pg.K_w]:
             # self.pos[1] += -1
             dx = 0
             dy = -1
             pos_change = True
+      
         if keystate[pg.K_s]:
             # self.pos[1] += 1
             dx = 0
             dy = 1
-            pos_change = True
-        
+            pos_change = True        
         if pos_change and self.onMap(self.pos[0]+dx, self.pos[1]+dy):
             self.pos = (self.pos[0]+dx, self.pos[1]+dy)
+            
+        if keystate[pg.K_HOME]:
+            self.app.player.go_spawn()
             
         mouse_button = pg.mouse.get_pressed()
         mouse_pos = pg.mouse.get_pos()
@@ -365,7 +381,7 @@ class terrain:
                 self.first_click = True
             
 
-            if mouse_button[0] and len(self.tile_pos) > 0 and not self.dark_cover[self.tile_pos]:
+            if mouse_button[0] and len(self.tile_pos) > 0 and not self.dark_cover[self.tile_pos] and self.operate[self.tile_pos]:
                 if self.app.player.inv.selected_backpack_cell > -1:
 
                     if self.first_click:
@@ -433,7 +449,10 @@ class terrain:
                 xyRect = pg.Rect(
                     (x-self.pos[0]+HALF_WIDTH)*TILE, (y-self.pos[1]+HALF_HIGHT)*TILE, TILE, TILE)
                 if self.field[x,y] > 0:
-                    self.surface.blit(self.field_img[self.field[x,y]], xyRect)
+                    if self.operate[x,y]:
+                        self.surface.blit(self.field_img[self.field[x,y]][0], xyRect)
+                    else:
+                        self.surface.blit(self.field_img[self.field[x,y]][1], xyRect)
                 if self.building_map[x,y] > 0:
                     self.surface.blit(
                         self.block_img[self.building_map[x,y]], xyRect)
@@ -491,7 +510,7 @@ class terrain:
                     (x-self.pos[0]+HALF_WIDTH)*TILE, (y-self.pos[1]+HALF_HIGHT)*TILE, TILE, TILE)
               
                 if self.dark_cover[x,y]:
-                    self.surface.blit(self.field_img[0], xyRect)
+                    self.surface.blit(self.field_img[0][0], xyRect)
 
 
         # draw in viewport
@@ -532,19 +551,19 @@ class terrain:
         # player.pickup(loot, diginfo['count'])
 
 
-    def set_discover(self, x, y, radius):
+    def set_discover(self, x: int, y: int, radius):
         
-        for i in range(0, 2*radius+1):
-            for j in range(0, 2*radius+1):
-                if (i-radius)*(i-radius)+(j-radius)*(j-radius)<radius*radius+radius:
-                    if self.onMap(i+x-radius, j+y-radius):
-                        self.dark_cover[i+x-radius, j+y-radius]=False
+        for i in range(-radius, radius):
+            for j in range(-radius, radius):
+                if (i+0.5)*(i+0.5)+(j+0.5)*(j+0.5)<=radius*radius:
+                    if self.onMap(i+x, j+y):
+                        self.dark_cover[ceil(i+x), ceil(j+y)]=False
         
 
 
     def set_operate(self, x, y, radius):
-        for i in range(0, 2*radius+1):
-            for j in range(0, 2*radius+1):
-                if (i-radius)*(i-radius)+(j-radius)*(j-radius)<radius*radius+radius:
-                    if self.onMap(i+x-radius, j+y-radius):
-                        self.operate[i+x-radius,j+y-radius]=True
+        for i in range(-radius, radius):
+            for j in range(-radius, radius):
+                if (i+0.5)*(i+0.5)+(j+0.5)*(j+0.5)<=radius*radius:
+                    if self.onMap(i+x, j+y):
+                        self.operate[ceil(i+x), ceil(j+y)]=True
