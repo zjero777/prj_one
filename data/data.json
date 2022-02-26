@@ -99,6 +99,11 @@
                 "sand": {
                 },
                 "ground": {
+                },
+                "water":
+                {
+                    "result": "sand",
+                    "type":"terrain"
                 }
             }
 
