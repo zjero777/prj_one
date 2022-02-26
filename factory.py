@@ -12,9 +12,9 @@ class factory:
         self.id = blueprint['id']
         self.name = blueprint['name']
         self.tile_pos = (x, y)
-        self.size = (blueprint['dim']['h'], blueprint['dim']['w'])
+        self.size = (blueprint['dim']['w'], blueprint['dim']['h'])
         if 'plan' in blueprint.keys():
-            self.plan = np.array(blueprint['plan'])
+            self.plan = np.transpose(blueprint['plan'])
         else:
             self.plan = None
         self.demolition = blueprint['demolition']
@@ -28,9 +28,20 @@ class factory:
         else:
             self.outcom = []
         self.process_time = int(blueprint['time']*1000)
+        if 'operate' in blueprint.keys():
+            self.operate = (blueprint['operate'])
+        else:
+            self.operate = 0
+        if 'detect' in blueprint.keys():
+            self.detect = (blueprint['detect'])
+        else:
+            self.detect = 0
+        
+        
         self.working = False
         self.timer = app.timer
         self.time = 0
+        
         
         
     def get_resources(self, minproc=100, maxproc=100):
@@ -99,9 +110,9 @@ class factory_list:
         hight = bp['dim']['h']
         for j in range(y, y+hight):
             for i in range(x, x+width):
-                b_map[j,i] = -1
+                b_map[i,j] = -1
 
-        new_factory = factory(self, self.app, bp, y,x)
+        new_factory = factory(self, self.app, bp, x,y)
         self.active.append(new_factory)
         
         if 'detect' in bp.keys():
