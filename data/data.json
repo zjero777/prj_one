@@ -437,7 +437,7 @@
             "pic": "escape_pod.png",
             "time": 10,
             "demolition": 15,
-            "detect": 10,
+            "detect": 5,
             "operate": 5
         },
         {

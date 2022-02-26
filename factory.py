@@ -117,10 +117,12 @@ class factory_list:
         
         if 'detect' in bp.keys():
             discover_radius = bp['detect']
-            self.app.terrain.set_discover(x+width//2,y+hight//2, discover_radius)
+            self.app.terrain.set_discover(x+new_factory.size[0]//2,y+new_factory.size[1]//2, discover_radius)
         if 'operate' in bp.keys():
             operate_radius = bp['operate']
-            self.app.terrain.set_operate(x-width//2,y-hight//2, operate_radius)
+            self.app.terrain.set_operate(x+new_factory.size[0]//2,y+new_factory.size[1]//2, operate_radius)
+            
+        return(new_factory)
             
         
 

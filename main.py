@@ -23,7 +23,7 @@ class game:
         self.is_runing = True
         self.mouse = mouse(self)
         self.factories = factory_list(self)
-        self.player.fall((PLANET_WIDTH//2,1))
+        self.player.fall((PLANET_WIDTH//2,PLANET_HIGHT//2))
                 
     def update(self, dt):
         self.player.update()
