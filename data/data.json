@@ -517,7 +517,21 @@
             ],
             "pic": "corall_f.png",
             "time": 20,
-            "demolition": 8
+            "demolition": 8,
+            "in": 
+            [
+                {
+                    "id": 10,
+                    "count": 4
+                }
+            ],
+            "out":
+            [
+                {
+                    "id": 9, 
+                    "count": 4
+                }
+            ]
         }
     ]
 }
