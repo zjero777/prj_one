@@ -58,7 +58,7 @@ class info:
         # self.pic_info = gui.elements.UIImage(self.pic_rect,  self.app.terrain.field_img[0], self.app.manager, container=self.panel_info)
 
         # debuf info
-        self.debug_font = pg.font.SysFont('arial', 36)
+        self.debug_font = pg.font.SysFont('times', 14, True)
         self.debug_textlist = []
 
         # self.panels = []

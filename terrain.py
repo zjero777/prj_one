@@ -15,16 +15,16 @@ from options import *
 
 
 class terrain:
-    def __init__(self, app, width, height, pos=[50, 50]):
+    def __init__(self, app, width, height):
         self.app = app
-        self.pos = [pos[0], pos[1]]
+        self.pos=(PLANET_WIDTH//2, PLANET_HIGHT//2)
         self.selection = [-1, -1]
         self.surface = pg.Surface((FIELD_WIDTH, FIELD_HIGHT))
-        self.field = np.zeros((height, width), dtype='i')
-        self.dark_cover = np.ones((height, width), dtype=np.bool)
-        self.fog_of_war = np.ones((height, width), dtype=np.bool)
-        self.operate = np.zeros((height, width), dtype=np.bool)
-        self.building_map = np.zeros((height, width), dtype='i')
+        self.field = np.zeros((width,height), dtype='i')
+        self.dark_cover = np.ones((width,height), dtype=np.bool)
+        self.fog_of_war = np.ones((width,height), dtype=np.bool)
+        self.operate = np.zeros((width,height), dtype=np.bool)
+        self.building_map = np.zeros((width,height), dtype='i')
         self.first_click = True
         self.tile_pos = ()
         f = open('data/data.json',)
@@ -34,15 +34,15 @@ class terrain:
         self.field.fill(self.FindTInfo('id', 'ground'))
 
         for i in range(100):
-            self.field[rnd.randint(0, 99), rnd.randint(0, 99)] = 0
+            self.field[rnd.randint(0, PLANET_WIDTH-1), rnd.randint(0, PLANET_HIGHT-1)] = 0
         for i in range(100):
-            self.field[rnd.randint(0, 99), rnd.randint(0, 99)] = 4
+            self.field[rnd.randint(0, PLANET_WIDTH-1), rnd.randint(0, PLANET_HIGHT-1)] = 4
         for i in range(100):
-            self.field[rnd.randint(0, 99), rnd.randint(0, 99)] = 6
+            self.field[rnd.randint(0, PLANET_WIDTH-1), rnd.randint(0, PLANET_HIGHT-1)] = 6
 
         for i in range(100):
-            self.building_map[rnd.randint(0, 99), rnd.randint(
-                0, 99)] = rnd.randrange(1, 3)
+            self.building_map[rnd.randint(0, PLANET_WIDTH-1), rnd.randint(
+                0, PLANET_HIGHT-1)] = rnd.randrange(1, 3)
         #self.field[50, 50] = 1
         # for i in range(100):
         self.building_map[9,7] = 2
@@ -66,38 +66,34 @@ class terrain:
         self.field_bg = pg.image.load(path.join(img_dir, 'bg.jpg')).convert_alpha()
         self.field_bgrect = self.field_bg.get_rect()
         
-    def go_pos(self, pos):
-        if self.onMap(pos[0],pos[1]):
-            self.pos = pos
-
     def onMap(self, tile_x, tile_y):
-        return(not tile_x < 0 or tile_y < 0 or tile_x > PLANET_WIDTH-1 or tile_y > PLANET_HIGHT-1)
+        return(tile_x >= 0 and tile_y >= 0 and tile_x < PLANET_WIDTH and tile_y < PLANET_HIGHT)
 
     def complete_factory(self):
-        y,x = self.tile_pos
+        x,y = self.tile_pos
         for bp in self.data['factory_type']:
             factory_width = bp['dim']['w']
             factory_hight = bp['dim']['h']
             if 'plan' in bp.keys():
-                factory_plan = np.array(bp['plan'])
+                factory_plan = np.transpose(np.array(bp['plan']))
                 if np.sum(factory_plan)==0: continue
             else:
                 continue
             for find_x in range(x-factory_width+1, x+1):
                 for find_y in range(y-factory_hight+1, y+1):
                 
-                    if not self.onMap(find_y, find_x):
+                    if not self.onMap(find_x, find_y):
                         continue
-                    if not self.onMap(find_y+factory_hight,find_x+factory_width):
+                    if not self.onMap(find_x+factory_width, find_y+factory_hight):
                         continue
-                    lookup = self.building_map[find_y:find_y + factory_hight,find_x:find_x+factory_width]
+                    lookup = self.building_map[find_x:find_x+factory_width, find_y:find_y + factory_hight]
                     if np.all(lookup == factory_plan):
                         self.app.factories.add(
                             bp, self.building_map, find_x, find_y)
 
     def mapping(self, scPos):
-        tilepos = (self.pos[0]+(scPos[1]-P_UP)//TILE -
-                   HALF_HIGHT, self.pos[1]+scPos[0]//TILE-HALF_WIDTH)
+        tilepos = (self.pos[0]+scPos[0]//TILE-HALF_WIDTH, self.pos[1]+(scPos[1]-P_UP)//TILE -
+                   HALF_HIGHT)
         if tilepos[0] < 0 or tilepos[1] < 0 or tilepos[0] > PLANET_WIDTH-1 or tilepos[1] > PLANET_HIGHT-1:
             return ()
         else:
@@ -107,8 +103,8 @@ class terrain:
         if not self.onMap(tile_pos[0], tile_pos[1]):
             return()
         screen_pos = (
-            (tile_pos[1]-self.pos[1]+HALF_WIDTH)*TILE,
-            (tile_pos[0]-self.pos[0]+HALF_HIGHT)*TILE
+            (tile_pos[0]-self.pos[0]+HALF_WIDTH)*TILE,
+            (tile_pos[1]-self.pos[1]+HALF_HIGHT)*TILE
         )
         return(screen_pos)
 
@@ -211,7 +207,6 @@ class terrain:
         
         select_terrain = self.field[tilepos[0], tilepos[1]]
         select_building = self.building_map[tilepos[0], tilepos[1]]
-        select_factory = self.app.factories.factory(tilepos)
         self.app.info.start()
 
         terrain_data = self.GetTData('id', select_terrain)
@@ -242,26 +237,32 @@ class terrain:
             self.app.info.append_text(f'Время разбора(сек): {time}')
         
         if select_building == -1:    
-            self.app.info.append_pic(select_factory.pic)
-            self.app.info.append_progress_bar(select_factory.progress)
-            if select_factory.working:
-                working_text = '(Работает)'
-            else:
-                working_text = '(Не работает)'
-                
-            self.app.info.append_text(f'<b>{select_factory.name}</b> - {working_text}')
-            if select_factory.demolition_list_items_100:
-                self.app.info.append_text('Ресурсы при разборе:')
-                self.app.info.append_list_items(select_factory.demolition_list_items_100)
-            self.app.info.append_text(f'Время разбора(сек): {select_factory.demolition}')
-            if select_factory.incom:
-                self.app.info.append_text('Вход:')
-                self.app.info.append_list_items(select_factory.incom)
-            if select_factory.outcom:
-                self.app.info.append_text('Выход:')
-                self.app.info.append_list_items(select_factory.outcom)
-            process_time_sec = select_factory.process_time/1000
-            self.app.info.append_text(f'Время производства (сек): {process_time_sec:10.3f}')
+            select_factory = self.app.factories.factory(tilepos)
+            if select_factory:
+                self.app.info.append_pic(select_factory.pic)
+                self.app.info.append_progress_bar(select_factory.progress)
+                if select_factory.working:
+                    working_text = '(Работает)'
+                else:
+                    working_text = '(Не работает)'
+                    
+                self.app.info.append_text(f'<b>{select_factory.name}</b> - {working_text}')
+                if select_factory.demolition_list_items_100:
+                    self.app.info.append_text('Ресурсы при разборе:')
+                    self.app.info.append_list_items(select_factory.demolition_list_items_100)
+                self.app.info.append_text(f'Время разбора(сек): {select_factory.demolition}')
+                if select_factory.incom:
+                    self.app.info.append_text('Вход:')
+                    self.app.info.append_list_items(select_factory.incom)
+                if select_factory.outcom:
+                    self.app.info.append_text('Выход:')
+                    self.app.info.append_list_items(select_factory.outcom)
+                process_time_sec = select_factory.process_time/1000
+                self.app.info.append_text(f'Время производства (сек): {process_time_sec:10.3f}')
+                if select_factory.detect:
+                    self.app.info.append_text(f'Радар (кв): {select_factory.detect}')
+                if select_factory.operate:
+                    self.app.info.append_text(f'Операционный радиус (кв): {select_factory.operate}')
             
             
 
@@ -312,26 +313,32 @@ class terrain:
 
     def update(self):
         
-        
+        pos_change=False
         keystate = pg.key.get_pressed()
         if keystate[pg.K_a]:
-            self.pos[1] += -1
+            dx = -1
+            dy = 0
+            pos_change = True
+            # self.pos[0] += -1
         if keystate[pg.K_d]:
-            self.pos[1] += 1
+            dx = 1
+            dy = 0
+            pos_change = True
+            # self.pos[0] += 1
         if keystate[pg.K_w]:
-            self.pos[0] += -1
+            # self.pos[1] += -1
+            dx = 0
+            dy = -1
+            pos_change = True
         if keystate[pg.K_s]:
-            self.pos[0] += 1
-        if self.pos[1] > self.field.shape[0]-1:
-            self.pos[1] = self.field.shape[0]-1
-        if self.pos[1] < 0:
-            self.pos[1] = 0
-
-        if self.pos[0] > self.field.shape[1]-1:
-            self.pos[0] = self.field.shape[1]-1
-        if self.pos[0] < 0:
-            self.pos[0] = 0
-
+            # self.pos[1] += 1
+            dx = 0
+            dy = 1
+            pos_change = True
+        
+        if pos_change and self.onMap(self.pos[0]+dx, self.pos[1]+dy):
+            self.pos = (self.pos[0]+dx, self.pos[1]+dy)
+            
         mouse_button = pg.mouse.get_pressed()
         mouse_pos = pg.mouse.get_pos()
         self.tile_pos = self.mapping(mouse_pos)
@@ -420,25 +427,25 @@ class terrain:
         # draw bg
         self.surface.blit(self.field_bg, self.field_bgrect)
         # draw field and buildings
-        for y in range(self.pos[0]-HALF_HIGHT, self.pos[0]+HALF_HIGHT+1):
-            for x in range(self.pos[1]-HALF_WIDTH, self.pos[1]+HALF_WIDTH+1):
-                if (x < 0) or (y < 0) or (x >= self.field.shape[1]) or (y >= self.field.shape[0]):
-                    continue
+        for y in range(self.pos[1]-HALF_HIGHT, self.pos[1]+HALF_HIGHT+1):
+            for x in range(self.pos[0]-HALF_WIDTH, self.pos[0]+HALF_WIDTH+1):
+                if not self.onMap(x,y): continue
                 xyRect = pg.Rect(
-                    (x-self.pos[1]+HALF_WIDTH)*TILE, (y-self.pos[0]+HALF_HIGHT)*TILE, TILE, TILE)
-                if self.field[y, x] > 0:
-                    self.surface.blit(self.field_img[self.field[y, x]], xyRect)
-                if self.building_map[y, x] > 0:
+                    (x-self.pos[0]+HALF_WIDTH)*TILE, (y-self.pos[1]+HALF_HIGHT)*TILE, TILE, TILE)
+                if self.field[x,y] > 0:
+                    self.surface.blit(self.field_img[self.field[x,y]], xyRect)
+                if self.building_map[x,y] > 0:
                     self.surface.blit(
-                        self.block_img[self.building_map[y, x]], xyRect)
+                        self.block_img[self.building_map[x,y]], xyRect)
+                # self.app.info.debug(xyRect.move(0,P_UP), self.building_map[x,y])
 
         # draw factory
         self.app.factories.draw(self.surface)
 
         # draw selection
         if self.selection != [-1, -1]:
-            xyRect = pg.Rect((self.selection[1]-self.pos[1]+HALF_WIDTH)*TILE,
-                             (self.selection[0]-self.pos[0]+HALF_HIGHT)*TILE, TILE, TILE)
+            xyRect = pg.Rect((self.selection[0]-self.pos[0]+HALF_WIDTH)*TILE,
+                             (self.selection[1]-self.pos[1]+HALF_HIGHT)*TILE, TILE, TILE)
             pg.draw.rect(self.surface, pg.Color('yellow'), xyRect, 3)
 
         # draw dig_site
@@ -450,8 +457,8 @@ class terrain:
         # draw pointed field
         # if self.app.player.inv.selected_backpack_cell:
         if self.tile_pos:
-            xyRect = pg.Rect((self.tile_pos[1]-self.pos[1]+HALF_WIDTH)*TILE,
-                             (self.tile_pos[0]-self.pos[0]+HALF_HIGHT)*TILE, TILE, TILE)
+            xyRect = pg.Rect((self.tile_pos[0]-self.pos[0]+HALF_WIDTH)*TILE,
+                             (self.tile_pos[1]-self.pos[1]+HALF_HIGHT)*TILE, TILE, TILE)
             if self.app.player.inv.selected_backpack_cell == -1:
                 if not self.app.player.is_openinv:
                     pg.draw.rect(self.surface, pg.Color('gray'), xyRect, 1)
@@ -477,14 +484,13 @@ class terrain:
                             img, xyRect, special_flags=pg.BLEND_RGBA_MIN)
 
 
-        for y in range(self.pos[0]-HALF_HIGHT, self.pos[0]+HALF_HIGHT+1):
-            for x in range(self.pos[1]-HALF_WIDTH, self.pos[1]+HALF_WIDTH+1):
-                if (x < 0) or (y < 0) or (x >= self.field.shape[1]) or (y >= self.field.shape[0]):
-                    continue
+        for y in range(self.pos[1]-HALF_HIGHT, self.pos[1]+HALF_HIGHT+1):
+            for x in range(self.pos[0]-HALF_WIDTH, self.pos[0]+HALF_WIDTH+1):
+                if not self.onMap(x,y): continue
                 xyRect = pg.Rect(
-                    (x-self.pos[1]+HALF_WIDTH)*TILE, (y-self.pos[0]+HALF_HIGHT)*TILE, TILE, TILE)
+                    (x-self.pos[0]+HALF_WIDTH)*TILE, (y-self.pos[1]+HALF_HIGHT)*TILE, TILE, TILE)
               
-                if self.dark_cover[y,x]:
+                if self.dark_cover[x,y]:
                     self.surface.blit(self.field_img[0], xyRect)
 
 
@@ -531,7 +537,8 @@ class terrain:
         for i in range(0, 2*radius+1):
             for j in range(0, 2*radius+1):
                 if (i-radius)*(i-radius)+(j-radius)*(j-radius)<radius*radius+radius:
-                    self.dark_cover[j+y-radius,i+x-radius]=False
+                    if self.onMap(i+x-radius, j+y-radius):
+                        self.dark_cover[i+x-radius, j+y-radius]=False
         
 
 
@@ -539,4 +546,5 @@ class terrain:
         for i in range(0, 2*radius+1):
             for j in range(0, 2*radius+1):
                 if (i-radius)*(i-radius)+(j-radius)*(j-radius)<radius*radius+radius:
-                    self.operate[i+x-radius,j+y-radius]=True
+                    if self.onMap(i+x-radius, j+y-radius):
+                        self.operate[i+x-radius,j+y-radius]=True

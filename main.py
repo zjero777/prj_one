@@ -17,13 +17,13 @@ class game:
         self.clock = pg.time.Clock()
         self.timer = pg.time
         self.allsprites = pg.sprite.Group()
-        self.terrain = terrain(self, PLANET_WIDTH, PLANET_HIGHT, [10,10])
+        self.terrain = terrain(self, PLANET_WIDTH, PLANET_HIGHT)
         self.player = player(self)
         self.info = info(self)
         self.is_runing = True
         self.mouse = mouse(self)
         self.factories = factory_list(self)
-        self.player.fall([10,20])
+        self.player.fall((PLANET_WIDTH//2,1))
                 
     def update(self, dt):
         self.player.update()

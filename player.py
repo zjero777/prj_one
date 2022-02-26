@@ -2,6 +2,7 @@ import pygame as pg
 import pygame_gui as gui
 from options import *
 from inv import *
+from terrain import terrain
 
 class player:
     def __init__(self, app):
@@ -97,8 +98,12 @@ class player:
         self.inv.delete_selected_backpack_cell()
         
     def fall(self, pos):
-        self.app.terrain.go_pos(pos)
-        bp = self.app.terrain.GetFData('name', 'escape_pod')
-        b_map = self.app.terrain.building_map
+        terra = self.app.terrain
+        self.go_pos(terra, pos)
+        bp = terra.GetFData('name', 'escape_pod')
+        b_map = terra.building_map
         self.app.factories.add(bp, b_map, pos[0], pos[1])
         
+    def go_pos(self, terra, pos):
+        if terra.onMap(pos[0],pos[1]):
+            terra.pos = pos
