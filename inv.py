@@ -1,4 +1,4 @@
-from distutils.log import warn
+from logging import warn
 from random import randrange
 import pygame as pg
 import pygame_gui as gui
@@ -63,6 +63,9 @@ class inv:
             if self.first_pressed:
                 self.first_pressed = False 
                 self.player.is_openinv = not self.player.is_openinv
+                if self.player.is_openinv:
+                    self.app.ui_tech_bp.hide()
+                    
         else:
             self.first_pressed = True
             

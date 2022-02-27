@@ -366,6 +366,11 @@ class terrain:
         mouse_pos = pg.mouse.get_pos()
         self.tile_pos = self.mapping(mouse_pos)
 
+        if self.app.ui_tech_bp.visible: 
+            self.app.info.clear_info()
+            return
+
+
         if self.app.player.is_openinv:
             self.view_invinfo()
 

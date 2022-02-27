@@ -148,7 +148,15 @@
             "follow_sprite_offset": "10, 10",
             "border_width": "0"
         }
-    }
+    },
+
+    "window": 
+    {
+        "misc": 
+        {
+            "enable_close_button": "0"
+        }
+    }   
     
     
    
