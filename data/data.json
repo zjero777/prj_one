@@ -227,7 +227,21 @@
                 {
                 }
             }
+        },
+        {
+            "id": 11,
+            "name": "water_in_a_bucket",
+            "pic": "w_item.png",
+            "demolition":999,
+            "build": {
+                "pit":
+                {
+                    "result": "water",
+                    "type": "terrain"
+                }
+            }
         }
+        
     ],
     "factory_type": [
         {
@@ -535,6 +549,29 @@
                 {
                     "id": 9, 
                     "count": 4
+                }
+            ]
+        },
+        {
+            "id": 12,
+            "name": "pump",
+            "dim": {
+                "w": 3,
+                "h": 3
+            },
+            "plan": [
+                [8,8,0],
+                [4,7,3],
+                [8,8,0]
+            ],
+            "pic": "pump.png",
+            "time": 3,
+            "demolition": 4.5,
+            "out":
+            [
+                {
+                    "id": 11, 
+                    "count": 1
                 }
             ]
         }

@@ -27,7 +27,7 @@ class water_fall:
         self.active = True
 
     def update(self):
-        if self.timer.get_ticks()-self.time > 5000:
+        if self.timer.get_ticks()-self.time > 1000:
             terra = self.app.terrain
             if terra.field[self.pos] == terra.GetTData('name', 'pit')['id']:
                 terra.field[self.pos] = terra.GetTData('name', 'water')['id']
