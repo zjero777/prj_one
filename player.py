@@ -5,6 +5,7 @@ from options import *
 from inv import *
 from terrain import terrain
 
+
 class player:
     def __init__(self, app):
         self.app = app

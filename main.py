@@ -8,6 +8,7 @@ from info import *
 from player import *
 from factory import *
 from waterfall import *
+from tech import *
 
 class game:
     def __init__(self):
@@ -26,6 +27,7 @@ class game:
         self.factories = factory_list(self)
         self.player.fall((PLANET_WIDTH//2,PLANET_HIGHT//2))
         self.water_falls = waterfalls(self)
+        self.ui_tech_bp = UI_tech_blueprints(self)
                 
     def update(self, dt):
         self.player.update()
@@ -35,14 +37,15 @@ class game:
         self.mouse.update()
         self.info.update()
         self.water_falls.update()
+        self.ui_tech_bp.update()
     
     def draw(self):
         self.surface.fill(pg.Color('cyan'))        
         self.screen.blit(self.surface, (0,0))
         self.terrain.draw() 
+        # self.player.draw()
         self.player.draw()
         self.manager.draw_ui(self.screen)
-        self.player.draw()
         self.mouse.draw()  
         self.allsprites.draw(self.screen)
         self.info.draw()
