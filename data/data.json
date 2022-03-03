@@ -240,6 +240,26 @@
                     "type": "terrain"
                 }
             }
+        },
+        {
+            "id": 12,
+            "name": "corall_block",
+            "pic": "corall_block.png",
+            "demolition":2.4,
+            "build": {
+                "ground":{},
+                "sand":{}
+            }
+        },
+        {
+            "id": 13,
+            "name": "pressured_moss",
+            "pic": "moss.png",
+            "demolition":1.5,
+            "build": {
+                "ground":{},
+                "sand":{}
+            }
         }
         
     ],
@@ -565,12 +585,79 @@
                 [8,8,0]
             ],
             "pic": "pump.png",
-            "time": 3,
+            "time": 20,
             "demolition": 4.5,
             "out":
             [
                 {
                     "id": 11, 
+                    "count": 1
+                }
+            ]
+        },
+        {
+            "id": 13,
+            "name": "corall_press",
+            "dim": {
+                "w": 5,
+                "h": 5
+            },
+            "plan": [
+                [2,3,7,3,2],
+                [3,9,9,9,3],
+                [7,9,9,9,7],
+                [3,9,9,9,3],
+                [2,3,7,3,2]
+            ],
+            "pic": "corall_p.png",
+            "time": 24,
+            "demolition": 12.5,
+            "in": 
+            [
+                {
+                    "id": 9,
+                    "count": 9
+                }
+            ],
+            "out":
+            [
+                {
+                    "id": 12, 
+                    "count": 2
+                }
+            ]
+        },
+        {
+            "id": 14,
+            "name": "moss_press",
+            "dim": {
+                "w": 4,
+                "h": 4
+            },
+            "plan": [
+                [6,9,9,6],
+                [7,4,4,7],
+                [7,4,4,7],
+                [6,9,9,6]
+            ],
+            "pic": "moss_farm.png",
+            "time": 24,
+            "demolition": 12.5,
+            "in": 
+            [
+                {
+                    "id": 4,
+                    "count": 2
+                },
+                {
+                    "id": 2,
+                    "count": 1
+                }
+            ],
+            "out":
+            [
+                {
+                    "id": 13, 
                     "count": 1
                 }
             ]
