@@ -184,8 +184,32 @@ class tech_area:
     def create_pic(self):
         pic = pg.Surface((self.rect.size[0]*TILE, self.rect.size[1]*TILE), flags=pg.SRCALPHA)
         pg.Surface.fill(pic, pg.Color(64,128,255,128))
-        for i in range(0,self.rect.w):
-            screen_pos = self.app.terrain.demapping((i+self.rect.left,1+self.rect.top))
-            a_rect = pg.Rect(screen_pos, (self.rect.size[0]*TILE, self.rect.size[1]*TILE))
+        down_img = pygame.transform.rotate(self.list.img[0], 180)
+        left_img = pygame.transform.rotate(self.list.img[0], 270)
+        rigth_img = pygame.transform.rotate(self.list.img[0], 90)
+        tr_img = pygame.transform.rotate(self.list.img[1], 90)
+        br_img = pygame.transform.rotate(self.list.img[1], 180)
+        bl_img = pygame.transform.rotate(self.list.img[1], 270)
+        for i in range(TILE,(self.rect.w-1)*TILE, TILE):
+            a_rect = pg.Rect((i,0), self.rect.size)
             pic.blit(self.list.img[0], a_rect)
+            b_rect = pg.Rect((i,(self.rect.h-1)*TILE), self.rect.size)
+            pic.blit(down_img, b_rect)
+            
+        for j in range(TILE,(self.rect.h-1)*TILE, TILE):
+            a_rect = pg.Rect((0,j), self.rect.size)
+            pic.blit(rigth_img, a_rect)
+            b_rect = pg.Rect(((self.rect.w-1)*TILE,j), self.rect.size)
+            pic.blit(left_img, b_rect)
+            
+        c_rect = pg.Rect((0,0), self.rect.size)
+        pic.blit(self.list.img[1], c_rect)
+        c_rect = pg.Rect(((self.rect.w-1)*TILE,0), self.rect.size)
+        pic.blit(bl_img, c_rect)
+        c_rect = pg.Rect(((self.rect.w-1)*TILE,(self.rect.h-1)*TILE), self.rect.size)
+        pic.blit(br_img, c_rect)
+        c_rect = pg.Rect((0,(self.rect.h-1)*TILE), self.rect.size)
+        pic.blit(tr_img, c_rect)
+        
+            
         return pic
