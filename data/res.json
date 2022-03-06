@@ -1,6 +1,20 @@
 {
-    "tech-ui_img": {
-        "id":0,
-        "img":""
-    }
+    "tech-ui_img": [
+        {
+            "id":0,
+            "name":"border",
+            "pic":"tech_border.png"
+        },
+        {
+            "id":1,
+            "name":"corner",
+            "pic":"tech_corner.png"
+        },
+        {
+            "id":2,
+            "name":"mark",
+            "pic":"tech_marks.png"
+        }
+
+    ]
 }
