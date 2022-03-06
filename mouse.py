@@ -22,6 +22,9 @@ class mouse:
         ani_cur_dig = ss.load_strip((0,0,32,32), 6)
         self.cursors[cursor_type.dig.value] = AnimatedSprite(self.pos, ani_cur_dig)
             
+        ss = spritesheet(path.join(img_dir, 'cur_tech.png'))
+        cur = ss.load_strip(ss.sheet.get_rect(), 1)
+        self.cursors[cursor_type.tech.value] = AnimatedSprite(self.pos, cur)
       
         
         # self.cursor.append(pg.image.load(path.join(img_dir, "cur2.png")).convert_alpha())
@@ -45,6 +48,7 @@ class mouse:
         self.pos = pg.mouse.get_pos()
         self.cursors[cursor_type.normal.value].SetRect(self.pos)
         self.cursors[cursor_type.dig.value].SetRect(self.pos)
+        self.cursors[cursor_type.tech.value].SetRect(self.pos)
         
         
     def setcursor(self, idx):
@@ -53,6 +57,10 @@ class mouse:
                 self.app.allsprites = pg.sprite.Group(self.cursors[cursor_type.normal.value])
             case cursor_type.dig: 
                 self.app.allsprites = pg.sprite.Group(self.cursors[cursor_type.dig.value])
+            case cursor_type.tech:
+                self.app.allsprites = pg.sprite.Group(self.cursors[cursor_type.tech.value])
+
+
             
         self.cursor = idx
         
