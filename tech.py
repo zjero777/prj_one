@@ -1,4 +1,4 @@
-from cgitb import lookup
+from random import randint
 import numpy as np
 import pygame as pg
 import pygame_gui as gui
@@ -55,6 +55,7 @@ class ui_tech:
         self.area = pg.Rect(0,0,0,0)
         self.start = self.area
         self.allow = True
+        self.selected_site = None
         # close bp all factory 
         for item in self.data:
             item['open'] = False
@@ -65,7 +66,11 @@ class ui_tech:
         self.bg_red = pg.Surface((TILE,TILE), pg.SRCALPHA)
         pg.draw.rect(self.bg_red, pg.Color(255,32,128,128), (0,0,TILE, TILE))
         
-
+    def view_tech_site_ui(self):
+        self.app.info.start()
+        self.app.info.append_text(f'Лаборатория: {self.selected_site.name}')
+        self.app.info.append_text(f' - размер: {self.selected_site.rect.size}')
+        self.app.info.stop()
         
     
     def update(self):
@@ -88,12 +93,18 @@ class ui_tech:
         else:
             self.keypressed = False
         
+        
+        
         if not self.enabled: return()
             
         mouse_button = pg.mouse.get_pressed()
         mouse_pos = pg.mouse.get_pos()
         mouse_tile_pos = self.app.terrain.mapping(mouse_pos)
         if not mouse_tile_pos: return
+
+        if self.selected_site:
+            self.view_tech_site_ui()
+
         
         if mouse_button[0] and not self.first_pressed:
             # first push button
@@ -112,7 +123,7 @@ class ui_tech:
                 if self.allow:
                     content = self.app.terrain.building_map[self.area.left:self.area.right,
                                                 self.area.top:self.area.bottom]
-                    self.tech_sites.add(self.area, content)
+                    self.selected_site = self.tech_sites.add(self.area, content)
                 self.area = pg.Rect(0,0,0,0)
         elif mouse_button[0]:
             # on drag
@@ -155,6 +166,7 @@ class tech_sites:
         # print(f'{area}')
         t_site = tech_area(self, self.app, area.copy(), content)
         self.list.append(t_site)
+        return t_site
     
     def draw(self, surface):
         for item in self.list:
@@ -173,6 +185,8 @@ class tech_area:
         # self.content = np.zeros(rect.size, dtype=np.integer)
         self.content = np.array(content)
         self.pic = self.create_pic()
+        num = randint(0,99999999)
+        self.name = f'lab{num:0>8d}'
         
         
     def draw(self, surface):
@@ -210,6 +224,4 @@ class tech_area:
         pic.blit(br_img, c_rect)
         c_rect = pg.Rect((0,(self.rect.h-1)*TILE), self.rect.size)
         pic.blit(tr_img, c_rect)
-        
-            
         return pic
