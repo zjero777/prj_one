@@ -377,7 +377,7 @@ class terrain:
             self.view_invinfo()
 
         if self.app.ui_tech.enabled:
-            self.app.info.clear_info()
+            # self.app.info.clear_info()
             return
 
         if not pg.Rect(VIEW_RECT).collidepoint(mouse_pos):
