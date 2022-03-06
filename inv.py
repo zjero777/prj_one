@@ -62,6 +62,7 @@ class inv:
         if keystate[pg.K_e]:
             if self.first_pressed:
                 self.first_pressed = False 
+                if self.app.ui_tech.enabled: return
                 self.player.is_openinv = not self.player.is_openinv
                 if self.player.is_openinv:
                     self.app.ui_tech_bp.hide()

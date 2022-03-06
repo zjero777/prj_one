@@ -147,6 +147,13 @@ class factory_list:
     def update(self):
         for f in self.active:
             f.update()
+            
+    @property
+    def rect_list_all(self):
+        f_list = []
+        for item in self.active:
+            f_list.append(pg.Rect(item.tile_pos, item.size))
+        return f_list
         
 
 

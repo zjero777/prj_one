@@ -13,12 +13,13 @@ from tech import *
 class game:
     def __init__(self):
         pg.init()
-        self.screen = pg.display.set_mode(WIN_SIZE)
-        self.surface = pg.Surface(WIN_SIZE)
+        self.screen = pg.display.set_mode(WIN_SIZE, pg.SRCALPHA)
+        self.surface = pg.Surface(WIN_SIZE, pg.SRCALPHA)
         self.manager = pygame_gui.UIManager(WIN_SIZE, path.join(data_dir, 'theme.json'))
         self.clock = pg.time.Clock()
         self.timer = pg.time
         self.allsprites = pg.sprite.Group()
+        self.data = self.load_resources()
         self.terrain = terrain(self, PLANET_WIDTH, PLANET_HIGHT)
         self.player = player(self)
         self.info = info(self)
@@ -28,6 +29,7 @@ class game:
         self.player.fall((PLANET_WIDTH//2,PLANET_HIGHT//2))
         self.water_falls = waterfalls(self)
         self.ui_tech_bp = UI_tech_blueprints(self)
+        self.ui_tech = ui_tech(self)
                 
     def update(self, dt):
         self.player.update()
@@ -37,7 +39,9 @@ class game:
         self.mouse.update()
         self.info.update()
         self.water_falls.update()
+        self.ui_tech.update()
         self.ui_tech_bp.update()
+        
     
     def draw(self):
         self.surface.fill(pg.Color('cyan'))        
@@ -76,6 +80,12 @@ class game:
             self.info.debug((0,0), f'FPS:{int(fps)}')
             pg.display.update()
     
+    def load_resources(self):
+        f = open('data/res.json',)
+        data = json.load(f)
+        f.close
+        return data
+
 if __name__ == '__main__':
     app = game()
     app.run()

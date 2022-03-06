@@ -1,6 +1,7 @@
 from cgitb import reset
 from distutils.util import strtobool
 from math import ceil
+from sys import flags
 import numpy as np
 import pygame as pg
 import random as rnd
@@ -84,6 +85,7 @@ class terrain:
     def complete_factory(self):
         x, y = self.tile_pos
         for bp in self.data['factory_type']:
+            if not bp['open']: continue
             factory_width = bp['dim']['w']
             factory_hight = bp['dim']['h']
             if 'plan' in bp.keys():
@@ -374,6 +376,10 @@ class terrain:
         if self.app.player.is_openinv:
             self.view_invinfo()
 
+        if self.app.ui_tech.enabled:
+            self.app.info.clear_info()
+            return
+
         if not pg.Rect(VIEW_RECT).collidepoint(mouse_pos):
             self.app.info.clear_info()
 
@@ -449,6 +455,8 @@ class terrain:
     def draw(self):
         # draw bg
         self.surface.blit(self.field_bg, self.field_bgrect)
+        
+        
         # draw field and buildings
         for y in range(self.pos[1]-HALF_HIGHT, self.pos[1]+HALF_HIGHT+1):
             for x in range(self.pos[0]-HALF_WIDTH, self.pos[0]+HALF_WIDTH+1):
@@ -470,6 +478,9 @@ class terrain:
 
         # draw factory
         self.app.factories.draw(self.surface)
+        
+        # draw tech areas
+        self.app.ui_tech.draw(self.surface)
 
         # draw selection
         if self.selection != [-1, -1]:

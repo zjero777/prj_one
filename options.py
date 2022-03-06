@@ -51,3 +51,4 @@ TECH_WND_RECT = (TECH_WND_POS[0], TECH_WND_POS[1], TECH_WND_WIDTH, TECH_WND_HIGH
 class cursor_type(Enum):
     normal = 0
     dig = 1
+    tech = 2
