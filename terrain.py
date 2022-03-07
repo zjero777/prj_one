@@ -554,7 +554,7 @@ class terrain:
             resourses = select_factory.get_resources(100, 100)
             i = 0
             for count in resourses[1]:
-                if resourses[0][i] != 0:
+                if resourses[0][i] != 0 and resourses[0][i]:
                     player.pickup(resourses[0][i], count)
                 i += 1
 
@@ -578,12 +578,12 @@ class terrain:
                     if self.onMap(i+x, j+y):
                         self.dark_cover[ceil(i+x), ceil(j+y)] = False
 
-    def set_operate(self, x, y, radius):
+    def set_operate(self, x, y, radius, value=True):
         for i in range(-radius, radius):
             for j in range(-radius, radius):
                 if (i+0.5)*(i+0.5)+(j+0.5)*(j+0.5) <= radius*radius:
                     if self.onMap(i+x, j+y):
-                        self.operate[ceil(i+x), ceil(j+y)] = True
+                        self.operate[ceil(i+x), ceil(j+y)] = value
 
     def water_arround(self, pos):
         def _is_water(pos):

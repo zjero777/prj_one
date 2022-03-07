@@ -52,3 +52,9 @@ class cursor_type(Enum):
     normal = 0
     dig = 1
     tech = 2
+
+TECH_A_NEW = 0
+TECH_A_PROGRESS = 1
+TECH_A_RESULT = 2
+TECH_A_COMPLETE = 3
+

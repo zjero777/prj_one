@@ -52,16 +52,7 @@ class mouse:
         
         
     def setcursor(self, idx):
-        match idx:
-            case cursor_type.normal: 
-                self.app.allsprites = pg.sprite.Group(self.cursors[cursor_type.normal.value])
-            case cursor_type.dig: 
-                self.app.allsprites = pg.sprite.Group(self.cursors[cursor_type.dig.value])
-            case cursor_type.tech:
-                self.app.allsprites = pg.sprite.Group(self.cursors[cursor_type.tech.value])
-
-
-            
+        self.app.allsprites = pg.sprite.Group(self.cursors[idx.value])
         self.cursor = idx
         
 
