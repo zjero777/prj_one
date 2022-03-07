@@ -125,12 +125,17 @@ class factory_list:
             
         
 
-    def delete(self, b_map, factory):
+    def delete(self,b_map, factory):
         width, hight = factory.size
         x, y = factory.tile_pos
         for i in range(x, x+width):
             for j in range(y, y+hight):
                 b_map[i, j] = 0
+                
+        if factory.operate>0:
+            self.app.terrain.set_operate(x+factory.size[0]//2,y+factory.size[1]//2, factory.operate, False)
+                
+                
         self.active.remove(factory)
 
         

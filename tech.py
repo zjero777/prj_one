@@ -55,7 +55,7 @@ class ui_tech:
         self.area = pg.Rect(0,0,0,0)
         self.start = self.area
         self.allow = True
-        self.selected_site = None
+        # self.selected_site = None
         # close bp all factory 
         for item in self.data:
             item['open'] = False
@@ -66,12 +66,16 @@ class ui_tech:
         self.bg_red = pg.Surface((TILE,TILE), pg.SRCALPHA)
         pg.draw.rect(self.bg_red, pg.Color(255,32,128,128), (0,0,TILE, TILE))
         
+    @property
+    def selected_site(self):
+        return self.tech_sites.selected_site
+        
     def view_tech_site_ui(self):
         self.app.info.start()
         self.app.info.append_text(f'Лаборатория: {self.selected_site.name}')
         self.app.info.append_text(f' - размер: {self.selected_site.rect.size}')
         self.app.info.stop()
-        
+    
     
     def update(self):
         self.tech_sites.update()
@@ -95,7 +99,8 @@ class ui_tech:
         
         
         
-        if not self.enabled: return()
+        if not self.enabled: 
+            return()
             
         mouse_button = pg.mouse.get_pressed()
         mouse_pos = pg.mouse.get_pos()
@@ -104,6 +109,10 @@ class ui_tech:
 
         if self.selected_site:
             self.view_tech_site_ui()
+        else:
+            self.app.info.clear_info()
+
+            
 
         
         if mouse_button[0] and not self.first_pressed:
@@ -117,13 +126,18 @@ class ui_tech:
             self.first_pressed = False
             if self.area.size==(1,1):
                 # click to cell
-                pass
+                click_area_screen = pg.Rect((0,0),mouse_pos)
+                if click_area_screen.colliderect(VIEW_RECT):
+                    area_num = self.area.collidelist(self.tech_sites.rect_list_all)
+                    self.tech_sites.select(area_num)
+                    # self.selected_site = self.tech_sites.get_by_num(area_num)
             else:
                 # add area
                 if self.allow:
                     content = self.app.terrain.building_map[self.area.left:self.area.right,
                                                 self.area.top:self.area.bottom]
-                    self.selected_site = self.tech_sites.add(self.area, content)
+                    # self.selected_site = self.tech_sites.add(self.area, content)
+                    self.tech_sites.add(self.area, content)
                 self.area = pg.Rect(0,0,0,0)
         elif mouse_button[0]:
             # on drag
@@ -131,6 +145,9 @@ class ui_tech:
             self.area.top = min(mouse_tile_pos[1], self.start.top)
             self.area.size = (abs(self.start.left-mouse_tile_pos[0])+1, abs(self.start.top-mouse_tile_pos[1])+1)
             self.allow = (self.area.collidelist(self.app.factories.rect_list_all)==-1)
+            self.allow = self.allow and (self.area.collidelist(self.tech_sites.rect_list_all)==-1)
+            lookup = self.app.terrain.operate[self.area.left:self.area.right, self.area.top:self.area.bottom]
+            self.allow = self.allow and np.min(lookup)
             
     def draw(self, surface):
         self.tech_sites.draw(surface)
@@ -155,16 +172,38 @@ class tech_sites:
     def __init__(self, app):
         self.app = app
         self.list = []
-        # load pic resources
+        self.active = None
+        # load pic resources 
         self.img = [0 for i in self.app.data['tech-ui_img']]
         for img in self.app.data['tech-ui_img']:
             self.img[img['id']] = (pg.image.load(
                 path.join(img_dir, img['pic'])).convert_alpha())
 
+    @property
+    def rect_list_all(self):
+        f_list = []
+        for item in self.list:
+            f_list.append(item.rect)
+        return f_list
+    
+    @property
+    def selected_site(self):
+        return self.active
+    
+    def select(self, num):
+        if num!=-1: 
+            self.active = self.list[num]
+    
+    def get_by_num(self, num):
+        if num>-1 and num<len(self.list):
+            return self.list[num]
+        else:
+            return None
     
     def add(self, area, content):
         # print(f'{area}')
         t_site = tech_area(self, self.app, area.copy(), content)
+        self.active = t_site
         self.list.append(t_site)
         return t_site
     
@@ -184,29 +223,42 @@ class tech_area:
         self.result = np.zeros(rect.size, dtype=np.integer)
         # self.content = np.zeros(rect.size, dtype=np.integer)
         self.content = np.array(content)
-        self.pic = self.create_pic()
+        self.pic = self.create_pic(is_select=False)
+        self.pic_selected = self.create_pic(is_select=True)
         num = randint(0,99999999)
         self.name = f'lab{num:0>8d}'
+        self.status = TECH_A_NEW
         
         
     def draw(self, surface):
         screen_pos = self.app.terrain.demapping(self.rect.topleft)
         a_rect = pg.Rect(screen_pos, (self.rect.size[0]*TILE, self.rect.size[1]*TILE))
         if pg.Rect(VIEW_RECT).colliderect(a_rect):
-            surface.blit(self.pic, a_rect)
+            if self.list.selected_site!=self:
+                surface.blit(self.pic, a_rect)
+            else:
+                surface.blit(self.pic_selected, a_rect)
         
-    def create_pic(self):
+    def create_pic(self, is_select):
         pic = pg.Surface((self.rect.size[0]*TILE, self.rect.size[1]*TILE), flags=pg.SRCALPHA)
-        pg.Surface.fill(pic, pg.Color(64,128,255,128))
-        down_img = pygame.transform.rotate(self.list.img[0], 180)
-        left_img = pygame.transform.rotate(self.list.img[0], 270)
-        rigth_img = pygame.transform.rotate(self.list.img[0], 90)
+        
+        if is_select: 
+            pic_res = 0
+            pg.Surface.fill(pic, pg.Color(64,128,255,64))
+            
+        else:
+            pic_res = 3
+            pg.Surface.fill(pic, pg.Color(128,128,128,128))
+            
+        down_img = pygame.transform.rotate(self.list.img[pic_res], 180)
+        left_img = pygame.transform.rotate(self.list.img[pic_res], 270)
+        rigth_img = pygame.transform.rotate(self.list.img[pic_res], 90)
         tr_img = pygame.transform.rotate(self.list.img[1], 90)
         br_img = pygame.transform.rotate(self.list.img[1], 180)
         bl_img = pygame.transform.rotate(self.list.img[1], 270)
         for i in range(TILE,(self.rect.w-1)*TILE, TILE):
             a_rect = pg.Rect((i,0), self.rect.size)
-            pic.blit(self.list.img[0], a_rect)
+            pic.blit(self.list.img[pic_res], a_rect)
             b_rect = pg.Rect((i,(self.rect.h-1)*TILE), self.rect.size)
             pic.blit(down_img, b_rect)
             
