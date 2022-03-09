@@ -68,12 +68,29 @@ class ui_tech:
         
     @property
     def selected_site(self):
-        return self.tech_sites.selected_site
+        if self.tech_sites.selected_site:
+            if self.tech_sites.selected_site.status != TECH_A_DELETE:
+                return self.tech_sites.selected_site
+        return None
+        
+        
+    def process_events(self, event):
+        if event.type == pg.USEREVENT:
+            if event.user_type == gui.UI_BUTTON_PRESSED:
+                if event.ui_element == self.selected_site.on_click_delete_button:
+                    self.tech_sites.delete(self.selected_site)
+                    
+
         
     def view_tech_site_ui(self):
         self.app.info.start()
-        self.app.info.append_text(f'Лаборатория: {self.selected_site.name}')
-        self.app.info.append_text(f' - размер: {self.selected_site.rect.size}')
+        
+        if self.selected_site.status != TECH_A_DELETE:
+            self.app.info.append_text(f'Лаборатория: {self.selected_site.name}')
+            # self.app.info.append_pic(self.selected_site.pic)    
+            self.app.info.append_text(f' - размер: {self.selected_site.rect.size}')
+        if self.selected_site.status == TECH_A_NEW:
+            self.selected_site.on_click_delete_button = self.app.info.append_button('Удалить')
         self.app.info.stop()
     
     
@@ -130,13 +147,11 @@ class ui_tech:
                 if click_area_screen.colliderect(VIEW_RECT):
                     area_num = self.area.collidelist(self.tech_sites.rect_list_all)
                     self.tech_sites.select(area_num)
-                    # self.selected_site = self.tech_sites.get_by_num(area_num)
             else:
                 # add area
                 if self.allow:
                     content = self.app.terrain.building_map[self.area.left:self.area.right,
                                                 self.area.top:self.area.bottom]
-                    # self.selected_site = self.tech_sites.add(self.area, content)
                     self.tech_sites.add(self.area, content)
                 self.area = pg.Rect(0,0,0,0)
         elif mouse_button[0]:
@@ -207,6 +222,11 @@ class tech_sites:
         self.list.append(t_site)
         return t_site
     
+    def delete(self, t_site):
+        t_site.delete()
+        self.list.remove(t_site)
+        
+    
     def draw(self, surface):
         for item in self.list:
             item.draw(surface)
@@ -228,7 +248,7 @@ class tech_area:
         num = randint(0,99999999)
         self.name = f'lab{num:0>8d}'
         self.status = TECH_A_NEW
-        
+        self.on_click_delete_button = None
         
     def draw(self, surface):
         screen_pos = self.app.terrain.demapping(self.rect.topleft)
@@ -238,6 +258,13 @@ class tech_area:
                 surface.blit(self.pic, a_rect)
             else:
                 surface.blit(self.pic_selected, a_rect)
+            
+    def delete(self):
+        del self.result
+        del self.content
+        del self.pic
+        del self.pic_selected
+        self.status = TECH_A_DELETE
         
     def create_pic(self, is_select):
         pic = pg.Surface((self.rect.size[0]*TILE, self.rect.size[1]*TILE), flags=pg.SRCALPHA)
