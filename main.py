@@ -64,12 +64,13 @@ class game:
                 if event.type == pg.QUIT:
                     self.is_runing = False
                     
-#                if event.type == pg.USEREVENT:
-#                    if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
-#                        if event.ui_element == self.hello_button:
-#                            print('Hello World!')                
+                # if event.type == pg.USEREVENT:
+                #     if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
+                #         if event.ui_element == 'panel.panel_info.button':
+                #             print('Hello World!')                
                 # self.mouse.process_events(event)
                 # self.field.process_events(event)
+                self.ui_tech.process_events(event)
                 self.manager.process_events(event)
          
             dt = self.clock.tick(60)/1000.0
