@@ -160,18 +160,24 @@ class info:
         return({'ui': picui, 'type': type(picui).__name__}, picui.get_relative_rect()[3])
 
 
-    def _create_button_info(self, button_text, top_pos, justify='center'):
-        # if justify=='left': 
-        #     justify = 0
-        # elif justify=='center':
-        #     justify = INFO_WIDTH//2-pic_relativity_rect.height//2
-        button_rect = pg.Rect((0, top_pos), (INFO_WIDTH, -1))
+    def _create_button_info(self, button_text, rect, justify='center', object_id='button'):
+        button_rect = pg.Rect(rect)
+        if button_rect.w==-2: button_rect.w = INFO_WIDTH
         butui = gui.elements.UIButton(
             relative_rect=button_rect,
             text=button_text,
             manager=self.app.manager,
-            container=self.panel_info
+            container=self.panel_info,
+            object_id=object_id
         )
+        if button_rect.w<0:
+            if justify=='left': 
+                justify = 0
+            elif justify=='center':
+                justify = INFO_WIDTH//2-butui.get_relative_rect().width//2
+            elif justify=='right':
+                justify = INFO_WIDTH-butui.get_relative_rect().width
+            butui.set_relative_position((justify,button_rect.top))
         return({'ui': butui, 'type': type(butui).__name__}, butui.get_relative_rect()[3])
 
     def _create_item_info(self, item, top_pos, object_id, justify):
@@ -220,6 +226,16 @@ class info:
         )
         return({'ui': progressui, 'type': type(progressui).__name__}, progressui.get_relative_rect()[3])
 
+
+    def _create_button_list_info(self, buttons_line, top_pos):
+        rect = pg.Rect((0, top_pos), (INFO_WIDTH, -1))
+        butlineui = UIButtonLine(
+                    relative_rect=rect,
+                    buttons=buttons_line,
+                    manager=self.app.manager,
+                    container=self.panel_info
+                )        
+        return({'ui': butlineui, 'type': type(butlineui).__name__}, butlineui.get_relative_rect()[3])
 
 
     def _shift_next_position(self, delta_top):
@@ -392,28 +408,31 @@ class info:
         # self.app.info.append_text(f'')
         self.app.info.stop()
 
-    def append_button(self, button_text, justify='center'):
+    def append_button(self, button_text, w=-1,h=-1,justify='center', next_line=True, left=0, object_id='button'):
         if len(self.msg_info_list) < self.msg_line+1:
-            element, hight = self._create_button_info(button_text, self.top, justify=justify)
+            element, hight = self._create_button_info(button_text, rect=(left,self.top, w,h), justify=justify, object_id=object_id)
             self.msg_info_list.append(element)
-            self.top += hight
-            self.msg_line += 1
+            if next_line:
+                self.top += hight
+                self.msg_line += 1
             return(element['ui'])
         
         if self.msg_info_list[self.msg_line]['type'] == 'UIButton':
             if self.msg_info_list[self.msg_line]['ui'].text == button_text:
-                self.top += self.msg_info_list[self.msg_line]['ui'].get_relative_rect()[
-                    3]
-                self.msg_line += 1
+                if next_line:
+                    self.top += self.msg_info_list[self.msg_line]['ui'].get_relative_rect()[
+                        3]
+                    self.msg_line += 1
                 return(self.msg_info_list[self.msg_line-1]['ui'])
             else:            
                 oldtop = self.msg_info_list[self.msg_line]['ui'].get_relative_rect()[3]
                 self.msg_info_list[self.msg_line]['ui'].set_text(button_text)
                 newtop = self.msg_info_list[self.msg_line]['ui'].get_relative_rect()[3]
                 dtop = newtop - oldtop
-                self.top += newtop
                 self._shift_next_position(dtop)
-                self.msg_line += 1
+                if next_line:
+                    self.top += newtop
+                    self.msg_line += 1
                 return(self.msg_info_list[self.msg_line-1]['ui'])
         
         else:
@@ -422,11 +441,43 @@ class info:
             del self.msg_info_list[self.msg_line]['ui']
             
 
-            element, newtop = self._create_button_info(button_text, self.top, justify=justify)
+            element, newtop = self._create_button_info(button_text, rect=(self.top, left, w,h), justify=justify, object_id=object_id)
+            self.msg_info_list[self.msg_line] = element
+            if next_line:
+                self.top += newtop
+                self.msg_line += 1
+            dtop = newtop - oldtop
+            self._shift_next_position(dtop)
+
+            return(element['ui'])
+        
+    def append_buttons_line(self, buttons_line):
+        if len(self.msg_info_list) < self.msg_line+1:
+            element, hight = self._create_button_list_info(buttons_line, self.top)
+            self.msg_info_list.append(element)
+            self.top += hight
+            self.msg_line += 1
+            return(element['ui'])      
+        
+        if self.msg_info_list[self.msg_line]['type'] == 'UIButtonLine':
+            oldtop = self.msg_info_list[self.msg_line]['ui'].get_relative_rect()[3]
+            self.msg_info_list[self.msg_line]['ui'].set_buttons(buttons_line)
+            newtop = self.msg_info_list[self.msg_line]['ui'].get_relative_rect()[3]
+            dtop = newtop - oldtop
+            self.top += newtop
+            self._shift_next_position(dtop)
+            self.msg_line += 1
+            return(self.msg_info_list[self.msg_line-1]['ui'])
+        else: 
+            oldtop = self.msg_info_list[self.msg_line]['ui'].get_relative_rect()[3]
+            self.msg_info_list[self.msg_line]['ui'].kill()
+            del self.msg_info_list[self.msg_line]['ui']
+
+            element, newtop = self._create_button_list_info(buttons_line, self.top)
             self.msg_info_list[self.msg_line] = element
             self.top += newtop
             dtop = newtop - oldtop
             self._shift_next_position(dtop)
             self.msg_line += 1
-
-            return(element['ui'])
+        
+            return(element['ui'])        
