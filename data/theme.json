@@ -156,7 +156,29 @@
         {
             "enable_close_button": "0"
         }
-    }   
+    },
+    "del_button":
+    {
+        "colours":
+        {
+            "normal_bg": "#d02d43",
+            "normal_text": "#c5cbd8",
+            "normal_border": "#d02d43",
+
+            "hovered_bg": "#ef334c",
+            "disabled_bg": "#25292e",
+            "selected_bg": "#25292e",
+            "active_bg": "#67141f",            
+            "hovered_text": "#FFFFFF",
+            "selected_text": "#FFFFFF",
+            "active_text": "#6d736f",
+            "hovered_border": "#B0B0B0",
+            "disabled_border": "#808080",
+            "selected_border": "#8080B0",
+            "active_border": "#67141f"
+        }
+
+    }
     
     
    

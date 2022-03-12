@@ -363,6 +363,27 @@ class terrain:
 
         if keystate[pg.K_HOME]:
             self.app.player.go_spawn()
+            
+        # *** DEBUG ***
+        # if keystate[pg.K_1]:
+        #     self.app.info.start()
+        #     self.app.info.append_text(f'1')
+        #     self.app.info.append_text(f'2')
+        #     self.app.info.append_text(f'3')
+        #     self.app.info.stop()
+
+        # if keystate[pg.K_2]:
+        #     self.app.info.start()
+        #     self.app.info.append_text(f'4')
+        #     self.app.info.stop()
+
+        # if keystate[pg.K_0]:
+        #     self.app.info.start()
+           
+        #     self.app.info.stop()
+
+        # return
+        # *************
 
         mouse_button = pg.mouse.get_pressed()
         mouse_pos = pg.mouse.get_pos()

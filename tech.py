@@ -55,6 +55,9 @@ class ui_tech:
         self.area = pg.Rect(0,0,0,0)
         self.start = self.area
         self.allow = True
+        self.on_click_delete_button = None
+        self.control_buttons = []
+        
         # self.selected_site = None
         # close bp all factory 
         for item in self.data:
@@ -77,8 +80,14 @@ class ui_tech:
     def process_events(self, event):
         if event.type == pg.USEREVENT:
             if event.user_type == gui.UI_BUTTON_PRESSED:
-                if event.ui_element == self.selected_site.on_click_delete_button:
-                    self.tech_sites.delete(self.selected_site)
+                # if event.ui_element == self.on_click_delete_button:
+                #     self.tech_sites.delete(self.selected_site)
+                if self.control_buttons:
+                    for num, on_click_button in enumerate(self.control_buttons.ui_buttons):
+                        if event.ui_element == on_click_button:
+                            if num==0: self.tech_sites.delete(self.selected_site)
+                            if num==1: pass
+                    
                     
 
         
@@ -90,7 +99,11 @@ class ui_tech:
             # self.app.info.append_pic(self.selected_site.pic)    
             self.app.info.append_text(f' - размер: {self.selected_site.rect.size}')
         if self.selected_site.status == TECH_A_NEW:
-            self.selected_site.on_click_delete_button = self.app.info.append_button('Удалить')
+            # self.on_click_delete_button = self.app.info.append_button('Удалить', w=-2, justify='center')
+            buttons_line = []
+            buttons_line.append({'text':'Удалить', 'id':'del_button'})
+            buttons_line.append({'text':'Запуск', 'id':'button'})
+            self.control_buttons = self.app.info.append_buttons_line(buttons_line)
         self.app.info.stop()
     
     
@@ -248,7 +261,7 @@ class tech_area:
         num = randint(0,99999999)
         self.name = f'lab{num:0>8d}'
         self.status = TECH_A_NEW
-        self.on_click_delete_button = None
+        # self.on_click_delete_button = None
         
     def draw(self, surface):
         screen_pos = self.app.terrain.demapping(self.rect.topleft)

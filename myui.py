@@ -1,5 +1,8 @@
+from array import array
+from multiprocessing.dummy import Array
 from sys import flags
-from typing import Union, Tuple, Dict
+from typing import Iterable, Union, Tuple, Dict
+from unittest import result
 import utils 
 
 import pygame
@@ -300,3 +303,88 @@ class myUIImage(pygame_gui.elements.UIImage):
     def set_image(self, pic):
         super().set_image(pic) 
         self.relative_rect.size = self.image.get_rect().size
+        
+        
+class UIButtonLine(pygame_gui.elements.UIButton):
+    def __init__(self, relative_rect: pygame.Rect,
+                 buttons: None,
+                 manager: IUIManagerInterface,
+                 container: Union[IContainerLikeInterface, None] = None,
+                 parent_element: UIElement = None,
+                 starting_height:int=1,
+                 anchors: Dict[str, str] = None,
+                 object_id: Union[ObjectID, str, None] = None,
+                 generate_click_events_from_list: Iterable[int] = frozenset([pygame.BUTTON_LEFT]),
+                 visible: int = 1
+                 ):
+    
+        self.relative_rect = relative_rect
+        self.manager = manager
+        self.container = container
+
+        self.ui_buttons, self.relative_rect.height = self._create_buttons(buttons)
+        self.txt_buttons = buttons
+        
+        
+        super().__init__(relative_rect,
+                    text='',
+                    manager=manager,
+                    container=container,
+                    starting_height = 1,
+                    visible = 0
+                    )
+        
+        
+        
+        self._create_valid_ids(container=container,
+                               parent_element=parent_element,
+                               object_id=object_id,
+                               element_id='button_line')
+        
+        
+        self.rebuild_from_changed_theme_data()
+        
+    def rebuild_from_changed_theme_data(self):
+        for button in self.ui_buttons:
+            button.rebuild_from_changed_theme_data()
+                
+     
+    def _create_buttons(self, buttons):
+        # # num_col:len_col:frac_col
+        buttons_ui = []
+        frac_col = len(buttons)
+        if frac_col==0:
+            return buttons_ui
+        len_col = 1
+        width = len_col*self.container.get_relative_rect().w//frac_col
+        for i, button in enumerate(buttons):
+            num_col = i
+            left = num_col*self.container.get_relative_rect().w//frac_col
+            button_rect = pygame.Rect(left, self.relative_rect.top, width, self.relative_rect.height)
+            if button_rect.w==-2: button_rect.w = self.container.w
+            butui = pygame_gui.elements.UIButton(
+                relative_rect=button_rect,
+                text=button['text'],
+                manager=self.manager,
+                container=self.container,
+                object_id=button['id']
+            )
+            buttons_ui.append(butui)
+        return buttons_ui, butui.get_relative_rect().height
+        
+    def set_buttons(self, new_buttons):
+
+        if new_buttons!=self.txt_buttons:
+            self.ui_buttons, self.relative_rect.height = self._create_buttons(new_buttons)
+            self.txt_buttons = new_buttons
+            
+        
+    def kill(self):
+        for button in self.ui_buttons:
+            button.kill()
+            del button
+        self.ui_buttons.clear()
+        
+        return super().kill()
+    
+    
