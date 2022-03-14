@@ -390,6 +390,8 @@ class info:
             dtop = newtop - oldtop
             self.top += newtop
             self._shift_next_position(dtop)
+            
+            # self.msg_info_list[self.msg_line]['ui'].rebuild()
             self.msg_line += 1
         else: 
             oldtop = self.msg_info_list[self.msg_line]['ui'].get_relative_rect()[3]
@@ -402,6 +404,8 @@ class info:
             dtop = newtop - oldtop
             self._shift_next_position(dtop)
             self.msg_line += 1
+            
+        
         
     def clear_info(self):
         self.app.info.start()

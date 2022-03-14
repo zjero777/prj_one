@@ -229,16 +229,28 @@ class UIItemsList(UIElement):
                  text_render_rect.y + self.text_shadow_offset[1] + x_and_y),
                 text_render_rect.size)
             basic_blit(new_image, shadow_text_render, shadow_text_rect)
-        
+   
+   
+    def set_relative_position(self, newpos):
+        super().set_relative_position(newpos)
+        left = newpos[0]
+        for i, item in enumerate(self.item_img_list):
+            item[0].set_relative_position((left, newpos[1]))
+            w = item[0].relative_rect.w
+            left += w
+            
+
+            
 
     def rebuild(self):
         left = self.relative_rect.left
         self.relative_rect.size = (len(self.item_img_list)*(self.pic_size[0]+self.padding[0]), self.pic_size[1]+self.padding[1])
         for item in self.item_img_list:
             # item[0]['count'] = self.items_list
-            newpos = (left, item[0].relative_rect.top)
+            
+            # newpos = (left, item[0].relative_rect.top)
             item[0].relative_rect.size = (self.pic_size[0]+self.padding[0]*2, self.pic_size[1]+self.padding[1]*2)
-            item[0].set_relative_position(newpos)
+            item[0].set_relative_position((left, self.relative_rect.top))
             left += self.pic_size[0]+self.padding[0]
         
         
