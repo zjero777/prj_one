@@ -37,7 +37,9 @@ class player:
                 self.use_selected()
             elif build_type=='block':
                 field.building_map[field.tile_pos[0], field.tile_pos[1]]=build_item['id']
-                self.use_selected()       
+                self.use_selected()     
+                self.app.ui_tech.refresh_site_content(field.tile_pos)
+                
     
     def manual_dig(self, field, tilepos, time):
         if not self.dig:

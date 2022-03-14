@@ -83,10 +83,11 @@ class ui_tech:
                 # if event.ui_element == self.on_click_delete_button:
                 #     self.tech_sites.delete(self.selected_site)
                 if self.control_buttons:
-                    for num, on_click_button in enumerate(self.control_buttons.ui_buttons):
-                        if event.ui_element == on_click_button:
-                            if num==0: self.tech_sites.delete(self.selected_site)
-                            if num==1: pass
+                    if event.ui_element.text == 'Удалить': self.tech_sites.delete(self.selected_site)
+                    # for num, on_click_button in enumerate(self.control_buttons.ui_buttons):
+                    #     if event.ui_element == on_click_button:
+                    #         if on_click_button.text=='Удалить': self.tech_sites.delete(self.selected_site)
+                    #         if num==1: pass
                     
                     
 
@@ -100,10 +101,16 @@ class ui_tech:
             self.app.info.append_text(f' - размер: {self.selected_site.rect.size}')
         if self.selected_site.status == TECH_A_NEW:
             # self.on_click_delete_button = self.app.info.append_button('Удалить', w=-2, justify='center')
+            if self.selected_site.resource_research:
+                self.app.info.append_text(f'Стоимость исследования:')
+                self.app.info.append_list_items(self.selected_site.resource_research)
             buttons_line = []
             buttons_line.append({'text':'Удалить', 'id':'del_button'})
-            buttons_line.append({'text':'Запуск', 'id':'button'})
+            if self.selected_site.resource_research:
+                buttons_line.append({'text':'Запуск', 'id':'button'})
             self.control_buttons = self.app.info.append_buttons_line(buttons_line)
+            # button = get_button_by_text('Запуск')
+            
         self.app.info.stop()
     
     
@@ -191,7 +198,19 @@ class ui_tech:
                     else:
                         surface.blit(self.bg_red, f_rect.topleft)
         
+    def refresh_site_content(self, tile_pos):
         
+        self.area.topleft = tile_pos
+        self.area.size = (1,1)
+
+        area_num = self.area.collidelist(self.tech_sites.rect_list_all)
+        if area_num>-1:
+            tech_site = self.tech_sites.get_by_num(area_num)
+            content = self.app.terrain.building_map[tech_site.rect.left:tech_site.rect.right,
+                                        tech_site.rect.top:tech_site.rect.bottom]
+            tech_site.refresh(content)
+
+        ui_tech.area = pg.Rect(0,0,0,0)                  
     
         
 
@@ -254,8 +273,9 @@ class tech_area:
         self.app = app
         self.list = list
         self.result = np.zeros(rect.size, dtype=np.integer)
-        # self.content = np.zeros(rect.size, dtype=np.integer)
         self.content = np.array(content)
+        self.resource_research = self.calc_resource_research()
+        
         self.pic = self.create_pic(is_select=False)
         self.pic_selected = self.create_pic(is_select=True)
         num = randint(0,99999999)
@@ -317,3 +337,16 @@ class tech_area:
         c_rect = pg.Rect((0,(self.rect.h-1)*TILE), self.rect.size)
         pic.blit(tr_img, c_rect)
         return pic
+
+    def refresh(self, content):
+        self.content = content.copy()
+        self.resource_research = self.calc_resource_research()
+        
+    def calc_resource_research(self):
+        result=[]
+        res, count = np.unique(self.content, return_counts=True)
+        for i,id in enumerate(res):
+            if id==0: continue
+            if count[i]==0: continue
+            result.append({'id':id, 'count':count[i]*5})
+        return result

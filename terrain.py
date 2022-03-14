@@ -367,14 +367,15 @@ class terrain:
         # *** DEBUG ***
         # if keystate[pg.K_1]:
         #     self.app.info.start()
+        #     self.app.info.append_list_items([{'id':1,'count':2},{'id':2,'count':12}])
+        #     self.app.info.append_list_items([{'id':1,'count':3}])
         #     self.app.info.append_text(f'1')
-        #     self.app.info.append_text(f'2')
-        #     self.app.info.append_text(f'3')
         #     self.app.info.stop()
 
         # if keystate[pg.K_2]:
         #     self.app.info.start()
-        #     self.app.info.append_text(f'4')
+        #     self.app.info.append_text(f'1')
+        #     self.app.info.append_list_items([{'id':1,'count':1}])
         #     self.app.info.stop()
 
         # if keystate[pg.K_0]:
@@ -584,6 +585,7 @@ class terrain:
         if site > 0:  # demolition block
             player.pickup(site, 1)
             self.building_map[tile_pos[0], tile_pos[1]] = 0
+            self.app.ui_tech.refresh_site_content(tile_pos)
 
         # diginfo = self.GetBInfo('dig',site)
 
