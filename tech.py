@@ -49,20 +49,16 @@ class UI_tech_blueprints:
 class ui_tech:
     def __init__(self, app):
         self.app = app
-        self.data = app.terrain.data['factory_type']
+        
         self.enabled = False
-        self.first_pressed = False
+        self.first_pressed = [False, False, False]
+        
         self.area = pg.Rect(0,0,0,0)
         self.start = self.area
         self.allow = True
         self.on_click_delete_button = None
         self.control_buttons = []
         
-        # self.selected_site = None
-        # close bp all factory 
-        for item in self.data:
-            item['open'] = False
-
         self.tech_sites = tech_sites(self.app)
         self.bg_blue = pg.Surface((TILE,TILE), pg.SRCALPHA)
         pg.draw.rect(self.bg_blue, pg.Color(64,128,255,128), (0,0,TILE, TILE))
@@ -75,20 +71,17 @@ class ui_tech:
             if self.tech_sites.selected_site.status != TECH_A_DELETE:
                 return self.tech_sites.selected_site
         return None
+
+    def site(self, num):
+        return self.tech_sites.get_by_num(num)
         
         
     def process_events(self, event):
         if event.type == pg.USEREVENT:
             if event.user_type == gui.UI_BUTTON_PRESSED:
-                # if event.ui_element == self.on_click_delete_button:
-                #     self.tech_sites.delete(self.selected_site)
                 if self.control_buttons:
-                    if event.ui_element.text == 'Удалить': self.tech_sites.delete(self.selected_site)
-                    # for num, on_click_button in enumerate(self.control_buttons.ui_buttons):
-                    #     if event.ui_element == on_click_button:
-                    #         if on_click_button.text=='Удалить': self.tech_sites.delete(self.selected_site)
-                    #         if num==1: pass
-                    
+                    if event.ui_object_id == 'panel.panel_info.del_button': self.tech_sites.delete_selected()
+                    if event.ui_object_id == 'panel.panel_info.run_button': self.tech_sites.start_research_selected()
                     
 
         
@@ -99,18 +92,26 @@ class ui_tech:
             self.app.info.append_text(f'Лаборатория: {self.selected_site.name}')
             # self.app.info.append_pic(self.selected_site.pic)    
             self.app.info.append_text(f' - размер: {self.selected_site.rect.size}')
-        if self.selected_site.status == TECH_A_NEW:
-            # self.on_click_delete_button = self.app.info.append_button('Удалить', w=-2, justify='center')
+        if self.selected_site.status == TECH_A_NEW or self.selected_site.status == TECH_A_RESULT:
             if self.selected_site.resource_research:
                 self.app.info.append_text(f'Стоимость исследования:')
                 self.app.info.append_list_items(self.selected_site.resource_research)
+                process_time_sec = self.selected_site.process_time/1000
+                self.app.info.append_text(f'Время исследования(сек):{process_time_sec:10.3f}')
+                
             buttons_line = []
             buttons_line.append({'text':'Удалить', 'id':'del_button'})
             if self.selected_site.resource_research:
-                buttons_line.append({'text':'Запуск', 'id':'button'})
+                buttons_line.append({'text':'Запуск', 'id':'run_button'})
             self.control_buttons = self.app.info.append_buttons_line(buttons_line)
             # button = get_button_by_text('Запуск')
-            
+        if self.selected_site.status == TECH_A_PROGRESS:
+            self.app.info.append_progress_bar(self.selected_site.progress)
+        if self.selected_site.status == TECH_A_COMPLETE:
+            self.app.info.append_text(f'Технология исследована:')
+            buttons_line = []
+            buttons_line.append({'text':'Посмотреть', 'id':'view_tech_button'})
+            self.control_buttons = self.app.info.append_buttons_line(buttons_line)
         self.app.info.stop()
     
     
@@ -135,6 +136,9 @@ class ui_tech:
             self.keypressed = False
         
         
+        if  (self.app.ui_tech_bp.visible or
+            self.app.player.is_openinv):
+            return
         
         if not self.enabled: 
             return()
@@ -149,40 +153,75 @@ class ui_tech:
         else:
             self.app.info.clear_info()
 
+        if not mouse_button[0]:
+            if mouse_button[2] and not self.first_pressed[2]:
+                # first push button
+                self.first_pressed[2] = True
+                self.area.topleft = mouse_tile_pos
+                self.area.size = (1,1)
+                
+            elif self.first_pressed[2] and not mouse_button[2]:
+                # release button
+                self.first_pressed[2] = False
+                if self.area.size==(1,1):
+                    # click to cell
+                    click_area_screen = pg.Rect((0,0),mouse_pos)
+                    if click_area_screen.colliderect(VIEW_RECT):
+                        self.enabled = False
+                        self.app.mouse.setcursor(cursor_type.normal)
+
+                else:
+                    # add area
+                    # if self.allow:
+                        # content = self.app.terrain.building_map[self.area.left:self.area.right,
+                        #                             self.area.top:self.area.bottom]
+                        # self.tech_sites.add(self.area, content)
+                    self.area = pg.Rect(0,0,0,0)
+            elif mouse_button[2]:
+                # on drag
+                pass
+                # self.area.left = min(mouse_tile_pos[0], self.start.left)
+                # self.area.top = min(mouse_tile_pos[1], self.start.top)
+                # self.area.size = (abs(self.start.left-mouse_tile_pos[0])+1, abs(self.start.top-mouse_tile_pos[1])+1)
+                # self.allow = (self.area.collidelist(self.app.factories.rect_list_all)==-1)
+                # self.allow = self.allow and (self.area.collidelist(self.tech_sites.rect_list_all)==-1)
+                # lookup = self.app.terrain.operate[self.area.left:self.area.right, self.area.top:self.area.bottom]
+                # self.allow = self.allow and np.min(lookup)
+            
             
 
-        
-        if mouse_button[0] and not self.first_pressed:
-            # first push button
-            self.first_pressed = True
-            self.area.topleft = mouse_tile_pos
-            self.area.size = (1,1)
-            self.start = self.area.copy()
-        elif self.first_pressed and not mouse_button[0]:
-            # release button
-            self.first_pressed = False
-            if self.area.size==(1,1):
-                # click to cell
-                click_area_screen = pg.Rect((0,0),mouse_pos)
-                if click_area_screen.colliderect(VIEW_RECT):
-                    area_num = self.area.collidelist(self.tech_sites.rect_list_all)
-                    self.tech_sites.select(area_num)
-            else:
-                # add area
-                if self.allow:
-                    content = self.app.terrain.building_map[self.area.left:self.area.right,
-                                                self.area.top:self.area.bottom]
-                    self.tech_sites.add(self.area, content)
-                self.area = pg.Rect(0,0,0,0)
-        elif mouse_button[0]:
-            # on drag
-            self.area.left = min(mouse_tile_pos[0], self.start.left)
-            self.area.top = min(mouse_tile_pos[1], self.start.top)
-            self.area.size = (abs(self.start.left-mouse_tile_pos[0])+1, abs(self.start.top-mouse_tile_pos[1])+1)
-            self.allow = (self.area.collidelist(self.app.factories.rect_list_all)==-1)
-            self.allow = self.allow and (self.area.collidelist(self.tech_sites.rect_list_all)==-1)
-            lookup = self.app.terrain.operate[self.area.left:self.area.right, self.area.top:self.area.bottom]
-            self.allow = self.allow and np.min(lookup)
+        if not mouse_button[2]:
+            if mouse_button[0] and not self.first_pressed[0]:
+                # first push button
+                self.first_pressed[0] = True
+                self.area.topleft = mouse_tile_pos
+                self.area.size = (1,1)
+                self.start = self.area.copy()
+            elif self.first_pressed[0] and not mouse_button[0]:
+                # release button
+                self.first_pressed[0] = False
+                if self.area.size==(1,1):
+                    # click to cell
+                    click_area_screen = pg.Rect((0,0),mouse_pos)
+                    if click_area_screen.colliderect(VIEW_RECT):
+                        area_num = self.area.collidelist(self.tech_sites.rect_list_all)
+                        self.tech_sites.select(area_num)
+                else:
+                    # add area
+                    if self.allow:
+                        content = self.app.terrain.building_map[self.area.left:self.area.right,
+                                                    self.area.top:self.area.bottom]
+                        self.tech_sites.add(self.area, content)
+                    self.area = pg.Rect(0,0,0,0)
+            elif mouse_button[0]:
+                # on drag
+                self.area.left = min(mouse_tile_pos[0], self.start.left)
+                self.area.top = min(mouse_tile_pos[1], self.start.top)
+                self.area.size = (abs(self.start.left-mouse_tile_pos[0])+1, abs(self.start.top-mouse_tile_pos[1])+1)
+                self.allow = (self.area.collidelist(self.app.factories.rect_list_all)==-1)
+                self.allow = self.allow and (self.area.collidelist(self.tech_sites.rect_list_all)==-1)
+                lookup = self.app.terrain.operate[self.area.left:self.area.right, self.area.top:self.area.bottom]
+                self.allow = self.allow and np.min(lookup)
             
     def draw(self, surface):
         self.tech_sites.draw(surface)
@@ -214,17 +253,35 @@ class ui_tech:
     
         
 
-
 class tech_sites:
+    
     def __init__(self, app):
         self.app = app
         self.list = []
         self.active = None
         # load pic resources 
-        self.img = [0 for i in self.app.data['tech-ui_img']]
-        for img in self.app.data['tech-ui_img']:
+        self.img = [0 for i in self.app.img_res['tech-ui_img']]
+        for img in self.app.img_res['tech-ui_img']:
             self.img[img['id']] = (pg.image.load(
                 path.join(img_dir, img['pic'])).convert_alpha())
+
+        ss = spritesheet(surface=self.img[self.get_img_data('name', 'mark')['id']])
+        self.img_mark = ss.images_slice(3,1)
+        # self.img_mark = ss.load_strip(pg.Rect(0,0,64,64), 2)
+        
+            
+        self.data = app.terrain.data['factory_type']
+        # self.selected_site = None
+        # close bp all factory 
+        for item in self.data:
+            item['open'] = False
+            
+    def get_img_data(self, key, stroke):
+        for item in self.app.img_res['tech-ui_img']:
+            if item[key] == stroke:
+                return(item)
+
+
 
     @property
     def rect_list_all(self):
@@ -254,17 +311,26 @@ class tech_sites:
         self.list.append(t_site)
         return t_site
     
-    def delete(self, t_site):
-        t_site.delete()
-        self.list.remove(t_site)
+    def delete_selected(self):
+        self.list.remove(self.active)
+        self.active.delete()
         
-    
     def draw(self, surface):
+        # self.app.info.start
+        # for img in self.img_mark:
+        #     self.app.info.append_pic(img, justify='left')
+        # self.app.info.stop
+        
+        
         for item in self.list:
             item.draw(surface)
     
     def update(self):
-        pass
+        for item in self.list:
+            item.update()
+    
+    def start_research_selected(self):
+        self.active.start_research()
     
     
 class tech_area:
@@ -273,15 +339,25 @@ class tech_area:
         self.app = app
         self.list = list
         self.result = np.zeros(rect.size, dtype=np.integer)
-        self.content = np.array(content)
-        self.resource_research = self.calc_resource_research()
+        self.result_bool = np.zeros(rect.size, dtype=np.bool_)
         
+        
+        self.content = np.array(content)
+        self.resource_research, self.process_time = self.calc_resource_research()
+
         self.pic = self.create_pic(is_select=False)
         self.pic_selected = self.create_pic(is_select=True)
+        self.complete_pic = self.create_complete_pic()
+        self.result_pic = None
         num = randint(0,99999999)
         self.name = f'lab{num:0>8d}'
         self.status = TECH_A_NEW
-        # self.on_click_delete_button = None
+        self.blueprint_id = None
+        self.complete_procent = 0
+        self.timer = app.timer
+        self.time_start = 0
+        
+        self.scan_ani_pos = 0
         
     def draw(self, surface):
         screen_pos = self.app.terrain.demapping(self.rect.topleft)
@@ -291,6 +367,17 @@ class tech_area:
                 surface.blit(self.pic, a_rect)
             else:
                 surface.blit(self.pic_selected, a_rect)
+            if self.status==TECH_A_RESULT:
+                surface.blit(self.result_pic, a_rect)
+                
+            if self.status==TECH_A_PROGRESS:
+                pg.draw.line(surface, pg.Color(0,189,243,255), (a_rect.left, self.scan_ani_pos+a_rect.top), (a_rect.right, self.scan_ani_pos+a_rect.top), 3)
+                self.scan_ani_pos += 1
+                if self.scan_ani_pos+a_rect.top>a_rect.bottom: 
+                    self.scan_ani_pos = 0
+                    
+            if self.status==TECH_A_COMPLETE:
+                surface.blit(self.complete_pic, a_rect)
             
     def delete(self):
         del self.result
@@ -298,6 +385,29 @@ class tech_area:
         del self.pic
         del self.pic_selected
         self.status = TECH_A_DELETE
+        
+    def create_result_pic(self):
+        pic = pg.Surface((self.rect.size[0]*TILE, self.rect.size[1]*TILE), flags=pg.SRCALPHA)
+        pg.Surface.fill(pic, pg.Color(0,255,0,64))
+        for j in range(0,(self.rect.h)*TILE, TILE):
+            for i in range(0,(self.rect.w)*TILE, TILE):
+                a_rect = pg.Rect((i,j), (TILE,TILE))  
+                tile = self.result[i//TILE][j//TILE]
+                if tile!=0:
+                    # pic.blit(self.list.img[1], a_rect)  
+                    
+                    pic.blit(self.list.img_mark[tile-1], a_rect)  
+        return pic
+        
+    def create_complete_pic(self):
+        pic = pg.Surface((self.rect.size[0]*TILE, self.rect.size[1]*TILE), flags=pg.SRCALPHA)
+        pg.Surface.fill(pic, pg.Color(0,255,0,64))
+        for j in range(0,(self.rect.h)*TILE, TILE):
+            for i in range(0,(self.rect.w)*TILE, TILE):
+                a_rect = pg.Rect((i,j), (TILE,TILE))  
+                pic.blit(self.list.img_mark[2], a_rect)  
+        return pic
+        
         
     def create_pic(self, is_select):
         pic = pg.Surface((self.rect.size[0]*TILE, self.rect.size[1]*TILE), flags=pg.SRCALPHA)
@@ -340,13 +450,95 @@ class tech_area:
 
     def refresh(self, content):
         self.content = content.copy()
-        self.resource_research = self.calc_resource_research()
+        self.resource_research, self.process_time = self.calc_resource_research()
         
     def calc_resource_research(self):
         result=[]
+        process_time = 0
         res, count = np.unique(self.content, return_counts=True)
         for i,id in enumerate(res):
             if id==0: continue
             if count[i]==0: continue
             result.append({'id':id, 'count':count[i]*5})
-        return result
+            process_time += count[i]*5*1000
+        return result, process_time
+    
+    def start_research(self):
+        if not self.app.player.inv.exist(self.resource_research):
+            return
+        self.app.player.inv.delete(self.resource_research)
+        self.status = TECH_A_PROGRESS
+        self.time_start = self.timer.get_ticks()
+
+    @property
+    def progress(self):
+        if self.status==TECH_A_PROGRESS:
+            now = self.timer.get_ticks()
+            return(((now-self.time_start)/self.process_time))      
+        elif self.status==TECH_A_RESULT:
+            return(100)
+        else:
+            return(0)
+    
+    def update(self):
+        if self.status == TECH_A_NEW:
+            pass
+        elif self.status == TECH_A_PROGRESS:
+            if self.timer.get_ticks()-self.time_start>self.process_time:
+                # research done, generate result
+                self.status = TECH_A_RESULT
+                self.calc_result()
+        elif self.status == TECH_A_RESULT:
+            if self.complete_procent == 100:
+                self.status = TECH_A_COMPLETE    
+        elif self.status == TECH_A_COMPLETE:
+            pass
+
+    def get_similar_plans(self, content, blueprints):
+    # get similar plan by content
+        shape = content.shape
+        max = 0 
+        complete = 0
+        result_bool = None
+        blueprint_id = None
+        for bp in blueprints:
+            if bp['dim']['w']!=shape[0] or bp['dim']['h']!=shape[1]: continue
+            if not bp.get('plan'): continue
+            _res = (np.transpose(bp['plan'])==content)
+            sum = _res.sum()
+            if sum > max:
+                max = sum
+                result_bool = _res
+                blueprint_id = bp['id']
+                
+        complete = round(max/np.count_nonzero(self.list.data[blueprint_id]['plan'])*100)
+        return result_bool, blueprint_id, complete
+
+    def calc_result(self):
+        # calc result array for check research
+        # self.content
+        # self.result
+        # self.list.data - bp
+        
+        if self.blueprint_id==None:
+            self.result_bool, self.blueprint_id, self.complete_procent = self.get_similar_plans(self.content, self.list.data)
+        else:
+            self.result_bool = (np.transpose(self.list.data[self.blueprint_id]['plan'])==self.content)
+            self.complete_procent = round(self.result_bool.sum()/np.count_nonzero(self.list.data[self.blueprint_id]['plan'])*100)
+            
+        # rebuild result
+        # 0 - none 
+        # 1 - wrong
+        # 2 - right
+
+        for i, row in enumerate(self.result_bool):
+            for j, val in enumerate(row):
+                if self.content[i][j]==0:
+                    self.result[i][j]=0
+                elif val:
+                    self.result[i][j]=2
+                else:
+                    self.result[i][j]=1
+                    
+        self.result_pic = self.create_result_pic()
+                    

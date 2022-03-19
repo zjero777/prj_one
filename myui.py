@@ -236,8 +236,7 @@ class UIItemsList(UIElement):
         left = newpos[0]
         for i, item in enumerate(self.item_img_list):
             item[0].set_relative_position((left, newpos[1]))
-            w = item[0].relative_rect.w
-            left += w
+            left += item[0].relative_rect.w
             
 
             
@@ -399,4 +398,7 @@ class UIButtonLine(pygame_gui.elements.UIButton):
         
         return super().kill()
     
-    
+class myUIProgressBar(pygame_gui.elements.UIProgressBar):
+    def update(self, time_delta: float):
+        super().update(time_delta)
+        self.set_relative_position(self.rect)

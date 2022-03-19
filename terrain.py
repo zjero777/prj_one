@@ -32,7 +32,7 @@ class terrain:
         self.building_map = np.zeros((width, height), dtype='i')
         self.first_click = True
         self.tile_pos = ()
-        f = open('data/data.json',)
+        f = open('data/data.json')
         self.data = json.load(f)
         f.close
 
@@ -367,9 +367,10 @@ class terrain:
         # *** DEBUG ***
         # if keystate[pg.K_1]:
         #     self.app.info.start()
-        #     self.app.info.append_list_items([{'id':1,'count':2},{'id':2,'count':12}])
-        #     self.app.info.append_list_items([{'id':1,'count':3}])
-        #     self.app.info.append_text(f'1')
+        #     self.app.info.append_progress_bar(50)
+        #     self.app.info.append_progress_bar(60)
+        #     self.app.info.append_progress_bar(0)
+        #     self.app.info.append_progress_bar(10)
         #     self.app.info.stop()
 
         # if keystate[pg.K_2]:
@@ -416,7 +417,17 @@ class terrain:
             if not mouse_button[0]:
                 self.first_click = True
 
-            if mouse_button[0] and len(self.tile_pos) > 0 and not self.dark_cover[self.tile_pos] and self.operate[self.tile_pos]:
+            area = pg.Rect(self.tile_pos, (1,1))
+            click_area_screen = pg.Rect((0,0),mouse_pos)
+            if click_area_screen.colliderect(VIEW_RECT):
+                area_num = area.collidelist(self.app.ui_tech.tech_sites.rect_list_all)
+                site = self.app.ui_tech.site(area_num)
+                if site:
+                    site_progress = (site.status==TECH_A_PROGRESS)
+                else:
+                    site_progress = False
+                
+            if mouse_button[0] and len(self.tile_pos) > 0 and not self.dark_cover[self.tile_pos] and self.operate[self.tile_pos] and not site_progress:
                 if self.app.player.inv.selected_backpack_cell > -1:
 
                     if self.first_click:
