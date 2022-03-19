@@ -218,12 +218,14 @@ class info:
 
     def _create_progress_bar_info(self, top_pos):  
         bar_rect = pg.Rect((0, top_pos), (P_INFO, 7))
-        progressui = gui.elements.UIProgressBar(
+        progressui = myUIProgressBar(
             relative_rect=bar_rect,
             manager=self.app.manager,
             container=self.panel_info
             # object_id='progress_bar'
         )
+        progressui.set_relative_position(bar_rect)
+
         return({'ui': progressui, 'type': type(progressui).__name__}, progressui.get_relative_rect()[3])
 
 
@@ -353,13 +355,17 @@ class info:
             self.msg_line += 1
             return     
 
-        if self.msg_info_list[self.msg_line]['type'] == 'UIProgressBar':
+        if self.msg_info_list[self.msg_line]['type'] == 'myUIProgressBar':
             oldtop = self.msg_info_list[self.msg_line]['ui'].get_relative_rect()[3]
-            self.msg_info_list[self.msg_line]['ui'].percent_full=procent
+            self.msg_info_list[self.msg_line]['ui'].set_current_progress(procent)
             newtop = self.msg_info_list[self.msg_line]['ui'].get_relative_rect()[3]
             dtop = newtop - oldtop
             self.top += newtop
-            self._shift_next_position(dtop)
+            # gui.elements.UIProgressBar.set_relative_position
+            self.msg_info_list[self.msg_line]['ui'].update_containing_rect_position()
+            
+            if dtop:
+                self._shift_next_position(dtop)
             self.msg_line += 1
         else: 
             oldtop = self.msg_info_list[self.msg_line]['ui'].get_relative_rect()[3]
@@ -367,9 +373,11 @@ class info:
             del self.msg_info_list[self.msg_line]['ui']
 
             element, newtop = self._create_progress_bar_info(self.top)
+            
             self.msg_info_list[self.msg_line] = element
             self.top += newtop
             dtop = newtop - oldtop
+            # if dtop:
             self._shift_next_position(dtop)
             self.msg_line += 1     
         

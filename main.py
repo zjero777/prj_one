@@ -19,7 +19,7 @@ class game:
         self.clock = pg.time.Clock()
         self.timer = pg.time
         self.allsprites = pg.sprite.Group()
-        self.data = self.load_resources()
+        self.img_res = self.load_resources()
         self.terrain = terrain(self, PLANET_WIDTH, PLANET_HIGHT)
         self.player = player(self)
         self.info = info(self)
@@ -82,10 +82,10 @@ class game:
             pg.display.update()
     
     def load_resources(self):
-        f = open('data/res.json',)
-        data = json.load(f)
+        f = open('data/res.json')
+        img_res = json.load(f)
         f.close
-        return data
+        return img_res
 
 if __name__ == '__main__':
     app = game()

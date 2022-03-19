@@ -84,8 +84,11 @@ class AnimatedSprite(pygame.sprite.Sprite):
 # (x, y, x + offset, y + offset)
 
 class spritesheet(object):
-    def __init__(self, filename):
-        self.sheet = pygame.image.load(filename).convert_alpha()
+    def __init__(self, filename=None, surface=None):
+        if filename:
+            self.sheet = pygame.image.load(filename).convert_alpha()
+        if surface:
+            self.sheet = surface
     # Load a specific image from a specific rectangle
     def image_at(self, rectangle, colorkey = None):
         "Loads image from x,y,x+offset,y+offset"
@@ -110,6 +113,5 @@ class spritesheet(object):
         return self.images_at(tups, colorkey)
     def images_slice(self, column, rows, colorkey = None):
         rect = self.sheet.get_rect()
-        tups = [(rect[0]+rect[2]*y//column, rect[1]+rect[2]*x//rows, rect[2]//column, rect[3]//rows) for x in range(column) for y in range(rows)]
-        #print(tups)
+        tups = [(rect[2]*x//column, rect[3]*y//rows, rect[2]//column, rect[3]//rows) for x in range(column) for y in range(rows)]
         return self.images_at(tups, colorkey)
