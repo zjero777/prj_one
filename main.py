@@ -30,6 +30,7 @@ class game:
         self.water_falls = waterfalls(self)
         self.ui_tech_bp = UI_tech_blueprints(self)
         self.ui_tech = ui_tech(self)
+        self.clear_modal()
                 
     def update(self, dt):
         self.player.update()
@@ -86,6 +87,18 @@ class game:
         img_res = json.load(f)
         f.close
         return img_res
+    
+    def set_modal(self, cls): 
+        self.modal_class = cls
+        
+    def is_modal(self, cls):
+        if self.modal_class!=None:
+            return self.modal_class==cls
+        else:
+            return True
+        
+    def clear_modal(self):
+        self.modal_class = None
 
 if __name__ == '__main__':
     app = game()

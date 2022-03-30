@@ -150,8 +150,11 @@ class factory_list:
             f.draw(surface)
             
     def update(self):
+        # update
         for f in self.active:
             f.update()
+            
+        # control
             
     @property
     def rect_list_all(self):

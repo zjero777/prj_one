@@ -3,6 +3,7 @@ import numpy as np
 import pygame as pg
 import pygame_gui as gui
 from mouse import *
+from myui import UIItemsList, myUIImage
 from options import *
 
 class UI_tech_blueprints:
@@ -25,6 +26,8 @@ class UI_tech_blueprints:
         self.visible = False
         
     def update(self):
+        if not self.app.is_modal(self): return
+        
         keystate = pg.key.get_pressed()
         if keystate[pg.K_b]:
             if not self.keypressed:
@@ -64,6 +67,22 @@ class ui_tech:
         pg.draw.rect(self.bg_blue, pg.Color(64,128,255,128), (0,0,TILE, TILE))
         self.bg_red = pg.Surface((TILE,TILE), pg.SRCALPHA)
         pg.draw.rect(self.bg_red, pg.Color(255,32,128,128), (0,0,TILE, TILE))
+        self.wnd = gui.elements.UIWindow(pg.Rect(TECHINFO_WND_RECT), 
+                                         self.app.manager,
+                                         'Технология:',
+                                         visible=False,
+                                         object_id='tech_wnd'
+                                         )        
+        
+        self.info_img = None 
+        self.info_name = None
+        self.info_text = None
+        self.in_img = None
+        self.out_img = None
+        self.in_text = None
+        self.out_text = None
+        self.ok_button = None
+        self.turn_text = None
         
     @property
     def selected_site(self):
@@ -80,10 +99,129 @@ class ui_tech:
         if event.type == pg.USEREVENT:
             if event.user_type == gui.UI_BUTTON_PRESSED:
                 if self.control_buttons:
-                    if event.ui_object_id == 'panel.panel_info.del_button': self.tech_sites.delete_selected()
-                    if event.ui_object_id == 'panel.panel_info.run_button': self.tech_sites.start_research_selected()
+                    if event.ui_object_id == 'panel.panel_info.del_button': 
+                        self.tech_sites.delete_selected()
+                    elif event.ui_object_id == 'panel.panel_info.run_button': 
+                        self.tech_sites.start_research_selected()
+                    elif event.ui_object_id == 'panel.panel_info.view_tech_button': 
+                        # show tech window
+                        self.show_tech_selected()
+                        # open tech
+                        self.tech_sites.open_research_selected()
+                        # remove lab
+                        self.tech_sites.delete_selected()
+                if event.ui_element == self.ok_button:
+                    self.wnd.hide()
+                    self.app.clear_modal()
                     
+                    
+    def show_tech_selected(self):
+        self.app.set_modal(self.wnd)
+        
+        bp_id = self.selected_site.blueprint_id
+        
+        
+        bp = self.app.terrain.data['factory_type'][bp_id]
 
+        wnd_width = self.wnd.get_relative_rect().width-self.wnd.border_width*2-self.wnd.shadow_width*2
+        pos = 0
+        paddind = (10,0,10,0)
+        pic = self.app.factories.factory_img[bp_id]
+        if self.info_img:
+            self.info_img.set_image(pic)
+            self.info_img.set_relative_position((wnd_width//2-128//2,pos))
+            pos += self.info_img.get_relative_rect().h
+        else:
+            self.info_img = myUIImage(pg.Rect(wnd_width//2-128//2,pos,128,128), pic, self.app.manager, container=self.wnd)
+            pos += self.info_img.get_relative_rect().h
+            
+        name = bp['name']
+        if self.info_name:
+            self.info_name.set_text(name)
+            self.info_name.set_relative_position((paddind[0],pos))
+            pos += self.info_name.get_relative_rect().h
+        else:
+            self.info_name = gui.elements.UILabel(pg.Rect(paddind[0],pos,wnd_width,-1), name, self.app.manager, container=self.wnd)
+            pos += self.info_name.get_relative_rect().h
+
+        info_text = bp.get('info')
+        if info_text:
+            if self.info_text:
+                self.info_text.set_text(info_text)
+                self.info_text.set_relative_position((0, pos))
+                pos += self.info_text.get_relative_rect().h
+            else:
+                self.info_text = gui.elements.UITextBox(
+                    info_text, 
+                    pg.Rect(0,pos,wnd_width,-1), 
+                    self.app.manager, 
+                    container=self.wnd, 
+                    wrap_to_height=True,
+                    object_id='wnd_info_text')
+                pos += self.info_text.get_relative_rect().h
+        else:
+            self.info_text.kill()
+
+    
+        res_in = bp.get('in')
+        if res_in:
+            if self.in_text:
+                self.in_text.set_relative_position((paddind[0],pos))
+                pos += self.in_text.get_relative_rect().h
+                self.in_img.set_items_list(self.app.info._create_items_list(res_in))
+                self.in_img.set_relative_position((paddind[0],pos))
+                pos += self.in_img.get_relative_rect().h
+            else:
+                self.in_text = gui.elements.UILabel(pg.Rect(paddind[0],pos,wnd_width-paddind[2]-paddind[0],-1), 'Вход:', self.app.manager, container=self.wnd, object_id='label_left')
+                pos += self.in_text.get_relative_rect().h
+                self.in_img = UIItemsList(pg.Rect(paddind[0],pos,-1,-1), self.app.info._create_items_list(res_in), self.app.manager, container=self.wnd, object_id='item_label_m')
+                pos += self.in_img.get_relative_rect().h
+        else:
+            self.in_text.kill()
+            self.in_img.kill()
+        
+        res_out = bp.get('out')
+        if res_out:
+            if self.out_text:
+                self.out_text.set_relative_position((paddind[0],pos))
+                pos += self.out_text.get_relative_rect().h
+                self.out_img.set_items_list(self.app.info._create_items_list(res_out))
+                self.out_img.set_relative_position((paddind[0],pos))
+                pos += self.out_img.get_relative_rect().h
+            else:
+                self.out_text = gui.elements.UILabel(pg.Rect(paddind[0],pos,wnd_width-paddind[2]-paddind[0],-1), 'Выход:', self.app.manager, container=self.wnd, object_id='label_left')
+                pos += self.out_text.get_relative_rect().h
+                self.out_img = UIItemsList(pg.Rect(paddind[0],pos,-1,-1), self.app.info._create_items_list(res_out), self.app.manager, container=self.wnd, object_id='item_label_m')
+                pos += self.out_img.get_relative_rect().h
+        else:
+            self.out_text.kill()
+            self.out_img.kill()
+
+
+        turn = bp.get('time')
+        if turn:
+            if self.turn_text:
+                self.turn_text.set_text(f'Производственный цикл (сек): {turn}')
+                self.turn_text.set_relative_position((paddind[0],pos))
+                pos += self.turn_text.get_relative_rect().h
+            else:
+                self.turn_text = gui.elements.UILabel(pg.Rect(paddind[0],pos,wnd_width-paddind[2]-paddind[0],-1), f'Производственный цикл (сек): {turn}', self.app.manager, container=self.wnd, object_id='label_left')
+                pos += self.turn_text.get_relative_rect().h
+        else:
+            self.turn_text.kill()
+
+
+        if not self.ok_button:
+            ok_rect = pg.Rect(paddind[0],0,wnd_width-paddind[2]-paddind[0],-1)
+            ok_rect.bottomright = (-10,-10)
+            self.ok_button = gui.elements.UIButton(ok_rect,'OK', self.app.manager, container=self.wnd, 
+                                                   anchors={'left': 'right',
+                                                            'right': 'right',
+                                                            'top': 'bottom',
+                                                            'bottom': 'bottom'})
+            pos += self.ok_button.get_relative_rect().h
+
+        self.wnd.show()
         
     def view_tech_site_ui(self):
         self.app.info.start()
@@ -116,6 +254,9 @@ class ui_tech:
     
     
     def update(self):
+        
+        if not self.app.is_modal(self): return
+        
         self.tech_sites.update()
         keystate = pg.key.get_pressed()
         if keystate[pg.K_t]:
@@ -332,6 +473,10 @@ class tech_sites:
     def start_research_selected(self):
         self.active.start_research()
     
+    def open_research_selected(self):
+        self.active.open_research()
+
+
     
 class tech_area:
     def __init__(self, list, app, rect, content):
@@ -469,6 +614,11 @@ class tech_area:
         self.app.player.inv.delete(self.resource_research)
         self.status = TECH_A_PROGRESS
         self.time_start = self.timer.get_ticks()
+
+    def open_research(self):
+        for item in self.list.data:
+            if item['id']==self.blueprint_id:
+                item['open'] = True        
 
     @property
     def progress(self):

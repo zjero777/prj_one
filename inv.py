@@ -58,6 +58,8 @@ class inv:
             return(cell,block)
         
     def update(self):
+        if not self.app.is_modal(self): return
+        
         keystate = pg.key.get_pressed()
         if keystate[pg.K_e]:
             if self.first_pressed:

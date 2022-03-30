@@ -32,7 +32,7 @@ class terrain:
         self.building_map = np.zeros((width, height), dtype='i')
         self.first_click = True
         self.tile_pos = ()
-        f = open('data/data.json')
+        f = open('data/data.json', encoding='utf-8')
         self.data = json.load(f)
         f.close
 
@@ -333,6 +333,7 @@ class terrain:
             return(self.block_img[item['id']])
 
     def update(self):
+        if not self.app.is_modal(self): return
 
         pos_change = False
         keystate = pg.key.get_pressed()
