@@ -13,6 +13,26 @@
         }        
     },
 
+    "bordered":
+    {
+        "colours":
+        {
+            "normal_bg":"#00ff00"
+        },
+        "misc":
+        {
+            "border_width": "1"
+        }
+    },
+
+    "label_left":
+    {
+        "misc":
+        {
+            "text_horiz_alignment": "left"
+        }
+    },
+
 
     "panel":
     {
@@ -96,7 +116,8 @@
         "misc":{
             "text_shadow": "1",
             "text_shadow_size": "1",
-            "text_shadow_offset": "0,0"            
+            "text_shadow_offset": "0,0",
+            "size": "64"         
         }
 
     },
@@ -134,7 +155,17 @@
 
     },
 
-    
+    "wnd_info_text":
+    {
+
+        "misc":
+        {
+            "border_width": "0",
+            "padding": "10,10",
+            "shadow_width": "0"
+        }
+    },
+
     "progress_bar":
     {
         "colours":
@@ -154,7 +185,9 @@
     {
         "misc": 
         {
-            "enable_close_button": "0"
+            "enable_close_button": "0",
+            "border_width": "0",
+            "shadow_width": "0"
         }
     },
     "del_button":
