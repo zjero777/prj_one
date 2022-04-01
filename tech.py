@@ -120,28 +120,28 @@ class ui_tech:
         
         bp_id = self.selected_site.blueprint_id
         
-        
         bp = self.app.terrain.data['factory_type'][bp_id]
-
+        
         wnd_width = self.wnd.get_relative_rect().width-self.wnd.border_width*2-self.wnd.shadow_width*2
         pos = 0
         paddind = (10,0,10,0)
         pic = self.app.factories.factory_img[bp_id]
+        pic_size = pic.get_size()
         if self.info_img:
             self.info_img.set_image(pic)
-            self.info_img.set_relative_position((wnd_width//2-128//2,pos))
+            self.info_img.set_relative_position((wnd_width//2-pic_size[0]//2,pos))
             pos += self.info_img.get_relative_rect().h
         else:
-            self.info_img = myUIImage(pg.Rect(wnd_width//2-128//2,pos,128,128), pic, self.app.manager, container=self.wnd)
+            self.info_img = myUIImage(pg.Rect((wnd_width//2-pic_size[0]//2,pos),pic_size), pic, self.app.manager, container=self.wnd)
             pos += self.info_img.get_relative_rect().h
             
         name = bp['name']
         if self.info_name:
             self.info_name.set_text(name)
-            self.info_name.set_relative_position((paddind[0],pos))
+            self.info_name.set_relative_position((0,pos))
             pos += self.info_name.get_relative_rect().h
         else:
-            self.info_name = gui.elements.UILabel(pg.Rect(paddind[0],pos,wnd_width,-1), name, self.app.manager, container=self.wnd)
+            self.info_name = gui.elements.UILabel(pg.Rect(0,pos,wnd_width,-1), name, self.app.manager, container=self.wnd)
             pos += self.info_name.get_relative_rect().h
 
         info_text = bp.get('info')
@@ -159,8 +159,9 @@ class ui_tech:
                     wrap_to_height=True,
                     object_id='wnd_info_text')
                 pos += self.info_text.get_relative_rect().h
-        else:
+        elif self.info_text:
             self.info_text.kill()
+            self.info_text = None
 
     
         res_in = bp.get('in')
@@ -176,9 +177,11 @@ class ui_tech:
                 pos += self.in_text.get_relative_rect().h
                 self.in_img = UIItemsList(pg.Rect(paddind[0],pos,-1,-1), self.app.info._create_items_list(res_in), self.app.manager, container=self.wnd, object_id='item_label_m')
                 pos += self.in_img.get_relative_rect().h
-        else:
+        elif self.in_text:
             self.in_text.kill()
+            self.in_text = None
             self.in_img.kill()
+            self.in_img = None
         
         res_out = bp.get('out')
         if res_out:
@@ -193,10 +196,11 @@ class ui_tech:
                 pos += self.out_text.get_relative_rect().h
                 self.out_img = UIItemsList(pg.Rect(paddind[0],pos,-1,-1), self.app.info._create_items_list(res_out), self.app.manager, container=self.wnd, object_id='item_label_m')
                 pos += self.out_img.get_relative_rect().h
-        else:
+        elif self.out_text:
             self.out_text.kill()
+            self.out_text = None
             self.out_img.kill()
-
+            self.out_img = None
 
         turn = bp.get('time')
         if turn:
@@ -207,8 +211,9 @@ class ui_tech:
             else:
                 self.turn_text = gui.elements.UILabel(pg.Rect(paddind[0],pos,wnd_width-paddind[2]-paddind[0],-1), f'Производственный цикл (сек): {turn}', self.app.manager, container=self.wnd, object_id='label_left')
                 pos += self.turn_text.get_relative_rect().h
-        else:
+        elif self.turn_text:
             self.turn_text.kill()
+            self.turn_text = None
 
 
         if not self.ok_button:
@@ -220,7 +225,7 @@ class ui_tech:
                                                             'top': 'bottom',
                                                             'bottom': 'bottom'})
             pos += self.ok_button.get_relative_rect().h
-
+            
         self.wnd.show()
         
     def view_tech_site_ui(self):
