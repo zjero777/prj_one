@@ -652,7 +652,7 @@ class tech_area:
     def get_similar_plans(self, content, blueprints):
     # get similar plan by content
         shape = content.shape
-        max = 0 
+        max = -1 
         complete = 0
         result_bool = None
         blueprint_id = None
