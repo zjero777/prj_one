@@ -666,7 +666,7 @@ class tech_area:
                 result_bool = _res
                 blueprint_id = bp['id']
                 
-        complete = round(max/np.count_nonzero(self.list.data[blueprint_id]['plan'])*100)
+        complete = round(max/result_bool.sum())*100
         return result_bool, blueprint_id, complete
 
     def calc_result(self):
