@@ -417,8 +417,10 @@ class terrain:
 
             if not mouse_button[0]:
                 self.first_click = True
-
-            area = pg.Rect(self.tile_pos, (1,1))
+            if not self.tile_pos:
+                area = pg.Rect(-1,-1,1,1)
+            else:
+                area = pg.Rect(self.tile_pos, (1,1))
             click_area_screen = pg.Rect((0,0),mouse_pos)
             if click_area_screen.colliderect(VIEW_RECT):
                 area_num = area.collidelist(self.app.ui_tech.tech_sites.rect_list_all)

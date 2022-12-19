@@ -665,8 +665,10 @@ class tech_area:
                 max = sum
                 result_bool = _res
                 blueprint_id = bp['id']
-                
-        complete = round(max/result_bool.sum())*100
+        if result_bool is None:
+            result_bool = (False==content)
+            result_bool.fill(False)
+        else: complete = round(max/result_bool.sum())*100
         return result_bool, blueprint_id, complete
 
     def calc_result(self):
