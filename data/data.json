@@ -75,6 +75,19 @@
                     {"id":1,"count": 1}
                 ]
             }
+        },
+          {
+            "id": 8,
+            "name": "platform",
+            "pic": "platform.png",
+            "allow_dig": "True",
+            "dig": {
+                "time": 4,
+                "after": "space",
+                "loot": [
+                    {"id":14,"count": 1}
+                ]
+            }
         }
 
     
@@ -232,13 +245,15 @@
             "id": 11,
             "name": "water_in_a_bucket",
             "pic": "w_item.png",
-            "demolition":999,
+            "demolition":0.2,
             "build": {
                 "pit":
                 {
                     "result": "water",
                     "type": "terrain"
-                }
+                },
+                "ground":{},
+                "sand":{}
             }
         },
         {
@@ -254,13 +269,34 @@
         {
             "id": 13,
             "name": "pressured_moss",
-            "pic": "moss.png",
+            "pic": "pressured_moss.png",
             "demolition":1.5,
             "build": {
                 "ground":{},
                 "sand":{}
             }
+            
+        },
+            {
+            "id": 14,
+            "name": "stone-iron",
+            "pic": "s-i.png",
+            "demolition":4,
+            "build": {
+                "ground":{},
+                "sand":{},
+                "water":{
+                    "result": "platform",
+                    "type":"terrain"
+                },
+                "space":{
+                    "result": "platform",
+                    "type":"terrain"
+                }
+            }
+            
         }
+        
         
     ],
     "factory_type": [
@@ -551,8 +587,8 @@
             },
             "plan": [
                 [8,8,  8,8],
-                [8,10,10,8],
-                [8,10,10,8],
+                [7,10,10,8],
+                [7,10,10,8],
                 [8,8,  8,8]
             ],
             "pic": "corall_f.png",
@@ -641,9 +677,9 @@
                 [7,4,4,7],
                 [6,9,9,6]
             ],
-            "pic": "moss_farm.png",
-            "time": 24,
-            "demolition": 12.5,
+            "pic": "moss_press.png",
+            "time": 10,
+            "demolition": 8,
             "in": 
             [
                 {
@@ -652,7 +688,7 @@
                 },
                 {
                     "id": 2,
-                    "count": 1
+                    "count": 2
                 }
             ],
             "out":
@@ -660,6 +696,74 @@
                 {
                     "id": 13, 
                     "count": 1
+                }
+            ]
+        },
+           {
+            "id": 15,
+            "name": "combiner",
+            "dim": {
+                "w": 7,
+                "h": 3
+            },
+            "plan": [
+                [2,6,3,7,3,8,2],
+                [2,6,3,7,3,8,13],
+                [2,6,3,7,3,8,2]
+            ],
+            "pic": "combiner.png",
+            "time": 15,
+            "demolition": 10.5,
+            "in": 
+            [
+                {
+                    "id": 6,
+                    "count": 9
+                },
+                {
+                    "id": 7,
+                    "count": 5
+                }
+            ],
+            "out":
+            [
+                {
+                    "id": 14, 
+                    "count": 2
+                }
+            ]
+        },
+        {
+            "id": 16,
+            "name": "washer",
+            "dim": {
+                "w": 5,
+                "h": 3
+            },
+            "plan": [
+                [4,4,4,11,8],
+                [6,6,6,11,8],
+                [7,7,7,7,8]
+            ],
+            "pic": "washer.png",
+            "time": 2,
+            "demolition": 7.5,
+            "in": 
+            [
+                {
+                    "id": 11,
+                    "count": 10
+                },
+                {
+                    "id": 1,
+                    "count": 3
+                }
+            ],
+            "out":
+            [
+                {
+                    "id": 5, 
+                    "count": 2
                 }
             ]
         }
