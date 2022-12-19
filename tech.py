@@ -609,7 +609,7 @@ class tech_area:
         for i,id in enumerate(res):
             if id==0: continue
             if count[i]==0: continue
-            result.append({'id':id, 'count':count[i]*5})
+            result.append({'id':id, 'count':count[i]})
             process_time += count[i]*5*1000
         return result, process_time
     
