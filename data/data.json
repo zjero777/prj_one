@@ -522,6 +522,12 @@
                 "w": 4,
                 "h": 4
             },
+            "plan": [
+                [14,14,14,14],
+                [14,14,14,14],
+                [14,14,14,14],
+                [14,14,14,14]
+            ],   
             "pic": "escape_pod.png",
             "time": 10,
             "demolition": 10,
@@ -542,7 +548,7 @@
                 [6,6,7,8]
             ],
             "pic": "labaratory.png",
-            "time": 20,
+            "time": 10,
             "demolition": 8,
             "detect": 3,
             "operate": 2,
@@ -550,14 +556,14 @@
             [
                 {
                     "id": 5,
-                    "count": 10
+                    "count": 5
                 }
             ],
             "out":
             [
                 {
                     "id": 10, 
-                    "count": 1
+                    "count": 2
                 }
             ]
         },
@@ -622,7 +628,7 @@
                 [8,8,0]
             ],
             "pic": "pump.png",
-            "time": 20,
+            "time": 10,
             "demolition": 4.5,
             "out":
             [
@@ -752,7 +758,7 @@
             [
                 {
                     "id": 11,
-                    "count": 10
+                    "count": 5
                 },
                 {
                     "id": 1,
