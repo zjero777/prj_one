@@ -117,7 +117,8 @@
                 {
                     "result": "sand",
                     "type":"terrain"
-                }
+                },
+                "platform": {}
             }
 
         },
@@ -131,7 +132,8 @@
                 {
                 },
                 "sand": {
-                }
+                },
+                "platform": {}
             }
         },
         {
@@ -144,7 +146,8 @@
                 {
                 },
                 "sand": {
-                }
+                },
+                "platform": {}
             }
         },
         {
@@ -157,7 +160,8 @@
                 {
                 },
                 "sand": {
-                }
+                },
+                "platform": {}
             }
         },
         {
@@ -173,7 +177,8 @@
                 "pit": {
                     "result": "sand",
                     "type":"terrain"
-                }
+                },
+                "platform": {}
             }
         },
         {
@@ -190,7 +195,8 @@
                 "deep_pit": {
                     "result": "pit",
                     "type":"terrain"
-                }
+                },
+                "platform": {}
             }
         },
         {
@@ -203,7 +209,8 @@
                 {
                 },
                 "sand": {
-                }
+                },
+                "platform": {}
             }
         },
         {
@@ -216,7 +223,8 @@
                 {
                 },
                 "sand": {
-                }
+                },
+                "platform": {}
             }
         },
         {
@@ -253,7 +261,8 @@
                     "type": "terrain"
                 },
                 "ground":{},
-                "sand":{}
+                "sand":{},
+                "platform": {}
             }
         },
         {
@@ -263,7 +272,8 @@
             "demolition":2.4,
             "build": {
                 "ground":{},
-                "sand":{}
+                "sand":{},
+                "platform": {}
             }
         },
         {
@@ -273,7 +283,8 @@
             "demolition":1.5,
             "build": {
                 "ground":{},
-                "sand":{}
+                "sand":{},
+                "platform": {}
             }
             
         },
@@ -292,7 +303,8 @@
                 "space":{
                     "result": "platform",
                     "type":"terrain"
-                }
+                },
+                "platform": {}
             }
             
         }
