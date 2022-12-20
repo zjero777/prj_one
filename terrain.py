@@ -38,13 +38,13 @@ class terrain:
 
         self.field.fill(self.FindTInfo('id', 'ground'))
 
-        for i in range(1000):
+        for i in range(5000):
             self.field[rnd.randint(0, PLANET_WIDTH-1),
                        rnd.randint(0, PLANET_HIGHT-1)] = 0
-        for i in range(1000):
+        for i in range(15000):
             self.field[rnd.randint(0, PLANET_WIDTH-1),
                        rnd.randint(0, PLANET_HIGHT-1)] = 4
-        for i in range(1000):
+        for i in range(15000):
             self.field[rnd.randint(0, PLANET_WIDTH-1),
                        rnd.randint(0, PLANET_HIGHT-1)] = 6
 

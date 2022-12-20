@@ -26,8 +26,8 @@ class game:
         self.is_runing = True
         self.mouse = mouse(self)
         self.factories = factory_list(self)
-        # self.player.fall((PLANET_WIDTH//2,PLANET_HIGHT//2))
-        self.player.fall((5,5))
+        self.player.fall((PLANET_WIDTH//2,PLANET_HIGHT//2))
+        # self.player.fall((5,5))
         self.water_falls = waterfalls(self)
         self.ui_tech_bp = UI_tech_blueprints(self)
         self.ui_tech = ui_tech(self)
