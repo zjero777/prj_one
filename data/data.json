@@ -307,6 +307,54 @@
                 "platform": {}
             }
             
+        },
+        {
+            "id": 15,
+            "name": "space_rock",
+            "pic": "space_rock.png",
+            "demolition":4,
+            "build": {
+                "ground":{},
+                "sand":{},
+                "platform": {}
+            }
+            
+        },
+        {
+            "id": 16,
+            "name": "data",
+            "pic": "data.png",
+            "demolition":0.1,
+            "build": {
+                "ground":{},
+                "sand":{},
+                "platform": {}
+            }
+            
+        },
+        {
+            "id": 17,
+            "name": "asteroid_data",
+            "pic": "a_data.png",
+            "demolition":0.1,
+            "build": {
+                "ground":{},
+                "sand":{},
+                "platform": {}
+            }
+            
+        },
+        {
+            "id": 18,
+            "name": "armored_brick",
+            "pic": "c_brick.png",
+            "demolition":0.1,
+            "build": {
+                "ground":{},
+                "sand":{},
+                "platform": {}
+            }
+            
         }
         
         
@@ -784,6 +832,345 @@
                     "count": 2
                 }
             ]
+        },
+        {
+            "id": 17,
+            "name": "rocket_silo",
+            "dim": {
+                "w": 6,
+                "h": 4
+            },
+            "plan": [
+                [12,14,14,14,14,12],
+                [13,14,0,0,14,13],
+                [13,14,0,0,14,13],
+                [12,14,14,14,14,12]
+            ],
+            "pic": "rocket_silo.png",
+            "time": 600,
+            "demolition": 15,
+            "in": 
+            [
+                {
+                    "id": 14,
+                    "count": 100
+                },
+                {
+                    "id": 2,
+                    "count": 25
+                },
+                {
+                    "id": 4,
+                    "count": 50
+                },
+                {
+                    "id": 12,
+                    "count": 50
+                },
+                {
+                    "id": 13,
+                    "count": 10
+                },
+                {
+                    "id": 7,
+                    "count": 100
+                }
+            ],
+            "out":
+            [
+                {
+                    "id": 15, 
+                    "count": 15
+                },
+                {
+                    "id": 16, 
+                    "count": 20
+                }
+            ]
+        },
+        {
+            "id": 18,
+            "name": "observatory",
+            "dim": {
+                "w": 8,
+                "h": 8
+            },
+            "plan": [
+                [14,7,7,7,7,7,7,14],
+                [7,7,8,14,14,8,7,7],
+                [7,8,12,14,14,12,8,7],
+                [7,14,14,15,15,14,14,7],
+                [7,14,14,15,15,14,14,7],
+                [7,8,12,14,14,12,8,7],
+                [7,7,8,14,14,8,7,7],
+                [14,7,7,7,7,7,7,14]
+            ],
+            "pic": "a_observatory.png",
+            "time": 20,
+            "demolition": 32,
+            "in": 
+            [
+                {
+                    "id": 16,
+                    "count": 3
+                },
+                {
+                    "id": 15,
+                    "count": 1
+                },
+                {
+                    "id": 11,
+                    "count": 10
+                }
+            ],
+            "out":
+            [
+                {
+                    "id": 17, 
+                    "count": 2
+                }
+            ]
+        },
+        {
+            "id": 19,
+            "name": "brick_compressor",
+            "dim": {
+                "w": 4,
+                "h": 4
+            },
+            "plan": [
+                [15,6,13,15],
+                [3,3,3,3],
+                [11,2,2,11],
+                [3,3,3,3]
+            ],
+            "pic": "b_compressor.png",
+            "time": 10,
+            "demolition": 8,
+            "in": 
+            [
+                {
+                    "id": 13,
+                    "count": 2
+                },
+                {
+                    "id": 8,
+                    "count": 2
+                },
+                {
+                    "id": 17,
+                    "count": 1
+                }
+            ],
+            "out":
+            [
+                {
+                    "id": 19, 
+                    "count": 1
+                }
+            ]
+        },
+        {
+            "id": 20,
+            "name": "brickyard_2",
+            "dim": {
+                "w": 2,
+                "h": 2
+            },
+            "plan": [
+                [11,11],
+                [11,11]
+            ],
+            "pic": "brickyard.png",
+            "in": 
+            [
+                {
+                    "id": 1,
+                    "count": 10
+                }
+            ],
+            "out":
+            [
+                {
+                    "id": 2, 
+                    "count": 10
+                }
+            ],
+            "time": 10,
+            "demolition":2
+        },
+        {
+            "id": 21,
+            "name": "career_2",
+            "dim": {
+                "w": 2,
+                "h": 2
+            },
+            "plan": [
+                [12,12],
+                [12,12]
+            ],
+            "pic": "career.png",
+            "out":
+            [
+                {
+                    "id": 1, 
+                    "count": 2
+                },
+                {
+                    "id": 5, 
+                    "count": 1
+                }
+            ],
+            
+            "time": 6,
+            "demolition":2
+        },
+        {
+            "id": 22,
+            "name": "miller_2",
+            "dim": {
+                "w": 1,
+                "h": 3
+            },
+            "plan": [
+                [12],
+                [11],
+                [12]
+            ],
+            "pic": "miller.png",
+            "in": 
+            [
+                {
+                    "id": 2,
+                    "count": 5
+                }
+            ],
+            "out":
+            [
+                {
+                    "id": 3, 
+                    "count": 25
+                }
+            ],
+            "time": 15,
+            "demolition":1.5
+        },
+        {
+            "id": 23,
+            "name": "moss_farm_2",
+            "dim": {
+                "w": 4,
+                "h": 4
+            },
+            "plan": [
+                [12,13,13,12],
+                [13,10,10,13],
+                [13,10,10,13],
+                [12,13,13,12]               
+            ],
+            "pic": "moss_farm.png",
+            "out":
+            [
+                {
+                    "id": 4, 
+                    "count": 24
+                }
+            ],
+            "time": 40,
+            "demolition":6
+        },
+        {
+            "id": 24,
+            "name": "mine2",
+            "dim": {
+                "w": 3,
+                "h": 2
+            },
+            "plan": [
+                [12,13,14],
+                [12,13,14]               
+            ],
+            "pic": "mine.png",
+            "in": 
+            [
+                {
+                    "id": 13,
+                    "count": 3
+                }
+            ],
+            "out":
+            [
+                {
+                    "id": 6, 
+                    "count": 10
+                }
+            ],
+            "time": 10,
+            "demolition":3
+        },
+        {
+            "id": 25,
+            "name": "forge2",
+            "dim": {
+                "w": 4,
+                "h": 4
+            },
+            "plan": [
+                [14,13,13,14],
+                [14,14,14,14],
+                [14,14,14,14],
+                [14,13,13,14]                  
+            ],
+            "pic": "forge.png",
+            "in": 
+            [
+                {
+                    "id": 6,
+                    "count": 1
+                }
+            ],
+            "out":
+            [
+                {
+                    "id": 7, 
+                    "count": 3
+                }
+            ],
+            "time": 10,
+            "demolition": 8
+        },
+        {
+            "id": 6,
+            "name": "plastic_factory2",
+            "dim": {
+                "w": 3,
+                "h": 5
+            },
+            "plan": [
+                [12,7,12],
+                [7,11,14],
+                [12,7,12],
+                [14,11,7],
+                [12,7,12]                  
+            ],
+            "pic": "plastic_f.png",
+            "in": 
+            [
+                {
+                    "id": 9,
+                    "count": 1
+                }
+            ],
+            "out":
+            [
+                {
+                    "id": 8, 
+                    "count": 2
+                }
+            ],
+            "time": 15,
+            "demolition": 7.5
         }
     ]
 }
