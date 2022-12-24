@@ -355,6 +355,44 @@
                 "platform": {}
             }
             
+        },
+        {
+            "id": 19,
+            "name": "circuit",
+            "pic": "circuit.png",
+            "demolition":0.2,
+            "build": {
+                "ground":{},
+                "sand":{},
+                "platform": {}
+            }
+            
+        },
+        {
+            "id": 20,
+            "name": "planet_data",
+            "pic": "p_data.png",
+            "demolition":0.1,
+            "build": {
+                "ground":{},
+                "sand":{},
+                "platform": {}
+            }
+            
+        },
+        {
+            "id": 21,
+            "name": "digital_structure",
+            "pic": "d_structure.png",
+            "demolition":0.1,
+            "build": {
+                "ground":{},
+                "sand":{},
+                "water":{},
+                "space":{},
+                "platform": {}
+            }
+            
         }
         
         
@@ -582,12 +620,6 @@
                 "w": 4,
                 "h": 4
             },
-            "plan": [
-                [14,14,14,14],
-                [14,14,14,14],
-                [14,14,14,14],
-                [14,14,14,14]
-            ],   
             "pic": "escape_pod.png",
             "time": 10,
             "demolition": 10,
@@ -1070,6 +1102,13 @@
                 [12,13,13,12]               
             ],
             "pic": "moss_farm2.png",
+            "in": 
+            [
+                {
+                    "id": 11,
+                    "count": 4
+                }
+            ],
             "out":
             [
                 {
@@ -1077,7 +1116,7 @@
                     "count": 24
                 }
             ],
-            "time": 40,
+            "time": 20,
             "demolition":6
         },
         {
@@ -1171,6 +1210,163 @@
             ],
             "time": 15,
             "demolition": 7.5
+        },
+        {
+            "id": 27,
+            "name": "big_roboport",
+            "dim": {
+                "w": 3,
+                "h": 3
+            },
+            "plan": [
+                [12,13,12],
+                [13,14,13],
+                [12,13,12]
+            ],
+            "pic": "b_roboport.png",
+            "time": 1,
+            "demolition": 4.5,
+            "operate": 25
+        },
+        {
+            "id": 28,
+            "name": "hub",
+            "dim": {
+                "w": 4,
+                "h": 4
+            },
+            "plan": [
+                [14,14,14,14],
+                [14,14,14,14],
+                [14,14,14,14],
+                [14,14,14,14]
+            ],   
+            "pic": "hub.png",
+            "time": 10,
+            "demolition": 10,
+            "detect": 15,
+            "operate": 10
+        },
+        {
+            "id": 29,
+            "name": "labaratory_2",
+            "dim": {
+                "w": 4,
+                "h": 4
+            },
+            "plan": [
+                [14,14,13,12],
+                [14,13,13,13],
+                [14,13,13,13],
+                [14,14,13,12]
+            ],
+            "pic": "labaratory2.png",
+            "time": 15,
+            "demolition": 8,
+            "detect": 5,
+            "operate": 4,
+            "in": 
+            [
+                {
+                    "id": 5,
+                    "count": 10
+                }
+            ],
+            "out":
+            [
+                {
+                    "id": 10, 
+                    "count": 6
+                }
+            ]
+        },
+        {
+            "id": 30,
+            "name": "radar_2",
+            "dim": {
+                "w": 3,
+                "h": 3
+            },
+            "plan": [
+                [12,13,12],
+                [13,14,13],
+                [12,13,12]
+            ],
+            "pic": "radar2.png",
+            "time": 10,
+            "demolition": 4.5,
+            "detect": 25
+        },
+        {
+            "id": 31,
+            "name": "suface_scanner",
+            "dim": {
+                "w": 5,
+                "h": 5
+            },
+            "plan": [
+                [14,13,2,13,14],
+                [13,4,15,4,13],
+                [2,4,1,4,2],
+                [13,4,15,4,13],
+                [14,13,2,13,14]
+            ],
+            "pic": "surf_sc.png",
+            "time": 20,
+            "demolition": 10.5,
+            "in": 
+            [
+                {
+                    "id": 1,
+                    "count": 5
+                },
+                {
+                    "id": 16,
+                    "count": 1
+                }  
+            ],
+            "out":
+            [
+                {
+                    "id": 20, 
+                    "count": 1
+                }
+            ]
+        },
+        {
+            "id": 32,
+            "name": "scanner_3000",
+            "dim": {
+                "w": 3,
+                "h": 3
+            },
+            "plan": [
+                [18,18,18],
+                [18,19,18],
+                [18,18,18]
+            ],
+            "pic": "scanner_3000.png",
+            "time": 1,
+            "demolition": 1,
+            "detect": 20,
+            "in": 
+            [
+                {
+                    "id": 1,
+                    "count": 1
+                },
+                {
+                    "id": 16,
+                    "count": 1
+                }  
+            ],
+            "out":
+            [
+                {
+                    "id": 21 , 
+                    "count": 6
+                }
+            ]
         }
     ]
 }
