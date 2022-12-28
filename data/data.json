@@ -324,12 +324,7 @@
             "id": 16,
             "name": "data",
             "pic": "data.png",
-            "demolition":0.1,
-            "build": {
-                "ground":{},
-                "sand":{},
-                "platform": {}
-            }
+            "demolition":0.1
             
         },
         {
@@ -372,12 +367,7 @@
             "id": 20,
             "name": "planet_data",
             "pic": "p_data.png",
-            "demolition":0.1,
-            "build": {
-                "ground":{},
-                "sand":{},
-                "platform": {}
-            }
+            "demolition":0.1
             
         },
         {
@@ -403,6 +393,20 @@
                 "ground":{},
                 "sand":{}
             }
+            
+        },
+        {
+            "id": 23,
+            "name": "oil_can",
+            "pic": "oil_can.png",
+            "demolition":0.2
+            
+        },
+        {
+            "id": 24,
+            "name": "closed_oil_well",
+            "pic": "oil_skvazhina_closed.png",
+            "demolition":0.1
             
         }
         
@@ -593,8 +597,8 @@
             "in": 
             [
                 {
-                    "id": 4,
-                    "count": 3
+                    "id": 23,
+                    "count": 10
                 }
             ],
             "out":
@@ -604,7 +608,7 @@
                     "count": 1
                 }
             ],
-            "time": 25,
+            "time": 20,
             "demolition": 7.5
         },
         {
@@ -890,7 +894,7 @@
                 [12,14,14,14,14,12]
             ],
             "pic": "rocket_silo.png",
-            "time": 600,
+            "time": 500,
             "demolition": 15,
             "in": 
             [
@@ -911,12 +915,8 @@
                     "count": 50
                 },
                 {
-                    "id": 13,
-                    "count": 10
-                },
-                {
                     "id": 7,
-                    "count": 100
+                    "count": 50
                 }
             ],
             "out":
@@ -1208,15 +1208,15 @@
             "in": 
             [
                 {
-                    "id": 9,
-                    "count": 1
+                    "id": 23,
+                    "count": 50
                 }
             ],
             "out":
             [
                 {
                     "id": 8, 
-                    "count": 2
+                    "count": 6
                 }
             ],
             "time": 15,
@@ -1445,23 +1445,27 @@
                 [22]
             ],
             "pic": "c_drill.png",
-            "time": 3,
+            "time": 1,
             "demolition": 1,
             "in": 
             [
                 {
                     "id": 11,
-                    "count": 1
+                    "count": 3
                 }
             ],
             "out":
             [
                 {
-                    "id": 1 , 
+                    "id": 1, 
                     "count": 6
                 },
                 {
-                    "id": 5 , 
+                    "id": 5, 
+                    "count": 3
+                },
+                {
+                    "id": 6,
                     "count": 3
                 }
             ]
@@ -1499,41 +1503,129 @@
             "out":
             [
                 {
-                    "id": 2 , 
-                    "count": 22
+                    "id": 22 , 
+                    "count": 2
                 }
             ]
         },
         {
             "id": 36,
-            "name": "deep_drill",
+            "name": "mega_pump",
             "dim": {
-                "w": 3,
-                "h": 2
+                "w": 5,
+                "h": 5
             },
             "plan": [
-                [14,19,14],
-                [14,22,14]
+                [0,18,19,18,0],
+                [18,8,14,8,18],
+                [19,14,11,14,19],
+                [18,8,14,8,18],
+                [0,18,19,18,0]
             ],
-            "pic": "d_drill.png",
-            "time": 5,
-            "demolition": 2,
+            "pic": "mega_pump.png",
+            "time": 10,
+            "demolition": 10.5,
             "in": 
-            [
+            [              
                 {
-                    "id": 11,
-                    "count": 2
+                    "id": 15,
+                    "count": 1
                 }
             ],
             "out":
             [
                 {
-                    "id": 1 , 
-                    "count": 1
+                    "id": 11 , 
+                    "count": 30
+                }
+            ]
+        },
+        {
+            "id": 37,
+            "name": "cosmic_forge",
+            "dim": {
+                "w": 5,
+                "h": 5
+            },
+            "plan": [
+                [18,18,18,18,18],
+                [18,14,14,14,18],
+                [18,14,3,14,18],
+                [18,14,14,14,18],
+                [18,18,18,18,18]
+            ],
+            "pic": "cosmic_forge.png",
+            "time": 25,
+            "demolition": 10.5,
+            "in": 
+            [              
+                {
+                    "id": 16,
+                    "count": 3
+                }
+            ],
+            "out":
+            [
+                {
+                    "id": 7 , 
+                    "count": 3
                 },
                 {
-                    "id": 6 , 
-                    "count": 3
+                    "id": 14 , 
+                    "count": 2
+                }
+            ]
+        },
+        {
+            "id": 38,
+            "name": "oil_pump",
+            "dim": {
+                "w": 3,
+                "h": 3
+            },
+            "plan": [
+                [8,14,2],
+                [8,24,7],
+                [8,14,2]
+            ],
+            "pic": "oil_pump.png",
+            "time": 10,
+            "demolition": 4.5,
+            "out":
+            [
+                {
+                    "id": 23 , 
+                    "count": 10
+                }
+            ]
+        },
+        {
+            "id": 39,
+            "name": "oil_refinery",
+            "dim": {
+                "w": 4,
+                "h": 3
+            },
+            "plan": [
+                [2,2,2,6],
+                [7,3,6,3],
+                [2,2,2,6]
+            ],
+            "pic": "oil_refinery.png",
+            "time": 15,
+            "demolition": 4.5,
+            "in": 
+            [              
+                {
+                    "id": 4,
+                    "count": 15
+                }
+            ],
+            "out":
+            [
+                {
+                    "id": 23 , 
+                    "count": 5
                 }
             ]
         }
