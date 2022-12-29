@@ -462,7 +462,7 @@
                     "count": 1
                 }
             ],
-            "time": 10,
+            "time": 5,
             "demolition":2
         },
         {
@@ -757,13 +757,13 @@
                 [8,8,0]
             ],
             "pic": "pump.png",
-            "time": 10,
+            "time": 15,
             "demolition": 4.5,
             "out":
             [
                 {
                     "id": 11, 
-                    "count": 1
+                    "count": 3
                 }
             ]
         },
@@ -881,13 +881,13 @@
                 [7,7,7,7,8]
             ],
             "pic": "washer.png",
-            "time": 5,
+            "time": 3,
             "demolition": 7.5,
             "in": 
             [
                 {
                     "id": 11,
-                    "count": 5
+                    "count": 4
                 },
                 {
                     "id": 1,
@@ -898,7 +898,7 @@
             [
                 {
                     "id": 5, 
-                    "count": 2
+                    "count": 3
                 }
             ]
         },

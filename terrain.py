@@ -47,7 +47,7 @@ class terrain:
         for i in range(15000):
             self.field[rnd.randint(0, PLANET_WIDTH-1),
                        rnd.randint(0, PLANET_HIGHT-1)] = 6
-        for i in range(15000):
+        for i in range(500):
             self.field[rnd.randint(0, PLANET_WIDTH-1),
                        rnd.randint(0, PLANET_HIGHT-1)] = 9
 
