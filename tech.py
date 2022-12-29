@@ -657,6 +657,7 @@ class tech_area:
         result_bool = None
         blueprint_id = None
         for bp in blueprints:
+            if bp['open']: continue
             if bp['dim']['w']!=shape[0] or bp['dim']['h']!=shape[1]: continue
             if not bp.get('plan'): continue
             _res = (np.transpose(bp['plan'])==content)
@@ -668,7 +669,7 @@ class tech_area:
         if result_bool is None:
             result_bool = (False==content)
             result_bool.fill(False)
-        else: complete = round(max/result_bool.sum())*100
+        else: complete = round(max/(shape[0]*shape[1])*100)
         return result_bool, blueprint_id, complete
 
     def calc_result(self):
@@ -690,9 +691,7 @@ class tech_area:
 
         for i, row in enumerate(self.result_bool):
             for j, val in enumerate(row):
-                if self.content[i][j]==0:
-                    self.result[i][j]=0
-                elif val:
+                if self.result_bool[i][j]:
                     self.result[i][j]=2
                 else:
                     self.result[i][j]=1
