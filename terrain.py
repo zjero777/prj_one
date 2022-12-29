@@ -47,6 +47,9 @@ class terrain:
         for i in range(15000):
             self.field[rnd.randint(0, PLANET_WIDTH-1),
                        rnd.randint(0, PLANET_HIGHT-1)] = 6
+        for i in range(15000):
+            self.field[rnd.randint(0, PLANET_WIDTH-1),
+                       rnd.randint(0, PLANET_HIGHT-1)] = 9
 
         for i in range(2500):
             self.building_map[rnd.randint(0, PLANET_WIDTH-1), rnd.randint(
@@ -54,9 +57,6 @@ class terrain:
         for i in range(5000):
             self.building_map[rnd.randint(0, PLANET_WIDTH-1), rnd.randint(
                 0, PLANET_HIGHT-1)] = 6
-        for i in range(5000):
-            self.building_map[rnd.randint(0, PLANET_WIDTH-1), rnd.randint(
-                0, PLANET_HIGHT-1)] = 24
                 
                 
         #self.field[50, 50] = 1
@@ -604,7 +604,7 @@ class terrain:
 
             self.app.factories.delete(self.building_map, select_factory)
 
-        if site > 0 and site!=24:  # demolition block
+        if site > 0:  # demolition block
             player.pickup(site, 1)
             self.building_map[tile_pos[0], tile_pos[1]] = 0
             self.app.ui_tech.refresh_site_content(tile_pos)

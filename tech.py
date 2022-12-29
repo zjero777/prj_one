@@ -609,10 +609,8 @@ class tech_area:
         for i,id in enumerate(res):
             if id==0: continue
             if count[i]==0: continue
-            if id != 24:
-
-                result.append({'id':id, 'count':count[i]})
-                process_time += count[i]*5*1000
+            result.append({'id':id, 'count':count[i]})
+            process_time += count[i]*5*1000
         return result, process_time
     
     def start_research(self):
