@@ -76,7 +76,7 @@
                 ]
             }
         },
-          {
+       {
             "id": 8,
             "name": "platform",
             "pic": "platform.png",
@@ -86,6 +86,32 @@
                 "after": "space",
                 "loot": [
                     {"id":14,"count": 1}
+                ]
+            }
+        },
+        {
+            "id": 9,
+            "name": "closed_oil_well",
+            "pic": "closed_oil_well.png",
+            "allow_dig": "True",
+            "dig": {
+                "time": 1,
+                "after": "oil_well",
+                "loot": [
+                    {"id":1,"count": 1}
+                ]
+            }
+        },
+        {
+            "id": 10,
+            "name": "oil_well",
+            "pic": "oil_well.png",
+            "allow_dig": "True",
+            "dig": {
+                "time": 10,
+                "after": "oil_well",
+                "loot": [
+                    {"id":23,"count": 1}
                 ]
             }
         }
@@ -399,14 +425,10 @@
             "id": 23,
             "name": "oil_can",
             "pic": "oil_can.png",
-            "demolition":0.2
-            
-        },
-        {
-            "id": 24,
-            "name": "closed_oil_well",
-            "pic": "oil_skvazhina_closed.png",
-            "demolition":0.1
+            "demolition":0.2,
+            "build": {
+                "oil_well":{}
+            }
             
         }
         
@@ -440,7 +462,7 @@
                     "count": 1
                 }
             ],
-            "time": 5,
+            "time": 10,
             "demolition":2
         },
         {
@@ -1585,7 +1607,7 @@
             },
             "plan": [
                 [8,14,2],
-                [8,24,7],
+                [8,23,7],
                 [8,14,2]
             ],
             "pic": "oil_pump.png",
@@ -1629,5 +1651,45 @@
                 }
             ]
         }
+    ],
+    "recipies" : [
+      {
+        "id":0,
+        "name":"firing_bricks",
+        "time":10,
+        "in": 
+        [              
+            {
+                "id": 1,
+                "count": 2
+            }
+        ],
+        "out":
+        [
+            {
+                "id": 2 , 
+                "count": 1
+            }
+        ]
+      },
+      {
+        "id":1,
+        "name":"firing_bricks_with_sand",
+        "time":5,
+        "in": 
+        [              
+            {
+                "id": 5,
+                "count": 2
+            }
+        ],
+        "out":
+        [
+            {
+                "id": 2 , 
+                "count": 1
+            }
+        ]
+      }
     ]
 }
