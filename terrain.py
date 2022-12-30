@@ -437,7 +437,8 @@ class terrain:
                     site_progress = (site.status==TECH_A_PROGRESS)
                 else:
                     site_progress = False
-                
+            else:
+                site_progress = False
             if mouse_button[0] and len(self.tile_pos) > 0 and not self.dark_cover[self.tile_pos] and self.operate[self.tile_pos] and not site_progress:
                 if self.app.player.inv.selected_backpack_cell > -1:
 
