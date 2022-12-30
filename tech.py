@@ -83,6 +83,8 @@ class ui_tech:
         self.out_text = None
         self.ok_button = None
         self.turn_text = None
+        self.detect_text = None
+        self.operate_text = None
         
     @property
     def selected_site(self):
@@ -214,6 +216,33 @@ class ui_tech:
         elif self.turn_text:
             self.turn_text.kill()
             self.turn_text = None
+        
+        detect = bp.get('detect')
+        if detect:
+            if self.detect_text:
+                self.detect_text.set_text(f'Радар: {detect}')
+                self.detect_text.set_relative_position((paddind[0],pos))
+                pos += self.detect_text.get_relative_rect().h
+            else:
+                self.detect_text = gui.elements.UILabel(pg.Rect(paddind[0],pos,wnd_width-paddind[2]-paddind[0],-1), f'Радар: {detect}', self.app.manager, container=self.wnd, object_id='label_left')
+                pos += self.detect_text.get_relative_rect().h
+        elif self.detect_text:
+            self.detect_text.kill()
+            self.detect_text = None
+        
+        operate = bp.get('operate')
+        if operate:
+            if self.operate_text:
+                self.operate_text.set_text(f'Управление: {operate}')
+                self.operate_text.set_relative_position((paddind[0],pos))
+                pos += self.operate_text.get_relative_rect().h
+            else:
+                self.operate_text = gui.elements.UILabel(pg.Rect(paddind[0],pos,wnd_width-paddind[2]-paddind[0],-1), f'Управление: {operate}', self.app.manager, container=self.wnd, object_id='label_left')
+                pos += self.operate_text.get_relative_rect().h
+        elif self.operate_text:
+            self.operate_text.kill()
+            self.operate_text = None
+        
 
 
         if not self.ok_button:
