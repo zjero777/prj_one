@@ -154,11 +154,8 @@
             "pic": "b2.png", 
             "demolition":2,
             "build": {
-                "ground":
-                {
-                },
-                "sand": {
-                },
+                "ground": {},
+                "sand": {},
                 "platform": {}
             }
         },
@@ -168,11 +165,8 @@
             "pic": "beam.png",
             "demolition":1,
             "build": {
-                "ground":
-                {
-                },
-                "sand": {
-                },
+                "ground": {},
+                "sand": {},
                 "platform": {}
             }
         },
@@ -182,11 +176,8 @@
             "pic": "moss.png",
             "demolition":1,
             "build": {
-                "ground":
-                {
-                },
-                "sand": {
-                },
+                "ground": {},
+                "sand": {},
                 "platform": {}
             }
         },
@@ -196,10 +187,8 @@
             "pic": "s_mound.png",
             "demolition":1,
             "build": {
-                "ground": {
-                },
-                "sand": {
-                },
+                "ground": {},
+                "sand": {},
                 "pit": {
                     "result": "sand",
                     "type":"terrain"
@@ -213,11 +202,8 @@
             "pic": "stone.png",
             "demolition":3,
             "build": {
-                "ground":
-                {
-                },
-                "sand": {
-                },
+                "ground": {},
+                "sand": {},
                 "deep_pit": {
                     "result": "pit",
                     "type":"terrain"
@@ -231,11 +217,8 @@
             "pic": "metall.png",
             "demolition":2,
             "build": {
-                "ground":
-                {
-                },
-                "sand": {
-                },
+                "ground": {},
+                "sand": {},
                 "platform": {}
             }
         },
@@ -245,11 +228,8 @@
             "pic": "plastic.png",
             "demolition":2,
             "build": {
-                "ground":
-                {
-                },
-                "sand": {
-                },
+                "ground": {},
+                "sand": {},
                 "platform": {}
             }
         },
@@ -259,9 +239,7 @@
             "pic": "corall.png",
             "demolition":2,
             "build": {
-                "water":
-                {
-                }
+                "water": {}
             }
         },
         {
@@ -270,9 +248,7 @@
             "pic": "n_g_corall.png",
             "demolition":1.5,
             "build": {
-                "water":
-                {
-                }
+                "water": {}
             }
         },
         {
@@ -357,19 +333,14 @@
             "id": 17,
             "name": "asteroid_data",
             "pic": "a_data.png",
-            "demolition":0.1,
-            "build": {
-                "ground":{},
-                "sand":{},
-                "platform": {}
-            }
+            "demolition":0.1
             
         },
         {
             "id": 18,
             "name": "armored_brick",
             "pic": "c_brick.png",
-            "demolition":0.1,
+            "demolition":1.5,
             "build": {
                 "ground":{},
                 "sand":{},
@@ -630,7 +601,7 @@
                     "count": 1
                 }
             ],
-            "time": 20,
+            "time": 15,
             "demolition": 7.5
         },
         {
@@ -925,20 +896,12 @@
                     "count": 100
                 },
                 {
-                    "id": 2,
-                    "count": 25
-                },
-                {
-                    "id": 4,
-                    "count": 50
-                },
-                {
-                    "id": 12,
-                    "count": 50
+                    "id": 23,
+                    "count": 500
                 },
                 {
                     "id": 7,
-                    "count": 50
+                    "count": 20
                 }
             ],
             "out":
@@ -1590,11 +1553,11 @@
             [
                 {
                     "id": 7 , 
-                    "count": 3
+                    "count": 5
                 },
                 {
                     "id": 14 , 
-                    "count": 2
+                    "count": 5
                 }
             ]
         },
