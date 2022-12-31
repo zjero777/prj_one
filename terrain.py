@@ -28,7 +28,7 @@ class terrain:
         self.field = np.zeros((width, height), dtype='i')
         self.dark_cover = np.ones((width, height), dtype=np.bool)
         self.fog_of_war = np.ones((width, height), dtype=np.bool)
-        self.operate = np.zeros((width, height), dtype=np.bool)
+        self.operate = np.zeros((width, height), dtype=np.int)
         self.building_map = np.zeros((width, height), dtype='i')
         self.first_click = True
         self.tile_pos = ()
@@ -624,13 +624,13 @@ class terrain:
                     if self.onMap(i+x, j+y):
                         self.dark_cover[ceil(i+x), ceil(j+y)] = False
 
-    def set_operate(self, x, y, radius, value=True):
+    def set_operate(self, x, y, radius, value=1):
         for i in range(-radius, radius):
             for j in range(-radius, radius):
                 if (i+0.5)*(i+0.5)+(j+0.5)*(j+0.5) <= radius*radius:
                     if self.onMap(i+x, j+y):
-                        self.operate[ceil(i+x), ceil(j+y)] = value
-
+                        self.operate[ceil(i+x), ceil(j+y)] += value
+        
     def water_arround(self, pos):
         def _is_water(pos):
             water_id = self.GetTData('name', 'water')['id']
