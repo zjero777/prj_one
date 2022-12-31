@@ -133,7 +133,7 @@ class factory_list:
                 b_map[i, j] = 0
                 
         if factory.operate>0:
-            self.app.terrain.set_operate(x+factory.size[0]//2,y+factory.size[1]//2, factory.operate, False)
+            self.app.terrain.set_operate(x+factory.size[0]//2,y+factory.size[1]//2, factory.operate, -1)
                 
                 
         self.active.remove(factory)
