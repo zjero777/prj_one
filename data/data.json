@@ -401,6 +401,18 @@
                 "oil_well":{}
             }
             
+        },
+        {
+            "id": 24,
+            "name": "space_alloy",
+            "pic": "alloy.png",
+            "demolition":5,
+            "build": {
+                "ground":{},
+                "sand":{},
+                "platform": {}
+            }
+            
         }
         
         
@@ -419,6 +431,11 @@
                 [1,1]
             ],
             "pic": "brickyard.png",
+            "recipes":
+            [
+                {"id":0},
+                {"id":1}
+            ],
             "in": 
             [
                 {
@@ -439,6 +456,7 @@
         {
             "id": 1,
             "name": "quarry",
+            "info": "don't worry - work in quarry",
             "dim": {
                 "w": 2,
                 "h": 2
@@ -1240,8 +1258,8 @@
             "pic": "hub.png",
             "time": 10,
             "demolition": 10,
-            "detect": 15,
-            "operate": 10
+            "detect": 20,
+            "operate": 15
         },
         {
             "id": 29,
@@ -1556,6 +1574,10 @@
                     "count": 5
                 },
                 {
+                    "id": 24 , 
+                    "count": 1
+                },
+                {
                     "id": 14 , 
                     "count": 5
                 }
@@ -1619,6 +1641,7 @@
       {
         "id":0,
         "name":"firing_bricks",
+        "pic": "b2.png",
         "time":10,
         "in": 
         [              
@@ -1638,6 +1661,7 @@
       {
         "id":1,
         "name":"firing_bricks_with_sand",
+        "pic": "b2.png",
         "time":5,
         "in": 
         [              
@@ -1653,6 +1677,186 @@
                 "count": 1
             }
         ]
+      },
+      {
+        "id":2,
+        "name":"mound_mining",
+        "pic": "mound.png",
+        "time":5,
+        "out":
+        [
+            {
+                "id": 1 , 
+                "count": 1
+            }
+        ]
+      },
+      {
+        "id":3,
+        "name":"sand_mining",
+        "pic": "sand_mound.png",
+        "time":5,
+        "out":
+        [
+            {
+                "id": 5 , 
+                "count": 1
+            }
+        ]
+      },
+      {
+        "id":4,
+        "name":"brick_milling",
+        "pic": "beam.png",
+        "time":8,
+        "in": 
+        [              
+            {
+                "id": 2,
+                "count": 1
+            }
+        ],
+        "out":
+        [
+            {
+                "id": 3 , 
+                "count": 4
+            }
+        ]
+      },
+      {
+        "id":5,
+        "name":"moss_farming",
+        "pic": "moss.png",
+        "time":20,
+        "out":
+        [
+            {
+                "id": 4 , 
+                "count": 24
+            }
+        ]
+      },
+      {
+        "id":6,
+        "name":"stone_mining",
+        "pic": "stane.png",
+        "time":15,
+        "in": 
+        [              
+            {
+                "id": 3,
+                "count": 5
+            }
+        ],
+        "out":
+        [
+            {
+                "id": 6 , 
+                "count": 5
+            }
+        ]
+      },
+      {
+        "id":7,
+        "name":"stone_smelting",
+        "pic": "metall.png",
+        "time":10,
+        "in": 
+        [              
+            {
+                "id": 6,
+                "count": 3
+            }
+        ],
+        "out":
+        [
+            {
+                "id": 7 , 
+                "count": 1
+            }
+        ]
+      },
+      {
+        "id":8,
+        "name":"plastic_crafting",
+        "pic": "plastic.png",
+        "time":15,
+        "in": 
+        [              
+            {
+                "id": 23,
+                "count": 10
+            }
+        ],
+        "out":
+        [
+            {
+                "id": 8 , 
+                "count": 1
+            }
+        ]
+      },
+      {
+        "id":9,
+        "name":"coralls_finding",
+        "pic": "n_g_corall.png",
+        "time":20,
+        "in": 
+        [              
+            {
+                "id": 5,
+                "count": 5
+            }
+        ],
+        "out":
+        [
+            {
+                "id": 10 , 
+                "count": 2
+            }
+        ]
+      },
+      {
+        "id":10,
+        "name":"coralls_growing",
+        "pic": "corall.png",
+        "time":20,
+        "in": 
+        [              
+            {
+                "id": 10,
+                "count": 4
+            }
+        ],
+        "out":
+        [
+            {
+                "id": 9 , 
+                "count": 4
+            }
+        ]
+      },
+      {
+        "id":11,
+        "name":"coralls_pressing",
+        "pic": "c_brick.png",
+        "time":24,
+        "in": 
+        [              
+            {
+                "id": 9,
+                "count": 9
+            }
+        ],
+        "out":
+        [
+            {
+                "id": 12 , 
+                "count": 2
+            }
+        ]
       }
+
     ]
 }
