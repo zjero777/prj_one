@@ -433,21 +433,25 @@ class terrain:
                         'name', self.field[self.tile_pos[0], self.tile_pos[1]])
                     build_item, b_type = self.Get_info_block_placed(
                         self.app.player.inv.item, place)
+                    is_operate = self.operate[self.tile_pos[0], self.tile_pos[1]]
 
-                    if b_type:
+                    if b_type and is_operate:
+                        # allow place
                         img = self.Get_img(build_item, b_type).copy()
                         img.set_alpha(172)
                         self.surface.blit(img, xyRect)
                     else:
+                        # disallow place
                         img = self.Get_img(build_item, 'block').copy()
                         img.set_alpha(172)
                         colorImage = pg.Surface(img.get_size()).convert_alpha()
                         colorImage.fill(pg.Color('red'))
                         img.blit(colorImage, (0, 0),
-                                 special_flags=pg.BLEND_RGBA_MULT)
+                                    special_flags=pg.BLEND_RGBA_MULT)
                         self.surface.blit(
                             img, xyRect, special_flags=pg.BLEND_RGBA_MIN)
-
+        
+        # dark cover
         for y in range(self.pos[1]-HALF_HIGHT, self.pos[1]+HALF_HIGHT+1):
             for x in range(self.pos[0]-HALF_WIDTH, self.pos[0]+HALF_WIDTH+1):
                 if not self.onMap(x, y):

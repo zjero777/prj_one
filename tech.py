@@ -449,7 +449,7 @@ class tech_sites:
         # self.selected_site = None
         # close bp all factory 
         for item in self.data:
-            item['open'] = False
+            item['open'] = True #debug: set on False after
             
     def get_img_data(self, key, stroke):
         for item in self.app.img_res['tech-ui_img']:
@@ -652,7 +652,8 @@ class tech_area:
     def open_research(self):
         for item in self.list.data:
             if item['id']==self.blueprint_id:
-                item['open'] = True        
+                item['open'] = True   
+                return     
 
     @property
     def progress(self):

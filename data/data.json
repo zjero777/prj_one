@@ -431,32 +431,19 @@
                 [1,1]
             ],
             "pic": "brickyard.png",
-            "recipes":
-            [
-                {"id":0},
-                {"id":1}
-            ],
-            "in": 
-            [
-                {
-                    "id": 1,
-                    "count": 2
-                }
-            ],
-            "out":
-            [
-                {
-                    "id": 2, 
-                    "count": 1
-                }
-            ],
+            "use_recipes": 
+            {
+                "allowed_id":[0,1],
+                "selected_id":0
+            },
+            
             "time": 5,
             "demolition":2
         },
         {
             "id": 1,
             "name": "quarry",
-            "info": "don't worry - work in quarry",
+            "info": "do not worry - work in a quarry",
             "dim": {
                 "w": 2,
                 "h": 2
@@ -465,6 +452,7 @@
                 [2,2],
                 [2,2]
             ],
+            "use_recipes":{},
             "pic": "quarry.png",
             "out":
             [
@@ -488,6 +476,7 @@
                 [1],
                 [2]
             ],
+            "use_recipes":{},
             "pic": "miller.png",
             "in": 
             [
@@ -634,6 +623,7 @@
                 [3,5,3],
                 [2,3,2]
             ],
+            
             "pic": "roboport.png",
             "time": 1,
             "demolition": 4.5,
@@ -650,7 +640,9 @@
             "time": 10,
             "demolition": 10,
             "detect": 12,
-            "operate": 8
+            "operate": 8,
+            "storage":10,
+            "recipes":{}
         },
         {
             "id": 9,
@@ -1258,6 +1250,7 @@
             "pic": "hub.png",
             "time": 10,
             "demolition": 10,
+            "storage":20,
             "detect": 20,
             "operate": 15
         },
@@ -1637,7 +1630,7 @@
             ]
         }
     ],
-    "recipies" : [
+    "recipes" : [
       {
         "id":0,
         "name":"firing_bricks",
@@ -1662,19 +1655,19 @@
         "id":1,
         "name":"firing_bricks_with_sand",
         "pic": "b2.png",
-        "time":5,
+        "time":10,
         "in": 
         [              
             {
                 "id": 5,
-                "count": 2
+                "count": 3
             }
         ],
         "out":
         [
             {
                 "id": 2 , 
-                "count": 1
+                "count": 2
             }
         ]
       },

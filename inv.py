@@ -65,7 +65,7 @@ class inv:
         
         
         keystate = pg.key.get_pressed()
-        if keystate[pg.K_e]:
+        if keystate[pg.K_e] and keystate[pg.K_LCTRL]:
             if self.first_pressed:
                 self.first_pressed = False 
                 if self.app.ui_tech.enabled: return
