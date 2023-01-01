@@ -226,7 +226,7 @@ class terrain:
             self.app.info.stop()
             return
 
-        if self.dark_cover[self.tile_pos]:
+        if self.dark_cover[tilepos]:
             self.app.info.start()
             self.app.info.append_text(f'Территория не открыта')
             self.app.info.stop()
@@ -372,130 +372,9 @@ class terrain:
 
         if keystate[pg.K_HOME]:
             self.app.player.go_spawn()
-            
-        # *** DEBUG ***
-        # if keystate[pg.K_1]:
-        #     self.app.info.start()
-        #     self.app.info.append_progress_bar(50)
-        #     self.app.info.append_progress_bar(60)
-        #     self.app.info.append_progress_bar(0)
-        #     self.app.info.append_progress_bar(10)
-        #     self.app.info.stop()
+         
+        self.tile_pos = self.app.mouse.tile_pos   
 
-        # if keystate[pg.K_2]:
-        #     self.app.info.start()
-        #     self.app.info.append_text(f'1')
-        #     self.app.info.append_list_items([{'id':1,'count':1}])
-        #     self.app.info.stop()
-
-        # if keystate[pg.K_0]:
-        #     self.app.info.start()
-           
-        #     self.app.info.stop()
-
-        # return
-        # *************
-
-        mouse_button = pg.mouse.get_pressed()
-        mouse_pos = pg.mouse.get_pos()
-        self.tile_pos = self.mapping(mouse_pos)
-
-        if self.app.ui_tech_bp.visible: 
-            self.app.info.clear_info()
-            return
-
-
-        if self.app.player.is_openinv:
-            self.view_invinfo()
-
-        if self.app.ui_tech.enabled:
-            # self.app.info.clear_info()
-            return
-
-        if not pg.Rect(VIEW_RECT).collidepoint(mouse_pos):
-            self.app.info.clear_info()
-
-        if pg.Rect(VIEW_RECT).collidepoint(mouse_pos) and not self.app.player.is_openinv:
-
-            #  view terrain info
-            if self.app.player.inv.selected_backpack_cell == -1:
-                self.view_Tileinfo(self.tile_pos)
-            else:
-                self.view_Build_info(self.tile_pos)
-
-            if not mouse_button[0]:
-                self.first_click = True
-            if not self.tile_pos:
-                area = pg.Rect(-1,-1,1,1)
-            else:
-                area = pg.Rect(self.tile_pos, (1,1))
-            click_area_screen = pg.Rect((0,0),mouse_pos)
-            if click_area_screen.colliderect(VIEW_RECT):
-                area_num = area.collidelist(self.app.ui_tech.tech_sites.rect_list_all)
-                site = self.app.ui_tech.site(area_num)
-                if site:
-                    site_progress = (site.status==TECH_A_PROGRESS)
-                else:
-                    site_progress = False
-            else:
-                site_progress = False
-            if mouse_button[0] and len(self.tile_pos) > 0 and not self.dark_cover[self.tile_pos] and self.operate[self.tile_pos] and not site_progress:
-                if self.app.player.inv.selected_backpack_cell > -1:
-
-                    if self.first_click:
-                        self.first_click = False
-
-                        # build
-                        if self.building_map[self.tile_pos[0], self.tile_pos[1]] == 0:
-                            self.app.player.build(self)
-                            self.complete_factory()
-
-                else:
-
-                    if self.first_click:
-                        select_building = self.building_map[self.tile_pos[0],
-                                                            self.tile_pos[1]]
-                        select_terrain = self.field[self.tile_pos[0],
-                                                    self.tile_pos[1]]
-                        select_factory = self.app.factories.factory(
-                            self.tile_pos)
-                        # dig
-                        if select_building == 0 and strtobool(self.GetTileInfo('allow_dig', self.tile_pos)):
-                            data = self.GetTData('id', select_terrain)
-                            time = data['dig']['time']
-                            if self.app.player.manual_dig(self, self.tile_pos, time):
-                                self.first_click = True
-                                if self.field[self.tile_pos] == self.GetTData('name', 'pit')['id'] and self.water_arround(self.tile_pos):
-                                    self.app.water_falls.add(self.tile_pos)
-                        # demolition
-                        elif select_building > 0:
-                            data = self.GetBData('id', select_building)
-                            time = data['demolition']
-                            if self.app.player.manual_demolition(self, self.tile_pos, time):
-                                self.first_click = False
-                        elif select_factory:
-                            time = select_factory.demolition
-                            if self.app.player.manual_demolition(self, self.tile_pos, time):
-                                self.first_click = False
-
-                        else:
-                            self.app.player.stop_dig()
-                            self.app.player.stop_demolition()
-
-                        # building select
-                    else:
-                        self.app.player.stop_dig()
-                        self.app.player.stop_demolition()
-            else:
-                self.app.player.stop_dig()
-                self.app.player.stop_demolition()
-
-            if mouse_button[2] and not mouse_button[0] and len(self.tile_pos) > 0:
-                self.app.player.inv.selected_backpack_cell = -1
-                # self.app.player.inv.item = {}
-        else:
-            self.app.player.stop_dig()
-            self.app.player.stop_demolition()
 
     def draw(self):
         # draw bg
