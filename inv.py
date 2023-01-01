@@ -60,6 +60,10 @@ class inv:
     def update(self):
         if not self.app.is_modal(self): return
         
+        if self.app.player.is_openinv:
+            self.app.terrain.view_invinfo()
+        
+        
         keystate = pg.key.get_pressed()
         if keystate[pg.K_e]:
             if self.first_pressed:
