@@ -68,13 +68,6 @@ class mouse:
         # if not pg.Rect(VIEW_RECT).collidepoint(self.pos):
         #     self.app.info.clear_info()
 
-        if pg.Rect(VIEW_RECT).collidepoint(self.pos) and not self.app.player.is_openinv:
-
-            #  view terrain info
-            if self.app.player.inv.selected_backpack_cell == -1:
-                self.app.terrain.view_Tileinfo(self.tile_pos)
-            else:
-                self.app.terrain.view_Build_info(self.tile_pos)
 
         if pg.Rect(VIEW_RECT).collidepoint(self.pos) and not self.app.player.is_openinv and keystate[pg.K_LCTRL]:
 

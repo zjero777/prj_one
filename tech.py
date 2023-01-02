@@ -53,7 +53,7 @@ class ui_tech:
     def __init__(self, app):
         self.app = app
         
-        self.enabled = False
+        self.enabled = True
         self.first_pressed = [False, False, False]
         
         self.area = pg.Rect(0,0,0,0)
@@ -92,6 +92,11 @@ class ui_tech:
             if self.tech_sites.selected_site.status != TECH_A_DELETE:
                 return self.tech_sites.selected_site
         return None
+
+    @property
+    def selected_factory(self):
+        return self.app.factories.selected
+
 
     def site(self, num):
         return self.tech_sites.get_by_num(num)
@@ -256,10 +261,57 @@ class ui_tech:
             pos += self.ok_button.get_relative_rect().h
             
         self.wnd.show()
-        
+
+    def view_terrain_info(self, tilepos):
+        # self.app.info.debug((0,10),)
+        if not pg.Rect(VIEW_RECT).collidepoint(self.app.mouse.pos): return
+
+        if not tilepos:
+            pic_idx = self.app.terrain.FindTInfo('id', 'hyperspace')
+            data = self.app.terrain.GetInfo('name', pic_idx)
+            # self.app.info.set(self.text, pic_idx)
+            self.app.info.append_pic(self.app.terrain.field_img[pic_idx][0])
+            self.app.info.append_text(f'<b>{data}</b><br>(???,???)')
+            return
+
+        if self.app.terrain.dark_cover[tilepos]:
+            self.app.info.append_text(f'Территория не открыта')
+            return
+
+        select_terrain = self.app.terrain.field[tilepos[0], tilepos[1]]
+        select_building = self.app.terrain.building_map[tilepos[0], tilepos[1]]
+
+        terrain_data = self.app.terrain.GetTData('id', select_terrain)
+        terrain_name = terrain_data['name']
+        terrain_pic = self.app.terrain.field_img[select_terrain][0]
+
+        self.app.info.append_pic(terrain_pic)
+        self.app.info.append_text(f'<b>{terrain_name}</b><br>{tilepos}</b>')
+
+        if strtobool(self.app.terrain.GetTileInfo('allow_dig', tilepos)) and select_building == 0:
+            time = terrain_data['dig']['time']
+            loot = terrain_data['dig']['loot']
+            self.app.info.append_text('Ожидаемые ресурсы:')
+            self.app.info.append_list_items(loot)
+            self.app.info.append_text(f'Время добычи(сек): {time}')
+
+        if select_building > 0:
+            block_data = self.app.terrain.GetBData('id', select_building)
+            block_name = block_data['name']
+            time = block_data['demolition']
+            loot = select_building
+            lootcount = 1
+            self.app.info.append_item(
+                {'id': select_building, 'count': -1}, justify='center')
+            self.app.info.append_text(f'<b>{block_name}</b>')
+            self.app.info.append_text('Ресурсы при разборе:')
+            self.app.info.append_item(
+                {'id': loot, 'count': lootcount}, 'item_label_m')
+            self.app.info.append_text(f'Время разбора(сек): {time}')
+
+
     def view_tech_site_ui(self):
-        self.app.info.start()
-        
+        if self.selected_site is None: return
         if self.selected_site.status != TECH_A_DELETE:
             self.app.info.append_text(f'Лаборатория: {self.selected_site.name}')
             # self.app.info.append_pic(self.selected_site.pic)    
@@ -284,8 +336,45 @@ class ui_tech:
             buttons_line = []
             buttons_line.append({'text':'Посмотреть', 'id':'view_tech_button'})
             self.control_buttons = self.app.info.append_buttons_line(buttons_line)
-        self.app.info.stop()
     
+    def view_factories_ui(self, tile_pos):
+        if self.selected_factory is None: 
+            select_factory = self.app.factories.factory(tile_pos)
+            if not select_factory: return
+        else:
+            select_factory = self.selected_factory
+        self.app.info.append_pic(select_factory.pic)
+        self.app.info.append_progress_bar(select_factory.progress)
+        if select_factory.working:
+            working_text = '(Работает)'
+        else:
+            working_text = '(Не работает)'
+
+        self.app.info.append_text(
+            f'<b>{select_factory.name}</b> - {working_text}')
+        if select_factory.demolition_list_items_100:
+            self.app.info.append_text('Ресурсы при разборе:')
+            self.app.info.append_list_items(
+                select_factory.demolition_list_items_100)
+        self.app.info.append_text(
+            f'Время разбора(сек): {select_factory.demolition}')
+        if select_factory.incom:
+            self.app.info.append_text('Вход:')
+            self.app.info.append_list_items(select_factory.incom)
+        if select_factory.outcom:
+            self.app.info.append_text('Выход:')
+            self.app.info.append_list_items(select_factory.outcom)
+        process_time_sec = select_factory.process_time/1000
+        self.app.info.append_text(
+            f'Время производства (сек): {process_time_sec:10.3f}')
+        if select_factory.detect:
+            self.app.info.append_text(
+                f'Радар (кв): {select_factory.detect}')
+        if select_factory.operate:
+            self.app.info.append_text(
+                f'Операционный радиус (кв): {select_factory.operate}')
+     
+
     
     def update(self):
         
@@ -293,47 +382,43 @@ class ui_tech:
         
         self.tech_sites.update()
         keystate = pg.key.get_pressed()
-        if keystate[pg.K_t]:
-            if not self.keypressed:
-                self.keypressed = True
-                if  (self.app.ui_tech_bp.visible or
-                    self.app.player.is_openinv):
-                    return
-                
-                if not self.enabled:
-                    self.enabled = True
-                    self.app.mouse.setcursor(cursor_type.tech)
-                    self.app.player.inv.selected_backpack_cell = -1
-                else:
-                    self.enabled = False
-                    self.app.mouse.setcursor(cursor_type.normal)
-        else:
-            self.keypressed = False
-        
         
         if  (self.app.ui_tech_bp.visible or
             self.app.player.is_openinv):
             return
         
-        if not self.enabled: 
-            return()
-            
         mouse_button = pg.mouse.get_pressed()
         mouse_pos = pg.mouse.get_pos()
         mouse_tile_pos = self.app.terrain.mapping(mouse_pos)
         if not mouse_tile_pos: return
 
+# start info
+        self.app.info.start()
+
         if self.selected_site:
             self.view_tech_site_ui()
-        else:
-            self.app.info.clear_info()
+        if self.app.factories.selected:
+            self.view_factories_ui(mouse_tile_pos)
 
+        if not self.selected_site and not self.app.factories.selected:
+            self.view_tech_site_ui()
+            self.view_factories_ui(mouse_tile_pos)
+            self.view_terrain_info(mouse_tile_pos)
+
+
+
+        self.app.info.stop()
+# stop info
         if not mouse_button[0]:
             if mouse_button[2] and not self.first_pressed[2]:
+                # Rigth mouse button
                 # first push button
                 self.first_pressed[2] = True
                 self.area.topleft = mouse_tile_pos
                 self.area.size = (1,1)
+                self.tech_sites.unselect()
+                self.app.factories.unselect()
+
                 
             elif self.first_pressed[2] and not mouse_button[2]:
                 # release button
@@ -380,14 +465,24 @@ class ui_tech:
                     click_area_screen = pg.Rect((0,0),mouse_pos)
                     if click_area_screen.colliderect(VIEW_RECT):
                         area_num = self.area.collidelist(self.tech_sites.rect_list_all)
-                        self.tech_sites.select(area_num)
+                        factory_num = self.area.collidelist(self.app.factories.rect_list_all)
+                        if area_num!=-1: 
+                            self.app.factories.unselect()
+                            self.tech_sites.select(area_num)
+                        if factory_num!=-1: 
+                            self.tech_sites.unselect()
+                            self.app.factories.select(factory_num)
+                            
+
                 else:
                     # add area
                     if self.allow:
                         content = self.app.terrain.building_map[self.area.left:self.area.right,
                                                     self.area.top:self.area.bottom]
                         self.tech_sites.add(self.area, content)
+                        self.app.factories.unselect()
                     self.area = pg.Rect(0,0,0,0)
+
             elif mouse_button[0]:
                 # on drag
                 self.area.left = min(mouse_tile_pos[0], self.start.left)
@@ -472,7 +567,11 @@ class tech_sites:
     def select(self, num):
         if num!=-1: 
             self.active = self.list[num]
-    
+
+    def unselect(self):
+        self.active = None
+
+
     def get_by_num(self, num):
         if num>-1 and num<len(self.list):
             return self.list[num]
