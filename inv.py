@@ -68,7 +68,7 @@ class inv:
         if keystate[pg.K_e] and keystate[pg.K_LCTRL]:
             if self.first_pressed:
                 self.first_pressed = False 
-                if self.app.ui_tech.enabled: return
+                # if self.app.ui_tech.enabled: return
                 self.player.is_openinv = not self.player.is_openinv
                 if self.player.is_openinv:
                     self.app.ui_tech_bp.hide()
@@ -168,6 +168,7 @@ class inv:
         return(finditem['count']-use_item>item['count']-1)
         
     def exist(self, items):
+        if items is None: return(True)
         for block in items:
             if not self.item_exist(block):
                 return(False)
@@ -211,6 +212,7 @@ class inv:
             finditem['count'] = finditem['count'] - block['count']
 
     def delete(self, items):
+        if items is None: return
         for block in items:
             self.delete_item(block)
             

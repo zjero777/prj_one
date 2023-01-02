@@ -99,7 +99,6 @@ class storage_ui:
     def __init__(self, app, storage):
         self.app = app
         self.storage = storage
-        self.active = False
         
     def update(self):
         pass
