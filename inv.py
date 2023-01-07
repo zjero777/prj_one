@@ -9,7 +9,7 @@ class inv:
     def __init__(self, app, player):
         self.app = app
         self.player = player
-        self.backpack = [{'id':1,'count':20},{'id':16,'count':10},{'id':2, 'count':10},{'id':3,'count':10}]
+        self.backpack = [{'id':1,'count':20},{'id':16,'count':10},{'id':2, 'count':10},{'id':25,'count':10}]
         self.selected_backpack_cell = -1
         # self.item = {}
         # for item in range(3):
@@ -65,10 +65,10 @@ class inv:
         
         
         keystate = pg.key.get_pressed()
-        if keystate[pg.K_e]:
+        if keystate[pg.K_e] and keystate[pg.K_f]:
             if self.first_pressed:
                 self.first_pressed = False 
-                if self.app.ui_tech.enabled: return
+                # if self.app.ui_tech.enabled: return
                 self.player.is_openinv = not self.player.is_openinv
                 if self.player.is_openinv:
                     self.app.ui_tech_bp.hide()
@@ -168,6 +168,7 @@ class inv:
         return(finditem['count']-use_item>item['count']-1)
         
     def exist(self, items):
+        if items is None: return(True)
         for block in items:
             if not self.item_exist(block):
                 return(False)
@@ -211,6 +212,7 @@ class inv:
             finditem['count'] = finditem['count'] - block['count']
 
     def delete(self, items):
+        if items is None: return
         for block in items:
             self.delete_item(block)
             

@@ -216,102 +216,54 @@ class terrain:
             return
 
     def view_Tileinfo(self, tilepos=()):
-        if not tilepos:
-            pic_idx = self.FindTInfo('id', 'hyperspace')
-            data = self.GetInfo('name', pic_idx)
-            # self.app.info.set(self.text, pic_idx)
-            self.app.info.start()
-            self.app.info.append_pic(self.field_img[pic_idx][0])
-            self.app.info.append_text(f'<b>{data}</b><br>(???,???)')
-            self.app.info.stop()
-            return
+        # if not tilepos:
+        #     pic_idx = self.FindTInfo('id', 'hyperspace')
+        #     data = self.GetInfo('name', pic_idx)
+        #     # self.app.info.set(self.text, pic_idx)
+        #     self.app.info.start()
+        #     self.app.info.append_pic(self.field_img[pic_idx][0])
+        #     self.app.info.append_text(f'<b>{data}</b><br>(???,???)')
+        #     self.app.info.stop()
+        #     return
 
-        if self.dark_cover[tilepos]:
-            self.app.info.start()
-            self.app.info.append_text(f'Территория не открыта')
-            self.app.info.stop()
-            return
+        # if self.dark_cover[tilepos]:
+        #     self.app.info.start()
+        #     self.app.info.append_text(f'Территория не открыта')
+        #     self.app.info.stop()
+        #     return
 
-        select_terrain = self.field[tilepos[0], tilepos[1]]
-        select_building = self.building_map[tilepos[0], tilepos[1]]
-        self.app.info.start()
+        # select_terrain = self.field[tilepos[0], tilepos[1]]
+        # select_building = self.building_map[tilepos[0], tilepos[1]]
+        # self.app.info.start()
 
-        terrain_data = self.GetTData('id', select_terrain)
-        terrain_name = terrain_data['name']
-        terrain_pic = self.field_img[select_terrain][0]
+        # terrain_data = self.GetTData('id', select_terrain)
+        # terrain_name = terrain_data['name']
+        # terrain_pic = self.field_img[select_terrain][0]
 
-        self.app.info.append_pic(terrain_pic)
-        self.app.info.append_text(f'<b>{terrain_name}</b><br>{tilepos}</b>')
+        # self.app.info.append_pic(terrain_pic)
+        # self.app.info.append_text(f'<b>{terrain_name}</b><br>{tilepos}</b>')
 
-        if strtobool(self.GetTileInfo('allow_dig', tilepos)) and select_building == 0:
-            time = terrain_data['dig']['time']
-            loot = terrain_data['dig']['loot']
-            self.app.info.append_text('Ожидаемые ресурсы:')
-            self.app.info.append_list_items(loot)
-            self.app.info.append_text(f'Время добычи(сек): {time}')
+        # if strtobool(self.GetTileInfo('allow_dig', tilepos)) and select_building == 0:
+        #     time = terrain_data['dig']['time']
+        #     loot = terrain_data['dig']['loot']
+        #     self.app.info.append_text('Ожидаемые ресурсы:')
+        #     self.app.info.append_list_items(loot)
+        #     self.app.info.append_text(f'Время добычи(сек): {time}')
 
-        if select_building > 0:
-            block_data = self.GetBData('id', select_building)
-            block_name = block_data['name']
-            time = block_data['demolition']
-            loot = select_building
-            lootcount = 1
-            self.app.info.append_item(
-                {'id': select_building, 'count': -1}, justify='center')
-            self.app.info.append_text(f'<b>{block_name}</b>')
-            self.app.info.append_text('Ресурсы при разборе:')
-            self.app.info.append_item(
-                {'id': loot, 'count': lootcount}, 'item_label_m')
-            self.app.info.append_text(f'Время разбора(сек): {time}')
-
-        if select_building == -1:
-            select_factory = self.app.factories.factory(tilepos)
-            if select_factory:
-                self.app.info.append_pic(select_factory.pic)
-                self.app.info.append_progress_bar(select_factory.progress)
-                if select_factory.working:
-                    working_text = '(Работает)'
-                else:
-                    working_text = '(Не работает)'
-
-                self.app.info.append_text(
-                    f'<b>{select_factory.name}</b> - {working_text}')
-                if select_factory.demolition_list_items_100:
-                    self.app.info.append_text('Ресурсы при разборе:')
-                    self.app.info.append_list_items(
-                        select_factory.demolition_list_items_100)
-                self.app.info.append_text(
-                    f'Время разбора(сек): {select_factory.demolition}')
-                if select_factory.incom:
-                    self.app.info.append_text('Вход:')
-                    self.app.info.append_list_items(select_factory.incom)
-                if select_factory.outcom:
-                    self.app.info.append_text('Выход:')
-                    self.app.info.append_list_items(select_factory.outcom)
-                process_time_sec = select_factory.process_time/1000
-                self.app.info.append_text(
-                    f'Время производства (сек): {process_time_sec:10.3f}')
-                if select_factory.detect:
-                    self.app.info.append_text(
-                        f'Радар (кв): {select_factory.detect}')
-                if select_factory.operate:
-                    self.app.info.append_text(
-                        f'Операционный радиус (кв): {select_factory.operate}')
-
-        # if  self.tile_pos==(0,0):
-        #     self.app.info.append_list_items([
-        #         {"id":"1", "count":"1"},
-        #         {"id":"2", "count":"2"},
-        #         {"id":"1", "count":"3"}
-        #     ])
-        # if  self.tile_pos==(0,1):
-        #     self.app.info.append_list_items([
-        #         {"id":"2", "count":"11"},
-        #         {"id":"1", "count":"12"},
-        #         {"id":"2", "count":"13"}
-        #     ])
-
-        self.app.info.stop()
+        # if select_building > 0:
+        #     block_data = self.GetBData('id', select_building)
+        #     block_name = block_data['name']
+        #     time = block_data['demolition']
+        #     loot = select_building
+        #     lootcount = 1
+        #     self.app.info.append_item(
+        #         {'id': select_building, 'count': -1}, justify='center')
+        #     self.app.info.append_text(f'<b>{block_name}</b>')
+        #     self.app.info.append_text('Ресурсы при разборе:')
+        #     self.app.info.append_item(
+        #         {'id': loot, 'count': lootcount}, 'item_label_m')
+        #     self.app.info.append_text(f'Время разбора(сек): {time}')
+        pass
 
     def view_Build_info(self, tilepos):
         if not tilepos:
@@ -433,21 +385,25 @@ class terrain:
                         'name', self.field[self.tile_pos[0], self.tile_pos[1]])
                     build_item, b_type = self.Get_info_block_placed(
                         self.app.player.inv.item, place)
+                    is_operate = self.operate[self.tile_pos[0], self.tile_pos[1]]
 
-                    if b_type:
+                    if b_type and is_operate:
+                        # allow place
                         img = self.Get_img(build_item, b_type).copy()
                         img.set_alpha(172)
                         self.surface.blit(img, xyRect)
                     else:
+                        # disallow place
                         img = self.Get_img(build_item, 'block').copy()
                         img.set_alpha(172)
                         colorImage = pg.Surface(img.get_size()).convert_alpha()
                         colorImage.fill(pg.Color('red'))
                         img.blit(colorImage, (0, 0),
-                                 special_flags=pg.BLEND_RGBA_MULT)
+                                    special_flags=pg.BLEND_RGBA_MULT)
                         self.surface.blit(
                             img, xyRect, special_flags=pg.BLEND_RGBA_MIN)
-
+        
+        # dark cover
         for y in range(self.pos[1]-HALF_HIGHT, self.pos[1]+HALF_HIGHT+1):
             for x in range(self.pos[0]-HALF_WIDTH, self.pos[0]+HALF_WIDTH+1):
                 if not self.onMap(x, y):

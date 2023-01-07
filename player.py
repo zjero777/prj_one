@@ -108,6 +108,7 @@ class player:
         b_map = terra.building_map
         factory=self.app.factories.add(bp, b_map, pos[0], pos[1])
         pos = (pos[0]+factory.size[0]//2, pos[1]+factory.size[1]//2)
+        factory.storage.add_items([{'id':1,'count':20},{'id':16,'count':10},{'id':2, 'count':10},{'id':3,'count':10}])
         self.scorch_ground(pos, 4)
         self.add_water(pos, 7)
         self.go_pos(terra, pos)

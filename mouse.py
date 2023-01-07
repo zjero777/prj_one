@@ -54,24 +54,23 @@ class mouse:
         mouse_button = pg.mouse.get_pressed()
         self.tile_pos = self.app.terrain.mapping(self.pos)
 
-        if self.app.ui_tech_bp.visible: 
-            self.app.info.clear_info()
-            return
+        keystate = pg.key.get_pressed()
+        
 
-        if self.app.ui_tech.enabled:
-            # self.app.info.clear_info()
-            return
+        # if self.app.ui_tech_bp.visible: 
+        #     self.app.info.clear_info()
+        #     return
 
-        if not pg.Rect(VIEW_RECT).collidepoint(self.pos):
-            self.app.info.clear_info()
+        # if self.app.ui_tech.enabled:
+        #     # self.app.info.clear_info()
+        #     return
 
-        if pg.Rect(VIEW_RECT).collidepoint(self.pos) and not self.app.player.is_openinv:
+        # if not pg.Rect(VIEW_RECT).collidepoint(self.pos):
+        #     self.app.info.clear_info()
 
-            #  view terrain info
-            if self.app.player.inv.selected_backpack_cell == -1:
-                self.app.terrain.view_Tileinfo(self.tile_pos)
-            else:
-                self.app.terrain.view_Build_info(self.tile_pos)
+
+        if pg.Rect(VIEW_RECT).collidepoint(self.pos) and not self.app.player.is_openinv and keystate[pg.K_f]:
+
 
             if not mouse_button[0]:
                 self.first_click = True
@@ -79,6 +78,7 @@ class mouse:
                 area = pg.Rect(-1,-1,1,1)
             else:
                 area = pg.Rect(self.tile_pos, (1,1))
+
             click_area_screen = pg.Rect((0,0),self.pos)
             if click_area_screen.colliderect(VIEW_RECT):
                 area_num = area.collidelist(self.app.ui_tech.tech_sites.rect_list_all)
@@ -89,6 +89,7 @@ class mouse:
                     site_progress = False
             else:
                 site_progress = False
+
             if mouse_button[0] and len(self.tile_pos) > 0 and not self.app.terrain.dark_cover[self.tile_pos] and self.app.terrain.operate[self.tile_pos] and not site_progress:
                 if self.app.player.inv.selected_backpack_cell > -1:
 
@@ -144,8 +145,8 @@ class mouse:
                 self.app.player.inv.selected_backpack_cell = -1
                 # self.app.player.inv.item = {}
         else:
-            self.app.player.stop_dig()
-            self.app.player.stop_demolition()
+             self.app.player.stop_dig()
+             self.app.player.stop_demolition()
 
         
         

@@ -34,11 +34,11 @@ class game:
         self.clear_modal()
                 
     def update(self, dt):
+        self.mouse.update()
         self.player.update()
         self.terrain.update() 
         self.allsprites.update(dt)
         self.factories.update()
-        self.mouse.update()
         self.info.update()
         self.water_falls.update()
         self.ui_tech.update()
