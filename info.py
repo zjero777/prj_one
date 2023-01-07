@@ -31,7 +31,7 @@ class info:
                                                    element_id='map_info'
                                                    )
 
-        self.panel_info = gui.elements.UIPanel(relative_rect=pg.Rect((0, 320), (P_INFO, 600)),
+        self.panel_info = gui.elements.UIPanel(relative_rect=pg.Rect((0, 320), (P_INFO, SC_HIGHT-320)),
                                                starting_layer_height=0,
                                                manager=self.app.manager,
                                                margins={
@@ -83,6 +83,18 @@ class info:
         # self.panel_info.rebuild()
 
     def update(self):
+
+        if pg.Rect(VIEW_RECT).collidepoint(self.app.mouse.pos) and not self.app.player.is_openinv:
+
+            #  view terrain info
+            if self.app.player.inv.selected_backpack_cell == -1:
+                self.app.terrain.view_Tileinfo(self.app.mouse.tile_pos)
+                pass
+            else:
+                self.app.terrain.view_Build_info(self.app.mouse.tile_pos)
+                pass
+
+
         pass
 
     def draw(self):

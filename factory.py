@@ -1,5 +1,6 @@
 import pygame as pg
 from options import *
+from storage  import *
 import random as rnd
 import numpy as np
 
@@ -18,29 +19,46 @@ class factory:
             self.plan = None
         self.demolition = blueprint['demolition']
         self.pic = list.factory_img[blueprint['id']]
-        if 'in' in blueprint.keys():
-            self.incom = blueprint['in']
-        else:
-            self.incom = []
-        if 'out' in blueprint.keys():
-            self.outcom = (blueprint['out'])
-        else:
-            self.outcom = []
-        self.process_time = int(blueprint['time']*1000)
+
+        self.recipe = None
+        if 'use_recipes' in blueprint.keys():
+            base_recipe_id = blueprint['use_recipes']['selected_id']
+            self.recipe = self.get_recipe_by_id(base_recipe_id)
+
+        if 'storage' in blueprint.keys():
+            self.storage = storage(app, self, blueprint['storage'])
+        
         if 'operate' in blueprint.keys():
             self.operate = (blueprint['operate'])
+            self.app.terrain.set_operate(x+self.size[0]//2,y+self.size[1]//2, self.operate)
         else:
             self.operate = 0
         if 'detect' in blueprint.keys():
             self.detect = (blueprint['detect'])
+            self.app.terrain.set_discover(x+self.size[0]//2,y+self.size[1]//2, self.detect)
         else:
             self.detect = 0
         
-        
+        # if 'detect' in bp.keys():
+        #     discover_radius = bp['detect']
+        #     self.app.terrain.set_discover(x+new_factory.size[0]//2,y+new_factory.size[1]//2, discover_radius)
+        # if 'operate' in bp.keys():
+        #     operate_radius = bp['operate']
+        #     self.app.terrain.set_operate(x+new_factory.size[0]//2,y+new_factory.size[1]//2, operate_radius)
+
+
+
         self.working = False
         self.timer = app.timer
         self.time = 0
-        
+
+    def get_recipe_by_id(self, id):    
+        result = -1
+        self.app.terrain.data['recipes']
+        for i in self.app.terrain.data['recipes']:
+            if i['id']==id: 
+                return i
+        return result
         
         
     def get_resources(self, minproc=100, maxproc=100):
@@ -67,36 +85,66 @@ class factory:
         screen_pos = self.app.terrain.demapping(self.tile_pos)
         f_rect = pg.Rect(screen_pos, (self.size[0]*TILE, self.size[1]*TILE))
         if pg.Rect(VIEW_RECT).colliderect(f_rect):
-            surface.blit(self.pic, f_rect)
+            if self.app.factories.selected==self:
+                surface.blit(self.pic, f_rect)
+                pg.draw.rect(surface, pg.Color('gray'), f_rect, 1)
+            else:
+                surface.blit(self.pic, f_rect)
             
     def update(self):
+        if self.recipe is None: return
         if not self.working:
             # to-do: resource translate begin
-            
-            if self.app.player.inv.exist(self.incom):
-                self.app.player.inv.delete(self.incom)
+            if 'in' in self.recipe.keys(): 
+                in_res=self.recipe['in']
+            else: 
+                in_res=None
+
+            if self.app.player.inv.exist(in_res):
+                self.app.player.inv.delete(in_res)
                 self.time = self.timer.get_ticks()
                 self.working = True
         else:
-            if self.timer.get_ticks()-self.time>self.process_time:
+            if self.timer.get_ticks()-self.time>self.recipe['time']*1000:
                 # to-do: resource translate end
                 
-                self.app.player.inv.insert(self.outcom)
+                self.app.player.inv.insert(self.recipe['out'])
                 self.working = False
         
     @property
     def progress(self):
         if self.working:
             now = self.timer.get_ticks()
-            return(((now-self.time)/self.process_time))      
+            return((now-self.time)/(self.recipe['time']*1000))      
         else:
             return(0)
 
+    @property
+    def incom(self):
+        if not self.recipe is None:
+            if 'in' in self.recipe.keys():
+                return(self.recipe['in'])      
+        return(None)
+
+    @property
+    def outcom(self):
+        if not self.recipe is None:
+            if 'out' in self.recipe.keys():
+                return(self.recipe['out'])      
+        return(None)
+
+    @property
+    def process_time(self):
+        if not self.recipe is None:
+            if 'time' in self.recipe.keys():
+                return(self.recipe['time']*1000)      
+        return(0)
 
 class factory_list:
     def __init__(self, app):
         self.app = app
-        self.active = []
+        self.list = []
+        self.active = None
 
         self.factory_img = [0 for i in app.terrain.data['factory_type']]
         for img in app.terrain.data['factory_type']:
@@ -112,14 +160,8 @@ class factory_list:
                 b_map[i,j] = -1
 
         new_factory = factory(self, self.app, bp, x,y)
-        self.active.append(new_factory)
-        
-        if 'detect' in bp.keys():
-            discover_radius = bp['detect']
-            self.app.terrain.set_discover(x+new_factory.size[0]//2,y+new_factory.size[1]//2, discover_radius)
-        if 'operate' in bp.keys():
-            operate_radius = bp['operate']
-            self.app.terrain.set_operate(x+new_factory.size[0]//2,y+new_factory.size[1]//2, operate_radius)
+        self.list.append(new_factory)
+      
             
         return(new_factory)
             
@@ -136,22 +178,22 @@ class factory_list:
             self.app.terrain.set_operate(x+factory.size[0]//2,y+factory.size[1]//2, factory.operate, -1)
                 
                 
-        self.active.remove(factory)
+        self.list.remove(factory)
 
         
     def factory(self, tile_pos):
-        for f in self.active:
+        for f in self.list:
             if pg.Rect(f.tile_pos,f.size).collidepoint(tile_pos):
                 return(f)
         return()
 
     def draw(self, surface):
-        for f in self.active:
+        for f in self.list:
             f.draw(surface)
             
     def update(self):
         # update
-        for f in self.active:
+        for f in self.list:
             f.update()
             
         # control
@@ -159,9 +201,23 @@ class factory_list:
     @property
     def rect_list_all(self):
         f_list = []
-        for item in self.active:
+        for item in self.list:
             f_list.append(pg.Rect(item.tile_pos, item.size))
         return f_list
         
+    @property
+    def selected(self):
+        return self.active
+    
+    def select(self, num):
+        if num!=-1: 
+            self.active = self.list[num]
 
+    def unselect(self):
+        self.active = None
 
+    def get_by_num(self, num):
+        if num>-1 and num<len(self.list):
+            return self.list[num]
+        else:
+            return None
