@@ -69,7 +69,7 @@ class mouse:
         #     self.app.info.clear_info()
 
 
-        if pg.Rect(VIEW_RECT).collidepoint(self.pos) and not self.app.player.is_openinv and keystate[pg.K_LCTRL]:
+        if pg.Rect(VIEW_RECT).collidepoint(self.pos) and not self.app.player.is_openinv and keystate[pg.K_f]:
 
 
             if not mouse_button[0]:

@@ -9,7 +9,7 @@ class inv:
     def __init__(self, app, player):
         self.app = app
         self.player = player
-        self.backpack = [{'id':1,'count':20},{'id':16,'count':10},{'id':2, 'count':10},{'id':3,'count':10}]
+        self.backpack = [{'id':1,'count':20},{'id':16,'count':10},{'id':2, 'count':10},{'id':25,'count':10}]
         self.selected_backpack_cell = -1
         # self.item = {}
         # for item in range(3):
@@ -65,7 +65,7 @@ class inv:
         
         
         keystate = pg.key.get_pressed()
-        if keystate[pg.K_e] and keystate[pg.K_LCTRL]:
+        if keystate[pg.K_e] and keystate[pg.K_f]:
             if self.first_pressed:
                 self.first_pressed = False 
                 # if self.app.ui_tech.enabled: return
