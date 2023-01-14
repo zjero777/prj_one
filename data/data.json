@@ -47,7 +47,8 @@
                 "time": 1,
                 "after": "pit",
                 "loot": [
-                    {"id":5,"count": 1}
+                    {"id":5,"count": 1},
+                    {"id":10,"count": 1}
                 ]
             }
         },
@@ -114,6 +115,19 @@
                     {"id":23,"count": 1}
                 ]
             }
+        },
+        {
+            "id": 11,
+            "name": "soil",
+            "pic": "soil.png",
+            "allow_dig": "True",
+            "dig": {
+                "time": 1.5,
+                "after": "pit",
+                "loot": [
+                    {"id":1,"count": 1}
+                ]
+            }
         }
 
     
@@ -132,7 +146,7 @@
             "build": {
                 "pit":
                 {
-                    "result": "ground",
+                    "result": "soil",
                     "type":"terrain"
                 },
                 "sand": {
@@ -144,6 +158,7 @@
                     "result": "sand",
                     "type":"terrain"
                 },
+                "soil": {},
                 "platform": {}
             }
 
@@ -156,6 +171,7 @@
             "build": {
                 "ground": {},
                 "sand": {},
+                "soil": {},
                 "platform": {}
             }
         },
@@ -167,6 +183,7 @@
             "build": {
                 "ground": {},
                 "sand": {},
+                "soil": {},
                 "platform": {}
             }
         },
@@ -178,6 +195,7 @@
             "build": {
                 "ground": {},
                 "sand": {},
+                "soil": {},
                 "platform": {}
             }
         },
@@ -189,6 +207,7 @@
             "build": {
                 "ground": {},
                 "sand": {},
+                "soil": {},
                 "pit": {
                     "result": "sand",
                     "type":"terrain"
@@ -204,6 +223,7 @@
             "build": {
                 "ground": {},
                 "sand": {},
+                "soil": {},
                 "deep_pit": {
                     "result": "pit",
                     "type":"terrain"
@@ -219,6 +239,7 @@
             "build": {
                 "ground": {},
                 "sand": {},
+                "soil": {},
                 "platform": {}
             }
         },
@@ -230,6 +251,7 @@
             "build": {
                 "ground": {},
                 "sand": {},
+                "soil": {},
                 "platform": {}
             }
         },
@@ -264,6 +286,7 @@
                 },
                 "ground":{},
                 "sand":{},
+                "soil": {},
                 "platform": {}
             }
         },
@@ -275,6 +298,7 @@
             "build": {
                 "ground":{},
                 "sand":{},
+                "soil": {},
                 "platform": {}
             }
         },
@@ -286,6 +310,7 @@
             "build": {
                 "ground":{},
                 "sand":{},
+                "soil": {},
                 "platform": {}
             }
             
@@ -298,6 +323,7 @@
             "build": {
                 "ground":{},
                 "sand":{},
+                "soil": {},
                 "water":{
                     "result": "platform",
                     "type":"terrain"
@@ -318,6 +344,7 @@
             "build": {
                 "ground":{},
                 "sand":{},
+                "soil": {},
                 "platform": {}
             }
             
@@ -344,6 +371,7 @@
             "build": {
                 "ground":{},
                 "sand":{},
+                "soil": {},
                 "platform": {}
             }
             
@@ -356,6 +384,7 @@
             "build": {
                 "ground":{},
                 "sand":{},
+                "soil": {},
                 "platform": {}
             }
             
@@ -376,6 +405,7 @@
                 "ground":{},
                 "sand":{},
                 "water":{},
+                "soil": {},
                 "space":{},
                 "platform": {}
             }
@@ -388,6 +418,7 @@
             "demolition":0.5,
             "build": {
                 "ground":{},
+                "soil": {},
                 "sand":{}
             }
             
@@ -410,6 +441,7 @@
             "build": {
                 "ground":{},
                 "sand":{},
+                "soil": {},
                 "platform": {}
             }
             
@@ -422,6 +454,7 @@
             "build": {
                 "ground":{},
                 "sand":{},
+                "soil": {},
                 "platform": {}
             }
             
@@ -449,6 +482,15 @@
             "name": "metall_hammer",
             "pic": "m_hammer.png"
             
+        },
+        {
+            "id": 30,
+            "name": "plant",
+            "pic": "plant.png",
+            "demolition":1,
+            "build": {
+                "soil": {}
+            }          
         }
         
         
@@ -527,8 +569,8 @@
             },
             "plan": [
                 [2,3,3,2],
-                [3,0,0,3],
-                [3,0,0,3],
+                [3,4,4,3],
+                [3,4,4,3],
                 [2,3,3,2]               
             ],
             "pic": "moss_farm.png",
@@ -637,6 +679,11 @@
             },
             "pic": "escape_pod.png",
             "time": 10,
+            "use_recipes": 
+            {
+                "allowed_id":[33],
+                "selected_id":33
+            },
             "demolition": 10,
             "detect": 12,
             "operate": 8,
@@ -691,10 +738,10 @@
                 "h": 4
             },
             "plan": [
-                [8,8,  8,8],
-                [7,10,10,8],
-                [7,10,10,8],
-                [8,8,  8,8]
+                [8,8,8,8],
+                [7,9,9,8],
+                [7,9,9,8],
+                [8,8,8,8]
             ],
             "pic": "corall_f.png",
             "time": 20,
