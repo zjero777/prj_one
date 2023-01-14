@@ -99,6 +99,8 @@ class mouse:
                         # build
                         if self.app.terrain.building_map[self.tile_pos[0], self.tile_pos[1]] == 0:
                             self.app.player.build(self.app.terrain)
+                            if self.app.terrain.building_map[self.tile_pos] == self.app.terrain.GetBData('name', 'not_growed_corall')['id']:
+                                    self.app.corall_growings.add(self.tile_pos)
                             self.app.terrain.complete_factory()
 
                 else:
@@ -116,8 +118,10 @@ class mouse:
                             time = data['dig']['time']
                             if self.app.player.manual_dig(self.app.terrain, self.tile_pos, time):
                                 self.first_click = True
-                                if self.app.terrain.field[self.tile_pos] == self.app.terrain.GetTData('name', 'pit')['id'] and self.app.terrain.water_arround(self.tile_pos):
-                                    self.app.water_falls.add(self.tile_pos)
+                                if self.app.terrain.field[self.tile_pos] == self.app.terrain.GetTData('name', 'pit')['id']:
+                                    self.app.moss_spawns.add(self.tile_pos)
+                                    if self.app.terrain.water_arround(self.tile_pos):
+                                       self.app.water_falls.add(self.tile_pos)
                         # demolition
                         elif select_building > 0:
                             data = self.app.terrain.GetBData('id', select_building)
