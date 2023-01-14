@@ -29,6 +29,8 @@ class game:
         self.player.fall((PLANET_WIDTH//2,PLANET_HIGHT//2))
         # self.player.fall((5,5))
         self.water_falls = waterfalls(self)
+        self.moss_spawns = moss_spawns(self)
+        self.corall_growings = corall_growings(self)
         self.ui_tech_bp = UI_tech_blueprints(self)
         self.ui_tech = ui_tech(self)
         self.clear_modal()
@@ -41,6 +43,8 @@ class game:
         self.factories.update()
         self.info.update()
         self.water_falls.update()
+        self.moss_spawns.update()
+        self.corall_growings.update()
         self.ui_tech.update()
         self.ui_tech_bp.update()
         
