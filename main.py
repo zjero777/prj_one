@@ -9,6 +9,7 @@ from player import *
 from factory import *
 from waterfall import *
 from tech import *
+from sequence import *
 
 class game:
     def __init__(self):
@@ -25,9 +26,13 @@ class game:
         self.info = info(self)
         self.is_runing = True
         self.mouse = mouse(self)
+        self.seq_chg_recipe = sequence(self, 'data/chg_recipe.json')
+        # self.seq_prod = sequence(self)
+        # self.seq_remove = sequence(self)
+        
         self.factories = factory_list(self)
-        self.player.fall((PLANET_WIDTH//2,PLANET_HIGHT//2))
-        # self.player.fall((5,5))
+        # self.player.fall((PLANET_WIDTH//2,PLANET_HIGHT//2))
+        self.player.fall((10,10))
         self.water_falls = waterfalls(self)
         self.moss_spawns = moss_spawns(self)
         self.corall_growings = corall_growings(self)

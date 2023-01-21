@@ -1,0 +1,34 @@
+{
+    "0": [{            
+        "name":"inspect_in",
+        "go_succ": 1,
+        "go_fail": 5
+    }],
+    "1": [{            
+        "name":"change_in",
+        "go_succ": 2
+    }],
+    "2": [{            
+        "name":"inspect_out",
+        "go_succ": 3,
+        "go_fail": 6
+    }],
+    "3": [{            
+        "name":"change_out",
+        "go_succ": 4
+    }],
+    "4": [{            
+        "name":"allow_recipe",
+        "go_succ": 4
+    }],
+    "5": [{            
+        "name":"purge_in",
+        "go_succ": 1,
+        "msg_fail": "input storage is full or not valid item, wait for purge in"
+    }],
+    "6": [{            
+        "name":"purge_out",
+        "go_succ": 2,
+        "msg_fail": "Output storage is full or not valid item, wait for purge out"
+    }]
+}

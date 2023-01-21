@@ -13,6 +13,9 @@ class factory:
         self.name = blueprint['name']
         self.tile_pos = (x, y)
         self.size = (blueprint['dim']['w'], blueprint['dim']['h'])
+        self.status = None  #None, Prod, Chg_Recipe, Remove
+        self.command = None  # 
+        
         if 'plan' in blueprint.keys():
             self.plan = np.transpose(blueprint['plan'])
         else:
@@ -21,12 +24,14 @@ class factory:
         self.pic = list.factory_img[blueprint['id']]
 
         self.recipe = None
+        self.command_step = None
         if 'use_recipes' in blueprint.keys():
-            base_recipe_id = blueprint['use_recipes']['selected_id']
-            self.recipe = self.get_recipe_by_id(base_recipe_id)
+            self.recipe = self.get_recipe_by_id(blueprint['use_recipes']['selected_id'])
+            self.command_step = 0
+            self.status = FSTAT_CHG_RECIPE
 
         if 'storage' in blueprint.keys():
-            self.storage = storage(app, self, blueprint['storage'])
+            self.storage = storage(app, self, blueprint['storage'])  #add universal storage cell
         
         if 'operate' in blueprint.keys():
             self.operate = (blueprint['operate'])
@@ -38,7 +43,7 @@ class factory:
             self.app.terrain.set_discover(x+self.size[0]//2,y+self.size[1]//2, self.detect)
         else:
             self.detect = 0
-        
+
         self.working = False
         self.timer = app.timer
         self.time = 0
@@ -56,6 +61,23 @@ class factory:
             self.app.terrain.set_operate(x+self.size[0]//2,y+self.size[1]//2, self.operate, -1)
         
 
+    def change_recipe(self, recipe):
+        self.status = CHG_RCPT_INIT
+        self.new_recipe = recipe
+        if self.recipe is None: 
+            self.status = CHG_RCPT_DONE
+            self.recipe = self.new_recipe
+            self.new_recipe = None
+            self.change_prod_storage(self.recipe) # create in and out storage cell
+            return
+        else:
+            self.status = CHG_RCPT_PURGE_IN
+            return
+    
+    def change_prod_storage(self, recipe):
+        
+        pass
+        
     def get_recipe_by_id(self, id):    
         result = -1
         self.app.terrain.data['recipes']
@@ -63,7 +85,6 @@ class factory:
             if i['id']==id: 
                 return i
         return result
-        
         
     def get_resources(self, minproc=100, maxproc=100):
         if minproc==maxproc: 
@@ -96,7 +117,17 @@ class factory:
                 surface.blit(self.pic, f_rect)
             
     def update(self):
-        if self.recipe is None: return
+        if self.status is None: return
+        if self.status == FSTAT_NONE: return
+        if self.status == FSTAT_CHG_RECIPE: 
+            if self.command_step is None: return
+            if self.recipe is None: return
+            result = self.app.seq_chg_recipe.update(self.command_step, self)
+            
+
+            
+            
+        
         if not self.working:
             # to-do: resource translate begin
             if 'in' in self.recipe.keys(): 
