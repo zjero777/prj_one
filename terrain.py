@@ -431,13 +431,12 @@ class terrain:
         site = self.building_map[tile_pos[0], tile_pos[1]]
         if site == -1:  # demolition factory
             select_factory = self.app.factories.factory(tile_pos)
-            resourses = select_factory.get_resources(100, 100)
-            i = 0
-            for count in resourses[1]:
-                if resourses[0][i] != 0 and resourses[0][i]:
-                    player.pickup(resourses[0][i], count)
-                i += 1
-
+            # resourses = select_factory.get_resources(100, 100)
+            # i = 0
+            # for count in resourses[1]:
+            #     if resourses[0][i] != 0 and resourses[0][i]:
+            #         player.pickup(resourses[0][i], count)
+            #     i += 1
             self.app.factories.delete(self.building_map, select_factory)
 
         if site > 0:  # demolition block

@@ -39,18 +39,22 @@ class factory:
         else:
             self.detect = 0
         
-        # if 'detect' in bp.keys():
-        #     discover_radius = bp['detect']
-        #     self.app.terrain.set_discover(x+new_factory.size[0]//2,y+new_factory.size[1]//2, discover_radius)
-        # if 'operate' in bp.keys():
-        #     operate_radius = bp['operate']
-        #     self.app.terrain.set_operate(x+new_factory.size[0]//2,y+new_factory.size[1]//2, operate_radius)
-
-
-
         self.working = False
         self.timer = app.timer
         self.time = 0
+
+    def remove(self, b_map):
+        self.working = False
+        width, hight = self.size
+        x, y = self.tile_pos
+               
+        for i in range(x, x+width):
+            for j in range(y, y+hight):
+                b_map[i, j] = self.plan[i-x, j-y]
+
+        if self.operate>0:
+            self.app.terrain.set_operate(x+self.size[0]//2,y+self.size[1]//2, self.operate, -1)
+        
 
     def get_recipe_by_id(self, id):    
         result = -1
@@ -155,6 +159,7 @@ class factory_list:
     def add(self, bp, b_map, x, y):
         width = bp['dim']['w']
         hight = bp['dim']['h']
+
         for j in range(y, y+hight):
             for i in range(x, x+width):
                 b_map[i,j] = -1
@@ -168,17 +173,8 @@ class factory_list:
         
 
     def delete(self,b_map, factory):
-        width, hight = factory.size
-        x, y = factory.tile_pos
-        for i in range(x, x+width):
-            for j in range(y, y+hight):
-                b_map[i, j] = 0
-                
-        if factory.operate>0:
-            self.app.terrain.set_operate(x+factory.size[0]//2,y+factory.size[1]//2, factory.operate, -1)
-                
-                
         self.list.remove(factory)
+        factory.remove(b_map)
 
         
     def factory(self, tile_pos):
