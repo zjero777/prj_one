@@ -15,6 +15,9 @@ class factory:
         self.size = (blueprint['dim']['w'], blueprint['dim']['h'])
         self.status = None  #None, Prod, Chg_Recipe, Remove
         self.command = None  # 
+        self.storage = None
+        self.in_storage = None
+        self.out_storage = None
         
         if 'plan' in blueprint.keys():
             self.plan = np.transpose(blueprint['plan'])
@@ -122,11 +125,25 @@ class factory:
         if self.status == FSTAT_CHG_RECIPE: 
             if self.command_step is None: return
             if self.recipe is None: return
-            result = self.app.seq_chg_recipe.update(self.command_step, self)
+            command = self.app.seq_chg_recipe.get_command(self.command_step)
+            match command['name']:
+                case 'inspect_in':
+                    result_command = self.in_storage_is_correct(self.in_storage, self.incom_recipe)
+                case 'change_in':
+                    result_command = self.create_storage_in(self.in_storage, self.incom_recipe)
+                case 'inspect_out':
+                    result_command = self.out_storage_is_correct(self.out_storage, self.outcom_recipe)
+                case 'change_out':
+                    result_command = self.create_storage_out(self.out_storage, self.outcom_recipe)
+                case 'purge_in':
+                    result_command = self.purge_storage_in(self.in_storage, self.incom_recipe)
+                case 'purge_out':
+                    result_command = self.purge_storage_out(self.out_storage, self.outcom_recipe)
+                case 'allow_recipe':
+                    self.status = FSTAT_PROD
             
-
-            
-            
+            self.msg = self.app.seq_chg_recipe.get_msg(self.command_step, result_command)
+            self.command_step = self.app.seq_chg_recipe.go_next(self.command_step, result_command)
         
         if not self.working:
             # to-do: resource translate begin
@@ -146,6 +163,19 @@ class factory:
                 self.app.player.inv.insert(self.recipe['out'])
                 self.working = False
         
+    def in_storage_is_correct(self, storage, recipe):
+        if storage is None: return(True)
+        result = False
+        for cell in storage:
+            for item in recipe:
+                pass
+        
+        return(result)
+
+    def create_storage_in(self, storage, recipe):
+        if storage is None:
+            pass
+        
     @property
     def progress(self):
         if self.working:
@@ -155,14 +185,14 @@ class factory:
             return(0)
 
     @property
-    def incom(self):
+    def incom_recipe(self):
         if not self.recipe is None:
             if 'in' in self.recipe.keys():
                 return(self.recipe['in'])      
         return(None)
 
     @property
-    def outcom(self):
+    def outcom_recipe(self):
         if not self.recipe is None:
             if 'out' in self.recipe.keys():
                 return(self.recipe['out'])      
