@@ -108,18 +108,20 @@ class player:
 
         bp = terra.GetFData('name', 'escape_pod')
         b_map = terra.building_map
-        factory=self.app.factories.add(bp, b_map, pos[0], pos[1])
-        factory.storage.add_items([{'id':1,'count':20},{'id':16,'count':10},{'id':2, 'count':10},{'id':3,'count':10}])
-        pos_center = (pos[0]+factory.size[0]//2, pos[1]+factory.size[1]//2)
-        self.scorch_ground(pos_center, 4)
-        self.add_water(pos_center, 7)
-        self.go_pos(terra, pos_center)
-        
+
+        main_factory=self.app.factories.add(bp, b_map, pos[0], pos[1])
+        pos = (pos[0]+main_factory.size[0]//2, pos[1]+main_factory.size[1]//2)
+        main_factory.storage.add_items([{'id':1,'count':20},{'id':16,'count':10},{'id':2, 'count':10},{'id':3,'count':10}])
+        self.scorch_ground(pos, 4)
+        self.add_water(pos, 7)
+        self.go_pos(terra, pos)
+        self.set_spawn(pos)
         
         bp = terra.GetFData('name', 'brickyard')
         factory=self.app.factories.add(bp, b_map, pos[0]+4, pos[1])
         
         
+
         
     def go_pos(self, terra, pos):
         if terra.onMap(pos[0],pos[1]):
