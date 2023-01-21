@@ -679,11 +679,6 @@
             },
             "pic": "escape_pod.png",
             "time": 10,
-            "use_recipes": 
-            {
-                "allowed_id":[33],
-                "selected_id":33
-            },
             "demolition": 10,
             "detect": 12,
             "operate": 8,
