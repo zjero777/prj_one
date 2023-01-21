@@ -358,9 +358,9 @@ class ui_tech:
                 select_factory.demolition_list_items_100)
         self.app.info.append_text(
             f'Время разбора(сек): {select_factory.demolition}')
-        if select_factory.incom:
+        if select_factory.incom_recipe:
             self.app.info.append_text('Вход:')
-            self.app.info.append_list_items(select_factory.incom)
+            self.app.info.append_list_items(select_factory.incom_recipe)
         if select_factory.outcom:
             self.app.info.append_text('Выход:')
             self.app.info.append_list_items(select_factory.outcom)
