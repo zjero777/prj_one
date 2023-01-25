@@ -1,9 +1,5 @@
-import pygame as pg
-import pygame_gui as gui
-from options import *
-
 class storage:
-    def __init__(self, app, owner, count, list_items=[], list_allows=[]):
+    def __init__(self, app, owner, count=0, list_items=[], list_allows=[]):
         '''
         app - game class
         owner - owner class
@@ -23,14 +19,16 @@ class storage:
         self.owner = owner
         self.count = count
         if not list_items:
-            self.cell = [{'id':-1, 'count':0} for i in range(0, count)]
+            self.cells = [{'id':-1, 'count':0} for i in range(0, count)]
         else:
-            self.cell = list_items.copy()
+            self.cells = list_items.copy()
+            self.count = len(list_items)
 
         if not list_allows:
             self.allow = [{'id':-1, 'count':-1} for i in range(0, count)]
         else:
             self.allow = list_allows.copy()
+            self.count = len(list_allows)
         
         self.ui = storage_ui(app, self)
 
@@ -40,7 +38,7 @@ class storage:
         id = item['id']
         count = item['count']
         for num, allow in enumerate(self.allow):
-            if self.cell[num]['id']==-1:
+            if self.cells[num]['id']==-1:
                 if allow['id']==-1 or allow['id']==id:
                     find_cell = num
                 else: 
@@ -51,13 +49,13 @@ class storage:
                 else:
                     allow_count = min(allow['count'], count)
                     break
-            elif self.cell[num]['id']==id:
+            elif self.cells[num]['id']==id:
                 find_cell = num
-                if allow['count']==-1 or (allow['id']==id and allow['count']>=count+self.cell[num]['count']):
+                if allow['count']==-1 or (allow['id']==id and allow['count']>=count+self.cells[num]['count']):
                     allow_count = count
                     break
                 else:
-                    allow_count = allow['count']-self.cell[num]['count']
+                    allow_count = allow['count']-self.cells[num]['count']
                     break
             else: continue
         return(find_cell, allow_count)
@@ -79,7 +77,7 @@ class storage:
         return(not_fit)
          
     def add_item_to_cell(self, num, item):
-        self.cell[num] = {'id':item['id'], 'count':item['count']+self.cell[num]['count']}
+        self.cells[num] = {'id':item['id'], 'count':item['count']+self.cells[num]['count']}
 
     def add_item(self, list, new_item):
         for item in list:
@@ -87,7 +85,6 @@ class storage:
                 item['count'] += new_item['count']
                 return
         list.append(new_item)
-
 
     def update(self):
         self.ui.update()
