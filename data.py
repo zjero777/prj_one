@@ -1,6 +1,7 @@
 import json
 from options import *
 import pygame as pg
+from sequence import *
 
 class data:
     def __init__(self) -> None:
@@ -9,6 +10,11 @@ class data:
         f.close
 
         self.factory_img = [None for i in self.data['factory_type']]
+        
+        self.seq_chg_recipe = sequence(self, 'data/chg_recipe.json')
+        self.seq_prod = sequence(self, 'data/prod.json')
+        # self.seq_remove = sequence(self)
+        
 
 
     def init_sprites(self):

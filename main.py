@@ -29,9 +29,6 @@ class game:
         self.info = info(self)
         self.is_runing = True
         self.mouse = mouse(self)
-        self.seq_chg_recipe = sequence(self, 'data/chg_recipe.json')
-        # self.seq_prod = sequence(self)
-        # self.seq_remove = sequence(self)
         
         self.factories = factory_list(self)
         # self.player.fall((PLANET_WIDTH//2,PLANET_HIGHT//2))

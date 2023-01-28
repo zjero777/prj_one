@@ -62,12 +62,12 @@ class storage:
                 self.add_item_to_cell(find_cell, {'id':item['id'],'count':allow_count})
                 self.add_item(not_fit, {'id':item['id'], 'count':item['count']-allow_count})
             else:
-                self.add_item_to_cell(find_cell, {'id':item['id'],'count':allow_count})
+                self.add_item_to_cell(find_cell, {'id':item['id'],'count':item['count']})
 
         return(not_fit)
          
     def add_item_to_cell(self, num, item):
-        self.cells[num] = {'id':item['id'], 'count':item['count']+self.cells[num]['count'], 'allow_count':self.cells['allow_count']}
+        self.cells[num] = {'id':item['id'], 'count':item['count']+self.cells[num]['count'], 'allow_count':self.cells[num]['allow_count']}
 
     def add_item(self, list, new_item):
         for item in list:
@@ -106,6 +106,20 @@ class storage:
                 self.cells.append({'id': item['id'], 'count': 0, 'allow_count': item['count']*10})
                 
         return storage        
+
+    def inspect_resources(self, recipe):
+        resources_on_storage = {item['id']: item['count'] for item in self.cells}
+        for item in recipe:
+            if item['id'] not in resources_on_storage or resources_on_storage[item['id']] < item['count']:
+                return False
+        return True
+    
+    def remove_resources(self, recipe):
+        for item in recipe:
+            for cell in self.cells:
+                if cell['id'] == item['id']:
+                    cell['count'] -= item['count']
+
 
 class storage_ui:
     def __init__(self, app, storage):

@@ -49,6 +49,7 @@ class factory:
             self.detect = 0
 
         self.working = False
+        self.pause = False
         self.timer = pg.time
         self.time = 0
 
@@ -125,43 +126,70 @@ class factory:
         if self.status == FSTAT_CHG_RECIPE: 
             if self.command_step is None: return
             if self.recipe is None: return
-            command = self.app.seq_chg_recipe.get_command(self.command_step)
+            command = self.data.seq_chg_recipe.get_command(self.command_step)
             match command['name']:
                 case 'inspect_in':
-                    result_command = self.in_storage.is_need_purge_by_recipe(self.incom_recipe)
+                    result_command = self.inspect_storage(self.in_storage, self.incom_recipe)
                 case 'change_in':
                     result_command = self.create_storage_in(self.incom_recipe)
                 case 'inspect_out':
-                    result_command = self.storage_is_correct(self.out_storage, self.outcom_recipe)
+                    result_command = self.inspect_storage(self.out_storage, self.outcom_recipe)
                 case 'change_out':
-                    result_command = self.create_storage_out(self.out_storage, self.outcom_recipe)
+                    result_command = self.create_storage_out(self.outcom_recipe)
                 case 'purge_in':
-                    result_command = self.purge_storage_in(self.in_storage, self.incom_recipe)
+                    result_command = self.inspect_storage(self.in_storage, self.incom_recipe)
                 case 'purge_out':
-                    result_command = self.purge_storage_out(self.out_storage, self.outcom_recipe)
+                    result_command = self.inspect_storage(self.out_storage, self.outcom_recipe)
                 case 'allow_recipe':
+                    result_command = True
                     self.status = FSTAT_PROD
+            self.msg = self.data.seq_chg_recipe.get_msg(self.command_step, result_command)
+            self.command_step = self.data.seq_chg_recipe.go_next(self.command_step, result_command)
+        if self.status == FSTAT_PROD: 
+            if self.command_step is None: return
+            if self.recipe is None: return
+            if self.pause: return
+            command = self.data.seq_prod.get_command(self.command_step)
+            match command['name']:
+                case 'inspect_in':
+                    result_command = self.in_storage.inspect_resources(self.incom_recipe)  # if res is exist
+                case 'begin_prod':
+                    result_command = self.begin_prod()  # if del res, set timer
+                case 'wait_for_complete':
+                    result_command = self.prod_in_progress()  # if complete
+                case 'inspect_out':
+                    result_command = self.inspect_free_place_and_store(self.out_storage, self.outcom_recipe) # if store result res
+            self.msg = self.data.seq_prod.get_msg(self.command_step, result_command)
+            self.command_step = self.data.seq_prod.go_next(self.command_step, result_command)
             
-            self.msg = self.app.seq_chg_recipe.get_msg(self.command_step, result_command)
-            self.command_step = self.app.seq_chg_recipe.go_next(self.command_step, result_command)
-        
-        if not self.working:
-            # to-do: resource translate begin
-            if 'in' in self.recipe.keys(): 
-                in_res=self.recipe['in']
-            else: 
-                in_res=None
+            
+        # if not self.working:
+        #     # to-do: resource translate begin
+        #     if 'in' in self.recipe.keys(): 
+        #         in_res=self.recipe['in']
+        #     else: 
+        #         in_res=None
 
-            if self.app.player.inv.exist(in_res):
-                self.app.player.inv.delete(in_res)
-                self.time = self.timer.get_ticks()
-                self.working = True
-        else:
-            if self.timer.get_ticks()-self.time>self.recipe['time']*1000:
-                # to-do: resource translate end
+        #     if self.app.player.inv.exist(in_res):
+        #         self.app.player.inv.delete(in_res)
+        #         self.time = self.timer.get_ticks()
+        #         self.working = True
+        # else:
+        #     if self.timer.get_ticks()-self.time>self.recipe['time']*1000:
+        #         # to-do: resource translate end
                 
-                self.app.player.inv.insert(self.recipe['out'])
-                self.working = False
+        #         self.app.player.inv.insert(self.recipe['out'])
+        #         self.working = False
+
+    def begin_prod(self):
+        if not self.in_storage.inspect_resources(self.incom_recipe): return(False)
+        self.in_storage.remove_resources(self.incom_recipe)
+        self.timer = 0
+        self.working = True
+        
+    def inspect_storage(self, storage, recipe):
+        if storage is None: return(True)
+        return(storage.is_need_purge_by_recipe(recipe))
         
     def create_storage_in(self, recipe):
         if self.in_storage is None:
@@ -171,6 +199,16 @@ class factory:
         self.in_storage.append_recipe_cells(recipe)
         self.in_storage.sort_by_recipe(recipe)
         return(True)
+
+    def create_storage_out(self, recipe):
+        if self.out_storage is None:
+            self.out_storage = storage(self.app, self)
+        else:
+            self.out_storage.remove_non_recipe_cells(recipe)
+        self.out_storage.append_recipe_cells(recipe)
+        self.out_storage.sort_by_recipe(recipe)
+        return(True)
+
         
     @property
     def progress(self):
@@ -221,7 +259,7 @@ class factory_list:
             for i in range(x, x+width):
                 b_map[i,j] = -1
 
-        new_factory = factory(self, self.app, self.app.data, bp, x,y)
+        new_factory = factory(self.app, self.app.data, bp, x,y)
         self.list.append(new_factory)
       
             
