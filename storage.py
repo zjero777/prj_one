@@ -120,7 +120,18 @@ class storage:
                 if cell['id'] == item['id']:
                     cell['count'] -= item['count']
 
-
+    def add_resources_by_recipe(self, recipe):
+        for item in recipe:
+            for cell in self.cells:
+                if item['id'] == cell['id']:
+                    if item['count'] + cell['count'] > cell['allow_count']:
+                        return False
+                    else:
+                        cell['count'] += item['count']
+            return True
+        return False        
+    
+    
 class storage_ui:
     def __init__(self, app, storage):
         self.app = app
