@@ -128,7 +128,7 @@ class factory:
             command = self.app.seq_chg_recipe.get_command(self.command_step)
             match command['name']:
                 case 'inspect_in':
-                    result_command = self.storage_is_correct(self.in_storage, self.incom_recipe)
+                    result_command = self.in_storage.is_need_purge_by_recipe(self.incom_recipe)
                 case 'change_in':
                     result_command = self.create_storage_in(self.incom_recipe)
                 case 'inspect_out':
@@ -163,35 +163,14 @@ class factory:
                 self.app.player.inv.insert(self.recipe['out'])
                 self.working = False
         
-    def storage_is_correct(self, storage, recipe):
-        # true if storage not contain useless items
-        if storage.cells is None: return True
-        for s in storage.cells:
-            if s['count']==0: continue # можно использовать ячейку любого вила если в ней нет ничего
-            for r in recipe:
-                if s['id'] == r['id']: break
-            else:
-                return False
-        else:
-            return True
-        
-
     def create_storage_in(self, recipe):
         if self.in_storage is None:
-            list_allows = []
-            for item in recipe:
-                list_allows.append({'id': item['id'], 'count': 200})
-            self.in_storage = storage(self.app, self, list_allows=list_allows)
-            return(True)
+            self.in_storage = storage(self.app, self)
         else:
-            # sort items on recipe order
-            self.in_storage = self.sort_by_recipe(self.in_storage, recipe)
-            return(True)
-            
-        
-    def sort_by_recipe(self, storage, recipe):
-        sorted_storage = sorted(storage, key=lambda x: recipe.index(next(filter(lambda y: y['id'] == x['id'], recipe))))
-        return sorted_storage   
+            self.in_storage.remove_non_recipe_cells(recipe)
+        self.in_storage.append_recipe_cells(recipe)
+        self.in_storage.sort_by_recipe(recipe)
+        return(True)
         
     @property
     def progress(self):
