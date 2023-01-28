@@ -3,12 +3,13 @@ from options import *
 from storage  import *
 import random as rnd
 import numpy as np
+from data import *
 
 
 class factory:
-    def __init__(self, list, app, blueprint,  x, y):
+    def __init__(self, app, data, blueprint,  x, y):
         self.app = app
-        self.list = list
+        self.data = data
         self.id = blueprint['id']
         self.name = blueprint['name']
         self.tile_pos = (x, y)
@@ -24,7 +25,7 @@ class factory:
         else:
             self.plan = None
         self.demolition = blueprint['demolition']
-        self.pic = list.factory_img[blueprint['id']]
+        self.pic_id = blueprint['id']
 
         self.recipe = None
         self.command_step = None
@@ -48,7 +49,7 @@ class factory:
             self.detect = 0
 
         self.working = False
-        self.timer = app.timer
+        self.timer = pg.time
         self.time = 0
 
     def remove(self, b_map):
@@ -83,8 +84,7 @@ class factory:
         
     def get_recipe_by_id(self, id):    
         result = -1
-        self.app.terrain.data['recipes']
-        for i in self.app.terrain.data['recipes']:
+        for i in self.data.data['recipes']:
             if i['id']==id: 
                 return i
         return result
@@ -114,10 +114,10 @@ class factory:
         f_rect = pg.Rect(screen_pos, (self.size[0]*TILE, self.size[1]*TILE))
         if pg.Rect(VIEW_RECT).colliderect(f_rect):
             if self.app.factories.selected==self:
-                surface.blit(self.pic, f_rect)
+                surface.blit(self.data.factory_img[self.pic_id], f_rect)
                 pg.draw.rect(surface, pg.Color('gray'), f_rect, 1)
             else:
-                surface.blit(self.pic, f_rect)
+                surface.blit(self.data.factory_img[self.pic_id], f_rect)
             
     def update(self):
         if self.status is None: return
@@ -207,10 +207,10 @@ class factory_list:
         self.list = []
         self.active = None
 
-        self.factory_img = [0 for i in app.terrain.data['factory_type']]
-        for img in app.terrain.data['factory_type']:
-            self.factory_img[img['id']] = (pg.image.load(
-                path.join(img_dir, img['pic'])).convert_alpha())
+        # self.factory_img = [0 for i in data['factory_type']]
+        # for img in data['factory_type']:
+        #     self.factory_img[img['id']] = (pg.image.load(
+        #         path.join(img_dir, img['pic'])).convert_alpha())
         # self.factory_img_rect = self.factory_img[0].get_rect()
 
     def add(self, bp, b_map, x, y):
@@ -221,7 +221,7 @@ class factory_list:
             for i in range(x, x+width):
                 b_map[i,j] = -1
 
-        new_factory = factory(self, self.app, bp, x,y)
+        new_factory = factory(self, self.app, self.app.data, bp, x,y)
         self.list.append(new_factory)
       
             

@@ -25,7 +25,7 @@ recipe = [
 
 data = data()
 bp = data.get_fdata('name', 'brickyard')
-factory = factory(0,0,bp,0,0)
+factory = factory(0,data,bp,0,0)
 
 in_storage = storage(None, None, len(recipe))
 in_storage.append_recipe_cells(recipe)
