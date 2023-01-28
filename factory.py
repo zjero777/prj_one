@@ -186,6 +186,7 @@ class factory:
         self.in_storage.remove_resources(self.incom_recipe)
         self.timer = 0
         self.working = True
+        return(True)
         
     def inspect_storage(self, storage, recipe):
         if storage is None: return(True)
@@ -209,7 +210,12 @@ class factory:
         self.out_storage.sort_by_recipe(recipe)
         return(True)
 
+    @property
+    def message(self) :
+        if not ('msg' in vars(self)): return()
+        return(self.msg)
         
+    
     @property
     def progress(self):
         if self.working:

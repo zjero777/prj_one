@@ -367,6 +367,9 @@ class ui_tech:
         process_time_sec = select_factory.process_time/1000
         self.app.info.append_text(
             f'Время производства (сек): {process_time_sec:10.3f}')
+        if select_factory.message:
+            self.app.info.append_text(f'{select_factory.message}')
+        
         if select_factory.detect:
             self.app.info.append_text(
                 f'Радар (кв): {select_factory.detect}')
