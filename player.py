@@ -120,7 +120,7 @@ class player:
         bp = terra.GetFData('name', 'brickyard')
         factory=self.app.factories.add(bp, b_map, pos[0]+4, pos[1])
         factory.create_storage_in(factory.incom_recipe)
-        factory.in_storage.add_items([{'id':1,'count':24}])
+        factory.in_storage.add_items([{'id':1,'count':20}])
 
         
         

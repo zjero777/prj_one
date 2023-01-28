@@ -163,23 +163,6 @@ class factory:
             self.command_step = self.data.seq_prod.go_next(self.command_step, result_command)
             
             
-        # if not self.working:
-        #     # to-do: resource translate begin
-        #     if 'in' in self.recipe.keys(): 
-        #         in_res=self.recipe['in']
-        #     else: 
-        #         in_res=None
-
-        #     if self.app.player.inv.exist(in_res):
-        #         self.app.player.inv.delete(in_res)
-        #         self.time = self.timer.get_ticks()
-        #         self.working = True
-        # else:
-        #     if self.timer.get_ticks()-self.time>self.recipe['time']*1000:
-        #         # to-do: resource translate end
-                
-        #         self.app.player.inv.insert(self.recipe['out'])
-        #         self.working = False
     def inspect_free_place_and_store(self, storage, recipe):
         if storage.add_resources_by_recipe(recipe): 
             self.working = False
