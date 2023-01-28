@@ -180,11 +180,26 @@ class factory:
                 
         #         self.app.player.inv.insert(self.recipe['out'])
         #         self.working = False
+    def inspect_free_place_and_store(self, storage, recipe):
+        if storage.add_resources_by_recipe(recipe): 
+            self.working = False
+            return(True)
+        return(False)
+
+    def prod_in_progress(self):
+        if self.pause:
+            self.time =+ self.timer.get_ticks()-self.time
+        
+        dt = self.timer.get_ticks()-self.time    
+            
+        if dt>self.recipe['time']*1000:
+            return(True)
+        return(False)
 
     def begin_prod(self):
         if not self.in_storage.inspect_resources(self.incom_recipe): return(False)
         self.in_storage.remove_resources(self.incom_recipe)
-        self.timer = 0
+        self.time = self.timer.get_ticks()
         self.working = True
         return(True)
         

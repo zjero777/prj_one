@@ -31,13 +31,8 @@ factory.update()
 factory.in_storage.add_items(items)
 print('******IN_STORAGE***********************')
 print(factory.in_storage.cells)
-print('******PROD***********************')
-print(factory.in_storage.inspect_resources(factory.incom_recipe))
-factory.update()
-factory.update()
-factory.update()
-print('******IN_STORAGE***********************')
-print(factory.in_storage.cells)
+
+
 
    
 

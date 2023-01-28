@@ -7,7 +7,7 @@
     },
     "1": {            
         "name":"begin_prod",
-        "go_succ": 3,
+        "go_succ": 2,
         "go_fail": 0,
         "msg_fail": "Не хватает ресурсов для производства"
     },
@@ -19,7 +19,7 @@
     },
     "3": {            
         "name":"inspect_out",
-        "go_succ": 4,
+        "go_succ": 0,
         "go_fail": 3,
         "msg_fail": "Некуда класть"
 
