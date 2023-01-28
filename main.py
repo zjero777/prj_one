@@ -10,6 +10,7 @@ from factory import *
 from waterfall import *
 from tech import *
 from sequence import *
+from data import *
 
 class game:
     def __init__(self):
@@ -21,6 +22,8 @@ class game:
         self.timer = pg.time
         self.allsprites = pg.sprite.Group()
         self.img_res = self.load_resources()
+        self.data = data()
+        self.data.init_sprites() #init sprites from data (factories, items and etc)
         self.terrain = terrain(self, PLANET_WIDTH, PLANET_HIGHT)
         self.player = player(self)
         self.info = info(self)
