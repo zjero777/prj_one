@@ -1,0 +1,27 @@
+{
+    "0": {
+        "name":"inspect_in",
+        "go_succ": 1,
+        "go_fail": 0,
+        "msg_fail": "Enough't resources for production"
+    },
+    "1": {            
+        "name":"begin_prod",
+        "go_succ": 3,
+        "go_fail": 0,
+        "msg_fail": "Enough't resources for production"
+    },
+    "2": {            
+        "name":"wait_for_complete",
+        "go_succ": 3,
+        "go_fail": 2,
+        "msg_fail": "Production in progress..."
+    },
+    "3": {            
+        "name":"inspect_out",
+        "go_succ": 4,
+        "go_fail": 3,
+        "msg_fail": "Nowhere to put"
+
+    }
+}

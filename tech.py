@@ -343,7 +343,7 @@ class ui_tech:
             if not select_factory: return
         else:
             select_factory = self.selected_factory
-        self.app.info.append_pic(select_factory.pic)
+        self.app.info.append_pic(self.app.data.factory_img[select_factory.pic_id])
         self.app.info.append_progress_bar(select_factory.progress)
         if select_factory.working:
             working_text = '(Работает)'
@@ -361,9 +361,9 @@ class ui_tech:
         if select_factory.incom_recipe:
             self.app.info.append_text('Вход:')
             self.app.info.append_list_items(select_factory.incom_recipe)
-        if select_factory.outcom:
+        if select_factory.outcom_recipe:
             self.app.info.append_text('Выход:')
-            self.app.info.append_list_items(select_factory.outcom)
+            self.app.info.append_list_items(select_factory.outcom_recipe)
         process_time_sec = select_factory.process_time/1000
         self.app.info.append_text(
             f'Время производства (сек): {process_time_sec:10.3f}')

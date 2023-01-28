@@ -3,12 +3,7 @@ from factory import *
 from data import *
 
 items = [
-    {'id':3, 'count':10},
-    {'id':1, 'count':100},
-    {'id':3, 'count':100},
-    {'id':1, 'count':10},
-    {'id':3, 'count':100},
-    {'id':1, 'count':100},
+    {'id':1, 'count':3}
 ]
 
 in_storage = [
@@ -25,13 +20,24 @@ recipe = [
 
 data = data()
 bp = data.get_fdata('name', 'brickyard')
+
 factory = factory(0,data,bp,0,0)
-
-in_storage = storage(None, None, len(recipe))
-in_storage.append_recipe_cells(recipe)
-in_storage.sort_by_recipe(recipe)
-
-
+factory.update()
+factory.update()
+factory.update()
+factory.update()
+factory.update()
+factory.update()
+factory.in_storage.add_items(items)
+print('******IN_STORAGE***********************')
+print(factory.in_storage.cells)
+print('******PROD***********************')
+print(factory.in_storage.inspect_resources(factory.incom_recipe))
+factory.update()
+factory.update()
+factory.update()
+print('******IN_STORAGE***********************')
+print(factory.in_storage.cells)
 
    
 

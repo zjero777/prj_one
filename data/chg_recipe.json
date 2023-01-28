@@ -19,7 +19,7 @@
     },
     "4": {            
         "name":"allow_recipe",
-        "go_succ": 4
+        "go_succ": 0
     },
     "5": {            
         "name":"purge_in",
