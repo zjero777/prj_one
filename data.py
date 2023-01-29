@@ -10,17 +10,29 @@ class data:
         f.close
 
         self.factory_img = [None for i in self.data['factory_type']]
+        self.recipe_img = [None for i in self.data['recipes']]
         
         self.seq_chg_recipe = sequence(self, 'data/chg_recipe.json')
         self.seq_prod = sequence(self, 'data/prod.json')
         # self.seq_remove = sequence(self)
         
 
+    def get_recipe_by_id(self, id):    
+        result = -1
+        for i in self.data['recipes']:
+            if i['id']==id: 
+                return i
+        return result
 
     def init_sprites(self):
         for img in self.data['factory_type']:
             self.factory_img[img['id']] = (pg.image.load(
                 path.join(img_dir, img['pic'])).convert_alpha())
+
+        for img in self.data['recipes']:
+            self.recipe_img[img['id']] = (pg.image.load(
+                path.join(img_dir, img['pic'])).convert_alpha())
+
 
         
     def get_bdata(self, key, stroke):

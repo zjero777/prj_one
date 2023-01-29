@@ -11,6 +11,7 @@ from waterfall import *
 from tech import *
 from sequence import *
 from data import *
+from inv_recipe import *
 
 class game:
     def __init__(self):
@@ -26,12 +27,11 @@ class game:
         self.data.init_sprites() #init sprites from data (factories, items and etc)
         self.terrain = terrain(self, PLANET_WIDTH, PLANET_HIGHT)
         self.player = player(self)
+        self.inv_recipe = inv_recipe(self)        
         self.info = info(self)
         self.is_runing = True
         self.mouse = mouse(self)
-        
         self.factories = factory_list(self)
-        # self.player.fall((PLANET_WIDTH//2,PLANET_HIGHT//2))
         self.player.fall((10,10))
         self.water_falls = waterfalls(self)
         self.moss_spawns = moss_spawns(self)
@@ -51,6 +51,7 @@ class game:
         self.moss_spawns.update()
         self.corall_growings.update()
         self.ui_tech.update()
+        self.inv_recipe.update()
         self.ui_tech_bp.update()
         
     
@@ -60,6 +61,7 @@ class game:
         self.terrain.draw() 
         # self.player.draw()
         self.player.draw()
+        self.inv_recipe.draw()
         self.manager.draw_ui(self.screen)
         self.mouse.draw()  
         self.allsprites.draw(self.screen)

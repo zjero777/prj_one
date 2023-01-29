@@ -19,6 +19,7 @@ class factory:
         self.storage = None
         self.in_storage = None
         self.out_storage = None
+        self._allow_recipe_list = []
         
         if 'plan' in blueprint.keys():
             self.plan = np.transpose(blueprint['plan'])
@@ -30,7 +31,8 @@ class factory:
         self.recipe = None
         self.command_step = None
         if 'use_recipes' in blueprint.keys():
-            self.recipe = self.get_recipe_by_id(blueprint['use_recipes']['selected_id'])
+            self.recipe = self.data.get_recipe_by_id(blueprint['use_recipes']['selected_id'])
+            self._allow_recipe_list = blueprint['use_recipes']['allowed_id']
             self.command_step = 0
             self.status = FSTAT_CHG_RECIPE
 
@@ -65,31 +67,6 @@ class factory:
         if self.operate>0:
             self.app.terrain.set_operate(x+self.size[0]//2,y+self.size[1]//2, self.operate, -1)
         
-
-    def change_recipe(self, recipe):
-        self.status = CHG_RCPT_INIT
-        self.new_recipe = recipe
-        if self.recipe is None: 
-            self.status = CHG_RCPT_DONE
-            self.recipe = self.new_recipe
-            self.new_recipe = None
-            self.change_prod_storage(self.recipe) # create in and out storage cell
-            return
-        else:
-            self.status = CHG_RCPT_PURGE_IN
-            return
-    
-    def change_prod_storage(self, recipe):
-        
-        pass
-        
-    def get_recipe_by_id(self, id):    
-        result = -1
-        for i in self.data.data['recipes']:
-            if i['id']==id: 
-                return i
-        return result
-        
     def get_resources(self, minproc=100, maxproc=100):
         if minproc==maxproc: 
             proc=maxproc
@@ -98,6 +75,17 @@ class factory:
         res, count = np.unique(self.plan, return_counts=True)
         all_res = (res, np.int64(count*(proc/100)))
         return(all_res)
+    
+    @property
+    def allow_recipe_list(self):
+        if '_allow_recipe_list' in vars(self):
+            return(self._allow_recipe_list)
+        else:
+            return([])
+    
+    @allow_recipe_list.setter
+    def allow_recipe_list(self, value):
+        self._allow_recipe_list = value
     
     @property
     def demolition_list_items_100(self):

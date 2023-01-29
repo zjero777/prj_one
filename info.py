@@ -425,6 +425,8 @@ class info:
             self._shift_next_position(dtop)
             self.msg_line += 1
             
+    def append_in_out_lists_items(self, in_block_list, out_block_list, info, tmpl=TMPL3_2):
+        pass
         
         
     def clear_info(self):
