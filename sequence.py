@@ -15,6 +15,7 @@ class sequence:
         return(self.data[cmd_str])
     
     def go_next(self, command_step, result):
+        if command_step is None: return
         cmd_str = str(command_step)
         if result: 
             if 'go_succ' in self.data[cmd_str].keys():
@@ -28,6 +29,7 @@ class sequence:
                 return(command_step)
         
     def get_msg(self, command_step, result):
+        if command_step is None: return
         cmd_str = str(command_step)
         if result: 
             if 'msg_succ' in self.data[cmd_str].keys():

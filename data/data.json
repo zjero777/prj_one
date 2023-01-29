@@ -686,7 +686,7 @@
         },
         {
             "id": 9,
-            "name": "labaratory",
+            "name": "laboratory",
             "dim": {
                 "w": 4,
                 "h": 4
@@ -1810,7 +1810,7 @@
                 "count": 20
             },
             {
-                "id": 8,
+                "id": 23,
                 "count": 20
             },
             {

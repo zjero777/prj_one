@@ -376,7 +376,7 @@ class terrain:
             xyRect = pg.Rect((self.tile_pos[0]-self.pos[0]+HALF_WIDTH)*TILE,
                              (self.tile_pos[1]-self.pos[1]+HALF_HIGHT)*TILE, TILE, TILE)
             if self.app.player.inv.selected_backpack_cell == -1:
-                if not self.app.player.is_openinv:
+                if not self.app.player.is_openinv and not self.app.inv_recipe.is_openinv:
                     pg.draw.rect(self.surface, pg.Color('gray'), xyRect, 1)
             else:
                 if not self.app.player.is_openinv:

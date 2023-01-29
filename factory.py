@@ -130,6 +130,7 @@ class factory:
                     result_command = self.inspect_storage(self.out_storage, self.outcom_recipe)
                 case 'allow_recipe':
                     result_command = True
+                    self.command_step = 0
                     self.status = FSTAT_PROD
             self.msg = self.data.seq_chg_recipe.get_msg(self.command_step, result_command)
             self.command_step = self.data.seq_chg_recipe.go_next(self.command_step, result_command)

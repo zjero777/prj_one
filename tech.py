@@ -126,7 +126,7 @@ class ui_tech:
                     
     def show_recipes(self):
         
-        self.app.inv_recipe.load_recipe(self.selected_factory.allow_recipe_list)
+        self.app.inv_recipe.load_recipe(self.selected_factory.allow_recipe_list, self.selected_factory.recipe)
         self.app.inv_recipe.is_openinv = True
                
     def show_tech_selected(self):
@@ -403,6 +403,8 @@ class ui_tech:
         if  (self.app.ui_tech_bp.visible or
             self.app.player.is_openinv):
             return
+
+
         
         mouse_button = pg.mouse.get_pressed()
         mouse_pos = pg.mouse.get_pos()
@@ -412,12 +414,13 @@ class ui_tech:
 # start info
         self.app.info.start()
 
-        if self.selected_site:
+        if self.app.inv_recipe.is_openinv:
+            self.app.inv_recipe.view_recipe_info()
+        elif self.selected_site:
             self.view_tech_site_ui()
-        if self.app.factories.selected:
+        elif self.app.factories.selected: 
             self.view_factories_ui(mouse_tile_pos)
-
-        if not self.selected_site and not self.app.factories.selected:
+        else:
             self.view_tech_site_ui()
             self.view_factories_ui(mouse_tile_pos)
             self.view_terrain_info(mouse_tile_pos)
@@ -426,6 +429,10 @@ class ui_tech:
 
         self.app.info.stop()
 # stop info
+
+        if  self.app.inv_recipe.is_openinv: return
+
+
         if not mouse_button[0]:
             if mouse_button[2] and not self.first_pressed[2]:
                 # Rigth mouse button
