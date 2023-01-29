@@ -398,6 +398,14 @@ class UIButtonLine(pygame_gui.elements.UIButton):
         
         return super().kill()
     
+    def set_relative_position(self, newpos):
+        super().set_relative_position(newpos)
+        for item in self.ui_buttons:
+            item.set_relative_position(newpos)
+            
+        
+    
+    
 class myUIProgressBar(pygame_gui.elements.UIProgressBar):
     def update(self, time_delta: float):
         super().update(time_delta)

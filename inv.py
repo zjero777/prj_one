@@ -49,12 +49,12 @@ class inv:
         # self.app.info.debug((0,80), f'{pos2}')
         # i = (i%10*INV_CELL_W+i%10+INV_MARGIN, i//10*INV_CELL_H+i//10+INV_MARGIN)
         if cell<0 or cell>INV_CELL_COUNT or pos2[0]<0 or pos2[0]>INV_CELL_CW-1:
-            return(-1, -1)
+            return(None, None)
         else:
             if cell>-1 and cell<len(self.backpack):
                 block = self.backpack[cell]
             else:
-                block = -1
+                block = None
             return(cell,block)
         
     def update(self):
@@ -85,7 +85,7 @@ class inv:
             if mouse_button[0]:
                 if self.first_click:
                     self.first_click = False 
-                    if self.backpack_cell_num>-1 and self.backpack_cell_num<len(self.backpack):
+                    if not self.backpack_cell_num is None and self.backpack_cell_num<len(self.backpack):
                         # select item
                         self.selected_backpack_cell = self.backpack_cell_num
                         self.app.mouse.setcursor_with_item(self.item)

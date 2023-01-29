@@ -253,10 +253,12 @@ class info:
 
 
     def _shift_next_position(self, delta_top):
+        if delta_top==0: return
         for i in range(self.msg_line+1, len(self.msg_info_list)):
             item = self.msg_info_list[i]['ui']
             rect = item.get_relative_rect()
             item.set_relative_position((rect[0], rect[1]+delta_top))
+            
             
     def append_text(self, text):
         html_text = f'<font face=fira_code size=3>{text}</font>'
