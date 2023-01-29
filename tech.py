@@ -117,11 +117,18 @@ class ui_tech:
                         self.tech_sites.open_research_selected()
                         # remove lab
                         self.tech_sites.delete_selected()
+                    elif event.ui_object_id == 'panel.panel_info.chg_recipe_button':
+                        if self.app.inv_recipe.is_openinv: return
+                        self.show_recipes()
                 if event.ui_element == self.ok_button:
                     self.wnd.hide()
                     self.app.clear_modal()
                     
-                    
+    def show_recipes(self):
+        
+        self.app.inv_recipe.load_recipe(self.selected_factory.allow_recipe_list)
+        self.app.inv_recipe.is_openinv = True
+               
     def show_tech_selected(self):
         self.app.set_modal(self.wnd)
         
@@ -345,19 +352,16 @@ class ui_tech:
             select_factory = self.selected_factory
         self.app.info.append_pic(self.app.data.factory_img[select_factory.pic_id])
         self.app.info.append_progress_bar(select_factory.progress)
-        if select_factory.working:
-            working_text = '(Работает)'
+        # if select_factory.working:
+        #     working_text = '(Работает)'
+        # else:
+        #     working_text = '(Не работает)'
+        if select_factory.message:
+            working_text =  f' - {select_factory.message}'
         else:
-            working_text = '(Не работает)'
-
+            working_text =''
         self.app.info.append_text(
-            f'<b>{select_factory.name}</b> - {working_text}')
-        if select_factory.demolition_list_items_100:
-            self.app.info.append_text('Ресурсы при разборе:')
-            self.app.info.append_list_items(
-                select_factory.demolition_list_items_100)
-        self.app.info.append_text(
-            f'Время разбора(сек): {select_factory.demolition}')
+            f'<b>{select_factory.name}</b>{working_text}')
         if select_factory.incom_recipe:
             self.app.info.append_text('Вход:')
             self.app.info.append_list_items(select_factory.incom_recipe)
@@ -366,16 +370,26 @@ class ui_tech:
             self.app.info.append_list_items(select_factory.outcom_recipe)
         process_time_sec = select_factory.process_time/1000
         self.app.info.append_text(
-            f'Время производства (сек): {process_time_sec:10.3f}')
-        if select_factory.message:
-            self.app.info.append_text(f'{select_factory.message}')
+            f'Производство: {process_time_sec:0.1f} сек')
+
+        if len(select_factory.allow_recipe_list)>1:
+            buttons_line = []
+            buttons_line.append({'text':'Рецепт', 'id':'chg_recipe_button'})
+            self.control_buttons = self.app.info.append_buttons_line(buttons_line)
+
         
+        self.app.info.append_text(
+            f'Разборка: {select_factory.demolition} сек')
+        if select_factory.demolition_list_items_100:
+            # self.app.info.append_text('Ресурсы при разборе:')
+            self.app.info.append_list_items(
+                select_factory.demolition_list_items_100)
         if select_factory.detect:
             self.app.info.append_text(
-                f'Радар (кв): {select_factory.detect}')
+                f'Радар: {select_factory.detect} 10м')
         if select_factory.operate:
             self.app.info.append_text(
-                f'Операционный радиус (кв): {select_factory.operate}')
+                f'Операционный радиус: {select_factory.operate} 10м')
      
 
     

@@ -1426,7 +1426,7 @@
       {
         "id":3,
         "name":"sand_mining",
-        "pic": "sand_mound.png",
+        "pic": "s_mound.png",
         "time":5,
         "out":
         [
@@ -1472,7 +1472,7 @@
       {
         "id":6,
         "name":"stone_mining",
-        "pic": "stane.png",
+        "pic": "stone.png",
         "time":15,
         "in": 
         [              
