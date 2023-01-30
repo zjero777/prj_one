@@ -42,3 +42,17 @@ Convert OpenCV images for Pygame.
     
 def cvimage_grayscale(image):
     return cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+
+def set_proportion_by_frame(sprite_size, frame_size):
+    sprite_width, sprite_height = sprite_size
+    frame_width, frame_height = frame_size
+    
+    ratio_w = frame_width / sprite_width
+    ratio_h = frame_height / sprite_height
+    ratio = min(ratio_w, ratio_h)
+    
+    proportional_width = sprite_width * ratio
+    proportional_height = sprite_height * ratio
+    
+    return (proportional_width, proportional_height)    

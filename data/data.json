@@ -515,7 +515,7 @@
                 "selected_id":0
             },
             
-            "time": 5,
+            "efficiency": 1,
             "demolition":2
         },
         {
@@ -536,7 +536,7 @@
                 "selected_id":2
             },
             "pic": "quarry.png",
-            "time": 5,
+            "efficiency": 1,
             "demolition":2
         },
         {
@@ -557,7 +557,7 @@
                 "selected_id":4
             },
             "pic": "miller.png",
-            "time": 8,
+            "efficiency": 1,
             "demolition":2.5
         },
         {
@@ -579,7 +579,7 @@
                 "allowed_id":[5],
                 "selected_id":5
             },
-            "time": 40,
+            "efficiency": 0.5,
             "demolition":6
         },
         {
@@ -599,7 +599,7 @@
                 "allowed_id":[6],
                 "selected_id":6
             },
-            "time": 15,
+            "efficiency": 1,
             "demolition":3
         },
         {
@@ -621,7 +621,7 @@
                 "allowed_id":[7,22],
                 "selected_id":22
             },
-            "time": 10,
+            "efficiency": 1,
             "demolition": 8
         },
         {
@@ -644,7 +644,7 @@
                 "allowed_id":[8],
                 "selected_id":8
             },
-            "time": 15,
+            "efficiency": 1,
             "demolition": 7.5
         },
         {
@@ -661,12 +661,6 @@
             ],
             
             "pic": "roboport.png",
-            "use_recipes": 
-            {
-                "allowed_id":[31],
-                "selected_id":31
-            },
-            "time": 1,
             "demolition": 4.5,
             "operate": 10
         },
@@ -678,7 +672,6 @@
                 "h": 4
             },
             "pic": "escape_pod.png",
-            "time": 10,
             "demolition": 10,
             "detect": 12,
             "operate": 8,
@@ -698,7 +691,7 @@
                 [6,6,7,8]
             ],
             "pic": "labaratory.png",
-            "time": 10,
+            "efficiency": 1,
             "demolition": 8,
             "detect": 3,
             "operate": 2,
@@ -721,7 +714,6 @@
                 [2,7,2]
             ],
             "pic": "radar.png",
-            "time": 10,
             "demolition": 4.5,
             "detect": 15
         },
@@ -739,7 +731,7 @@
                 [8,8,8,8]
             ],
             "pic": "corall_f.png",
-            "time": 20,
+            "efficiency": 1,
             "demolition": 8,
             "use_recipes": 
             {
@@ -760,7 +752,7 @@
                 [8,8,0]
             ],
             "pic": "pump.png",
-            "time": 15,
+            "efficiency": 1,
             "demolition": 4.5,
             "use_recipes": 
             {
@@ -783,7 +775,7 @@
                 [2,3,7,3,2]
             ],
             "pic": "corall_p.png",
-            "time": 24,
+            "efficiency": 1,
             "demolition": 12.5,
             "use_recipes": 
             {
@@ -805,7 +797,7 @@
                 [6,9,9,6]
             ],
             "pic": "moss_press.png",
-            "time": 10,
+            "efficiency": 1,
             "demolition": 8,
             "use_recipes": 
             {
@@ -826,7 +818,7 @@
                 [2,6,3,7,3,8,2]
             ],
             "pic": "combiner.png",
-            "time": 15,
+            "efficiency": 1,
             "demolition": 10.5,
             "use_recipes": 
             {
@@ -847,7 +839,7 @@
                 [7,7,7,7,8]
             ],
             "pic": "washer.png",
-            "time": 3,
+            "efficiency": 1,
             "demolition": 7.5,
             "use_recipes": 
             {
@@ -869,7 +861,7 @@
                 [12,14,14,14,14,12]
             ],
             "pic": "rocket_silo.png",
-            "time": 500,
+            "efficiency": 1,
             "demolition": 15,
             "use_recipes": 
             {
@@ -895,7 +887,7 @@
                 [14,7,7,7,7,7,7,14]
             ],
             "pic": "a_observatory.png",
-            "time": 20,
+            "efficiency": 1,
             "demolition": 32,
             "use_recipes": 
             {
@@ -917,7 +909,7 @@
                 [3,3,3,3]
             ],
             "pic": "b_compressor.png",
-            "time": 10,
+            "efficiency": 1,
             "demolition": 8,
             "use_recipes": 
             {
@@ -942,7 +934,7 @@
                 "allowed_id":[0,1],
                 "selected_id":0
             },
-            "time": 10,
+            "efficiency": 2,
             "demolition":2
         },
         {
@@ -963,7 +955,7 @@
                 "selected_id":2
             },
             
-            "time": 6,
+            "efficiency": 2,
             "demolition":2
         },
         {
@@ -984,7 +976,7 @@
                 "allowed_id":[4,31],
                 "selected_id":4
             },
-            "time": 15,
+            "efficiency": 2,
             "demolition":1.5
         },
         {
@@ -1006,7 +998,7 @@
                 "allowed_id":[5],
                 "selected_id":5
             },
-            "time": 20,
+            "efficiency": 1,
             "demolition":6
         },
         {
@@ -1026,7 +1018,7 @@
                 "allowed_id":[6,16],
                 "selected_id":16
             },
-            "time": 10,
+            "efficiency": 2,
             "demolition":3
         },
         {
@@ -1048,7 +1040,7 @@
                 "allowed_id":[7,22],
                 "selected_id":22
             },
-            "time": 10,
+            "efficiency": 2,
             "demolition": 8
         },
         {
@@ -1071,7 +1063,7 @@
                 "allowed_id":[8],
                 "selected_id":8
             },
-            "time": 15,
+            "efficiency": 2,
             "demolition": 7.5
         },
         {
@@ -1087,7 +1079,6 @@
                 [14,12,14]
             ],
             "pic": "b_roboport.png",
-            "time": 1,
             "demolition": 4.5,
             "operate": 25
         },
@@ -1105,7 +1096,6 @@
                 [14,14,14,14]
             ],   
             "pic": "hub.png",
-            "time": 10,
             "demolition": 10,
             "storage":20,
             "detect": 20,
@@ -1125,7 +1115,7 @@
                 [14,14,13,12]
             ],
             "pic": "labaratory2.png",
-            "time": 15,
+            "efficiency": 2,
             "demolition": 8,
             "detect": 5,
             "operate": 4,
@@ -1148,7 +1138,6 @@
                 [14,12,14]
             ],
             "pic": "radar2.png",
-            "time": 10,
             "demolition": 4.5,
             "detect": 25
         },
@@ -1167,7 +1156,7 @@
                 [14,13,2,13,14]
             ],
             "pic": "surf_sc.png",
-            "time": 20,
+            "efficiency": 1,
             "demolition": 10.5,
             "use_recipes": 
             {
@@ -1188,7 +1177,7 @@
                 [18,18,18]
             ],
             "pic": "scanner_3000.png",
-            "time": 1,
+            "efficiency": 1,
             "demolition": 1,
             "detect": 20,
             "use_recipes": 
@@ -1210,7 +1199,7 @@
                 [7,2,2,13,2]
             ],
             "pic": "circuit_f.png",
-            "time": 15,
+            "efficiency": 1,
             "demolition": 7.5,
             "use_recipes": 
             {
@@ -1230,7 +1219,7 @@
                 [22]
             ],
             "pic": "c_drill.png",
-            "time": 1,
+            "efficiency": 1,
             "demolition": 1,
             "use_recipes": 
             {
@@ -1251,7 +1240,7 @@
                 [14,8,7]
             ],
             "pic": "drill_f.png",
-            "time": 10,
+            "efficiency": 1,
             "demolition": 7.5,
             "use_recipes": 
             {
@@ -1274,7 +1263,7 @@
                 [0,18,19,18,0]
             ],
             "pic": "mega_pump.png",
-            "time": 10,
+            "efficiency": 2,
             "demolition": 10.5,
             "use_recipes": 
             {
@@ -1297,7 +1286,7 @@
                 [18,18,18,18,18]
             ],
             "pic": "cosmic_forge.png",
-            "time": 25,
+            "efficiency": 2,
             "demolition": 10.5,
             "use_recipes": 
             {
@@ -1318,7 +1307,7 @@
                 [8,14,2]
             ],
             "pic": "oil_pump.png",
-            "time": 10,
+            "efficiency": 1,
             "demolition": 4.5,
             "use_recipes": 
             {
@@ -1339,7 +1328,7 @@
                 [2,2,2,6]
             ],
             "pic": "oil_refinery.png",
-            "time": 15,
+            "efficiency": 1,
             "demolition": 4.5,
             "use_recipes": 
             {
@@ -1360,7 +1349,7 @@
                 [2,4]
             ],
             "pic": "workbench.png",
-            "time": 15,
+            "efficiency": 1,
             "demolition": 4.5,
             "use_recipes": 
             {

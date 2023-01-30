@@ -4,6 +4,7 @@ from numpy.lib.function_base import append, select
 import pygame as pg
 import pygame_gui as gui
 from options import *
+from utils import set_proportion_by_frame
 from myui import *
 
 class info:
@@ -155,8 +156,12 @@ class info:
         )
         return({'ui': textui, 'type': type(textui).__name__}, textui.get_relative_rect()[3])
         
-    def _create_pic_info(self, pic, top_pos, justify='center'):
-        pic_relativity_rect = pg.Rect(pic.get_rect())
+    def _create_pic_info(self, pic, top_pos, justify='center', size=None):
+        if size: 
+            pic_relativity_rect = pg.Rect(pic.get_rect())
+            pic_relativity_rect.size = set_proportion_by_frame(pic_relativity_rect.size, size)
+        else:
+            pic_relativity_rect = pg.Rect(pic.get_rect())
         if justify=='left': 
             justify = 0
         elif justify=='center':
@@ -301,7 +306,7 @@ class info:
             self.msg_line += 1
 
     
-    def append_pic(self, pic, pic_size: int=64, justify='center'):
+    def append_pic(self, pic, justify='center', size=None):
         if len(self.msg_info_list) < self.msg_line+1:
             element, hight = self._create_pic_info(pic, self.top, justify=justify)
             self.msg_info_list.append(element)
@@ -323,7 +328,7 @@ class info:
             del self.msg_info_list[self.msg_line]['ui']
             
 
-            element, newtop = self._create_pic_info(pic, self.top, justify=justify)
+            element, newtop = self._create_pic_info(pic, self.top, justify=justify, size=size)
             self.msg_info_list[self.msg_line] = element
             self.top += newtop
             dtop = newtop - oldtop
