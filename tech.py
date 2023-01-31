@@ -350,7 +350,7 @@ class ui_tech:
             if not select_factory: return
         else:
             select_factory = self.selected_factory
-        self.app.info.append_pic(self.app.data.factory_img[select_factory.pic_id])
+        self.app.info.append_pic(self.app.data.factory_img[select_factory.pic_id], size=(192, 192))
         self.app.info.append_progress_bar(select_factory.progress)
         # if select_factory.working:
         #     working_text = '(Работает)'
@@ -368,9 +368,10 @@ class ui_tech:
         if select_factory.outcom_recipe:
             self.app.info.append_text('Выход:')
             self.app.info.append_list_items(select_factory.outcom_recipe)
-        process_time_sec = select_factory.process_time/1000
-        self.app.info.append_text(
-            f'Производство: {process_time_sec:0.1f} сек')
+        if select_factory.process_time:
+            process_time_sec = select_factory.process_time/1000
+            self.app.info.append_text(
+                f'Производство: {process_time_sec:0.1f} сек')
 
         if len(select_factory.allow_recipe_list)>1:
             buttons_line = []
