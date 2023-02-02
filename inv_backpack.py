@@ -55,7 +55,7 @@ class inv_backpack(inv):
 
     
     def draw(self):
-        self.surface.fill(pg.Color(33,40,45))
+        self.surface.fill(pg.Color(33,40,45)) 
 
         #  draw backpack cells
         for i in range(INV_CELL_COUNT):

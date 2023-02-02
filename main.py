@@ -17,7 +17,7 @@ class game:
     def __init__(self):
         pg.init()
         self.screen = pg.display.set_mode(WIN_SIZE, pg.SRCALPHA)
-        self.surface = pg.Surface(WIN_SIZE, pg.SRCALPHA)
+        # self.surface = pg.Surface(WIN_SIZE, pg.SRCALPHA)
         self.manager = pygame_gui.UIManager(WIN_SIZE, path.join(data_dir, 'theme.json'))
         self.clock = pg.time.Clock()
         self.timer = pg.time
@@ -56,8 +56,8 @@ class game:
         
     
     def draw(self):
-        self.surface.fill(pg.Color('cyan'))        
-        self.screen.blit(self.surface, (0,0))
+        self.screen.fill(pg.Color('cyan'))        
+        # self.screen.blit(self.surface, (0,0))
         self.terrain.draw() 
         # self.player.draw()
         self.player.draw()

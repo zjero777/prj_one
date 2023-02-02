@@ -98,8 +98,7 @@ class info:
     def draw(self):
         # self.surface.fill(pg.Color(255,0,0))
         for item in self.debug_textlist:
-            self.text_surface = self.debug_font.render(
-                item['text'], True, (255, 0, 0))
+            self.text_surface = self.debug_font.render(item['text'], True, (255, 0, 0))
             self.app.screen.blit(self.text_surface, item['pos'])
         self.debug_textlist.clear()
 
