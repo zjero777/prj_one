@@ -23,7 +23,7 @@ class terrain:
     def __init__(self, app, width, height):
         self.app = app
         self.pos = (PLANET_WIDTH//2, PLANET_HIGHT//2)
-        self.selection = [-1, -1]
+        # self.selection = [-1, -1]
         self.surface = pg.Surface((FIELD_WIDTH, FIELD_HIGHT))
         self.field = np.zeros((width, height), dtype='i')
         self.dark_cover = np.ones((width, height), dtype=np.bool)
@@ -132,8 +132,8 @@ class terrain:
         )
         return(screen_pos)
 
-    def select(self, mouse_coord):
-        a = self.mapping(mouse_coord)
+    # def select(self, mouse_coord):
+    #     a = self.mapping(mouse_coord)
         # self.selection[0] = self.pos[0]+a[0]-HALF_HIGHT
         # self.selection[1] = self.pos[1]+a[1]-HALF_WIDTH
         # data = self.data.get('terrain_type')[self.field[self.selection[0], self.selection[1]]]['name']
@@ -186,6 +186,7 @@ class terrain:
     def Get_info_block_placed(self, use_item, place):
         result_item = use_item
         result_type = ''
+        if not use_item: return(None, '')
         for item in self.data.get('block_type'):
             if use_item['id'] == item['id']:
                 rules = item.get('build', False)
@@ -358,11 +359,11 @@ class terrain:
         # draw tech areas
         self.app.ui_tech.draw(self.surface)
 
-        # draw selection
-        if self.selection != [-1, -1]:
-            xyRect = pg.Rect((self.selection[0]-self.pos[0]+HALF_WIDTH)*TILE,
-                             (self.selection[1]-self.pos[1]+HALF_HIGHT)*TILE, TILE, TILE)
-            pg.draw.rect(self.surface, pg.Color('yellow'), xyRect, 3)
+        # # draw selection
+        # if self.selection != [-1, -1]:
+        #     xyRect = pg.Rect((self.selection[0]-self.pos[0]+HALF_WIDTH)*TILE,
+        #                      (self.selection[1]-self.pos[1]+HALF_HIGHT)*TILE, TILE, TILE)
+        #     pg.draw.rect(self.surface, pg.Color('yellow'), xyRect, 3)
 
         # draw dig_site
         # if self.dig_site:
@@ -375,11 +376,11 @@ class terrain:
         if self.tile_pos:
             xyRect = pg.Rect((self.tile_pos[0]-self.pos[0]+HALF_WIDTH)*TILE,
                              (self.tile_pos[1]-self.pos[1]+HALF_HIGHT)*TILE, TILE, TILE)
-            if self.app.player.inv.selected_backpack_cell == -1:
-                if not self.app.player.is_openinv and not self.app.inv_recipe.is_openinv:
+            if self.app.player.inv.selected_cell is None:
+                if not self.app.player.inv.is_open and not self.app.inv_recipe.is_open:
                     pg.draw.rect(self.surface, pg.Color('gray'), xyRect, 1)
             else:
-                if not self.app.player.is_openinv:
+                if not self.app.player.inv.is_open and self.app.player.inv.item:
                     # Ghost cursor
                     place = self.GetInfo(
                         'name', self.field[self.tile_pos[0], self.tile_pos[1]])

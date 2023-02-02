@@ -8,10 +8,7 @@ from inv import inv
 
 class inv_recipe(inv):
     def __init__(self, app):
-        super().__init__(app, app.player)
-        self.is_openinv = False
-        self.backpack_recipe = []
-        # self.select_recipe = None
+        super().__init__(app)
     
     def update(self):
         if not self.app.is_modal(self): return
@@ -23,7 +20,7 @@ class inv_recipe(inv):
         if keystate[pg.K_ESCAPE]:
             if self.first_pressed:
                 self.first_pressed = False 
-                self.is_openinv = False
+                self.is_open = False
                 self.clear()
         else:
             self.first_pressed = True
@@ -31,31 +28,31 @@ class inv_recipe(inv):
         mouse_button = pg.mouse.get_pressed()
         mouse_pos = pg.mouse.get_pos()
 
-        if self.is_openinv:
-            self.backpack_cell_num, _item = self.get_cell(mouse_pos)
+        if self.is_open:
+            self.hover_cell_num, _item = self.get_cell(mouse_pos)
             if mouse_button[0]:
                 if self.first_click:
                     self.first_click = False 
-                    if not self.backpack_cell_num is None and self.backpack_cell_num<len(self.backpack_recipe):
+                    if not self.hover_cell_num is None and self.hover_cell_num<len(self.cells):
                         # select item
                         selected_factory = self.app.factories.selected
-                        selected_factory.recipe = self.backpack_recipe[self.backpack_cell_num]
+                        selected_factory.recipe = self.cells[self.hover_cell_num]
                         selected_factory.command_step = 0
                         selected_factory.status = FSTAT_CHG_RECIPE                        
-                        self.is_openinv = False
+                        self.is_open = False
                         self.clear()
             else:
                 self.first_click = True
 
     
     def draw(self):
-        if not self.is_openinv: return
+        if not self.is_open: return
         self.surface.fill(pg.Color(33,40,45))
 
         #  draw backpack cells
         for i in range(INV_CELL_COUNT):
             pos = (i%INV_CELL_CW*INV_CELL_W+i%INV_CELL_CW+INV_MARGIN, i//INV_CELL_CH*INV_CELL_H+i//INV_CELL_CH+INV_MARGIN)
-            if self.backpack_cell_num==i:
+            if self.hover_cell_num==i:
                 # hover
                 self.surface.blit(self.bgimgactive, pos)
             else:
@@ -65,7 +62,7 @@ class inv_recipe(inv):
         
         # draw backpack items
         i=-1
-        for item in self.backpack_recipe:
+        for item in self.cells:
             i+=1
             pos = (i%10*INV_CELL_W+i%INV_CELL_CW+INV_MARGIN, i//INV_CELL_CH*INV_CELL_H+i//INV_CELL_CH+INV_MARGIN)
             item_pos = (pos[0]+8, pos[1]+8)
@@ -89,8 +86,8 @@ class inv_recipe(inv):
         if cell<0 or cell>INV_CELL_COUNT or pos2[0]<0 or pos2[0]>INV_CELL_CW-1:
             return(None, None)
         else:
-            if cell>-1 and cell<len(self.backpack_recipe):
-                block = self.backpack_recipe[cell]
+            if cell>-1 and cell<len(self.cells):
+                block = self.cells[cell]
             else:
                 block = None
             return(cell,block)
@@ -103,10 +100,10 @@ class inv_recipe(inv):
         
         
     def append(self, recipe):
-        self.backpack_recipe.append(recipe)
+        self.cells.append(recipe)
         
     def clear(self):
-        self.backpack_recipe.clear()
+        self.cells.clear()
         
     def view_recipe_info(self):
         mouse_pos = pg.mouse.get_pos()

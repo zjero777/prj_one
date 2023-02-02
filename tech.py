@@ -34,7 +34,7 @@ class UI_tech_blueprints:
                 self.keypressed = True
                 if not self.wnd.visible:
                     self.wnd.show()
-                    self.app.player.is_openinv = False
+                    self.app.player.inv.is_open = False
                 else:
                     self.wnd.hide()
                 self.visible = bool(self.wnd.visible)
@@ -118,7 +118,7 @@ class ui_tech:
                         # remove lab
                         self.tech_sites.delete_selected()
                     elif event.ui_object_id == 'panel.panel_info.chg_recipe_button':
-                        if self.app.inv_recipe.is_openinv: return
+                        if self.app.inv_recipe.is_open: return
                         self.show_recipes()
                 if event.ui_element == self.ok_button:
                     self.wnd.hide()
@@ -127,7 +127,7 @@ class ui_tech:
     def show_recipes(self):
         
         self.app.inv_recipe.load_recipe(self.selected_factory.allow_recipe_list, self.selected_factory.recipe)
-        self.app.inv_recipe.is_openinv = True
+        self.app.inv_recipe.is_open = True
                
     def show_tech_selected(self):
         self.app.set_modal(self.wnd)
@@ -402,7 +402,7 @@ class ui_tech:
         keystate = pg.key.get_pressed()
         
         if  (self.app.ui_tech_bp.visible or
-            self.app.player.is_openinv):
+            self.app.player.inv.is_open):
             return
 
 
@@ -415,7 +415,7 @@ class ui_tech:
 # start info
         self.app.info.start()
 
-        if self.app.inv_recipe.is_openinv:
+        if self.app.inv_recipe.is_open:
             self.app.inv_recipe.view_recipe_info()
         elif self.selected_site:
             self.view_tech_site_ui()
@@ -431,7 +431,7 @@ class ui_tech:
         self.app.info.stop()
 # stop info
 
-        if  self.app.inv_recipe.is_openinv: return
+        if  self.app.inv_recipe.is_open: return
 
 
         if not mouse_button[0]:
