@@ -2,18 +2,17 @@ from numpy import cos, sin
 import pygame as pg
 import pygame_gui as gui
 from options import *
-from inv import *
+from inv_backpack import *
 from terrain import terrain
 
 
 class player:
     def __init__(self, app):
         self.app = app
-        self.inv = inv(self.app, self)
+        self.inv = inv_backpack(self.app, self)
         self.dig = False
         self.timer = app.timer
         self.start_dig = 0
-        self.is_openinv = False
         self.demolition = False
         self.warmup = 0
         self.pos = ()        
@@ -22,13 +21,13 @@ class player:
         self.inv.update()
     
     def draw(self):
-        if self.is_openinv:
+        if self.inv.is_open:
             self.inv.draw()
     
     # Place the item selected from the inventory on titlepos the ground
     # player.inv.selected_backpack_cell - selected inventory item 
     def build(self, field):
-        if self.inv.selected_backpack_cell>-1:
+        if not self.inv.selected_cell is None:
             item = self.inv.item
             place = field.GetInfo('name', field.field[field.tile_pos[0], field.tile_pos[1]])
             build_item, build_type = field.Get_info_block_placed(item, place)   
@@ -117,7 +116,7 @@ class player:
         self.go_pos(terra, pos)
         self.set_spawn(pos)
         
-        bp = terra.GetFData('name', 'observatory')
+        bp = terra.GetFData('name', 'brickyard')
         factory=self.app.factories.add(bp, b_map, pos[0]+4, pos[1])
         factory.create_storage_in(factory.incom_recipe)
         factory.in_storage.add_items([{'id':1,'count':20}])

@@ -41,7 +41,7 @@ class mouse:
         self.item = int(item['id'])
     
     def setcursor_noitem(self):
-        self.item = -1
+        self.item = None
         
             
 
@@ -69,7 +69,7 @@ class mouse:
         #     self.app.info.clear_info()
 
 
-        if pg.Rect(VIEW_RECT).collidepoint(self.pos) and not self.app.player.is_openinv and keystate[pg.K_f]:
+        if pg.Rect(VIEW_RECT).collidepoint(self.pos) and not self.app.player.inv.is_open and keystate[pg.K_f]:
 
 
             if not mouse_button[0]:
@@ -91,7 +91,7 @@ class mouse:
                 site_progress = False
 
             if mouse_button[0] and len(self.tile_pos) > 0 and not self.app.terrain.dark_cover[self.tile_pos] and self.app.terrain.operate[self.tile_pos] and not site_progress:
-                if self.app.player.inv.selected_backpack_cell > -1:
+                if not self.app.player.inv.selected_cell is None:
 
                     if self.first_click:
                         self.first_click = False
@@ -146,7 +146,7 @@ class mouse:
                 self.app.player.stop_demolition()
 
             if mouse_button[2] and not mouse_button[0] and len(self.tile_pos) > 0:
-                self.app.player.inv.selected_backpack_cell = -1
+                self.app.player.inv.selected_cell = None
                 # self.app.player.inv.item = {}
         else:
              self.app.player.stop_dig()
@@ -166,7 +166,7 @@ class mouse:
         
     
     def draw(self):
-        if self.item > -1 and self.app.player.is_openinv:
+        if self.item and self.app.player.inv.is_open:
             pic = pg.transform.scale(self.app.terrain.block_img[self.item], (32, 32))
             self.app.screen.blit(pic, pg.Rect(self.pos,self.pos).move(10,20))
         # i=self.cursor.value

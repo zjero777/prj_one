@@ -85,18 +85,15 @@ class info:
 
     def update(self):
 
-        if pg.Rect(VIEW_RECT).collidepoint(self.app.mouse.pos) and not self.app.player.is_openinv:
+        if pg.Rect(VIEW_RECT).collidepoint(self.app.mouse.pos) and not self.app.player.inv.is_open:
 
             #  view terrain info
-            if self.app.player.inv.selected_backpack_cell == -1:
-                self.app.terrain.view_Tileinfo(self.app.mouse.tile_pos)
-                pass
-            else:
-                self.app.terrain.view_Build_info(self.app.mouse.tile_pos)
-                pass
+            # if not self.app.player.inv.item is None:
+            #     self.app.terrain.view_Build_info(self.app.mouse.tile_pos)
+            # else:
+            #     self.app.terrain.view_Tileinfo(self.app.mouse.tile_pos)
+            pass
 
-
-        pass
 
     def draw(self):
         # self.surface.fill(pg.Color(255,0,0))
