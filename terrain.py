@@ -24,7 +24,7 @@ class terrain:
         self.app = app
         self.pos = (PLANET_WIDTH//2, PLANET_HIGHT//2)
         # self.selection = [-1, -1]
-        self.surface = pg.Surface((FIELD_WIDTH, FIELD_HIGHT))
+        self.surface = app.screen #pg.Surface((FIELD_WIDTH, FIELD_HIGHT))
         self.field = np.zeros((width, height), dtype='i')
         self.dark_cover = np.ones((width, height), dtype=np.bool)
         self.fog_of_war = np.ones((width, height), dtype=np.bool)
@@ -416,7 +416,7 @@ class terrain:
                     self.surface.blit(self.field_img[0][0], xyRect)
 
         # draw in viewport
-        self.app.screen.blit(self.surface, VIEW_RECT)
+        # self.app.screen.blit(self.surface, VIEW_RECT)
 
     def dig_succes(self, player, tile_pos):
         self.app.player.stop_dig()
