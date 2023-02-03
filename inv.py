@@ -6,7 +6,22 @@ from mouse import *
 from options import *
 
 class inv:
-    def __init__(self, app):
+# # inventory
+# INV_MARGIN = 15
+# INV_CELL_W = 48
+# INV_CELL_H = 48
+# INV_CELL_SIZE = (INV_CELL_W, INV_CELL_H)
+# INV_CELL_COUNT = 100
+# INV_CELL_CW = 10
+# INV_CELL_CH = INV_CELL_COUNT // INV_CELL_CW
+# INV_WIDTH = INV_CELL_W*INV_CELL_CW+(INV_CELL_CW-1)+INV_MARGIN*2
+# INV_HIGHT = INV_CELL_H*INV_CELL_CH+(INV_CELL_CH-1)+INV_MARGIN*2
+# INV_SIZE = (INV_WIDTH, INV_HIGHT)
+# INV_POS = (FIELD_WIDTH // 2 - INV_WIDTH // 2+INV_MARGIN, FIELD_HIGHT // 2 - INV_HIGHT // 2+INV_MARGIN)
+# INV_RECT = (INV_POS[0], INV_POS[1], INV_WIDTH, INV_HIGHT)    
+    
+    
+    def __init__(self, app, margin=15):
         self.app = app
 
         self.selected_cell = None
@@ -47,28 +62,9 @@ class inv:
         
     def update(self):
         if not self.app.is_modal(self): return
-        
-        keystate = pg.key.get_pressed()
-        if keystate[pg.K_1]:
-            if self.first_pressed:
-                self.first_pressed = False 
-                self.is_open = True
-        else:
-            self.first_pressed = True
-            
-        mouse_button = pg.mouse.get_pressed()
-        mouse_pos = pg.mouse.get_pos()
-
-        if self.is_open:
-            self.hover_cell_num, _item = self.get_cell(mouse_pos)
-            if mouse_button[0]:
-                if self.first_click:
-                    self.first_click = False 
-                    if not self.hover_cell_num is None and self.hover_cell_num<len(self.cells):
-                        # select item
-                        self.selected_cell = self.hover_cell_num
-            else:
-                self.first_click = True
+        self.keystate = pg.key.get_pressed()
+        self.mouse_button = pg.mouse.get_pressed()
+        self.mouse_pos = pg.mouse.get_pos()
 
     
     def draw(self):
@@ -76,7 +72,7 @@ class inv:
         
         self.surface.fill(pg.Color(33,40,45))
 
-        #  draw cells cells
+        #  draw bg cells 
         for i in range(INV_CELL_COUNT):
             pos = (i%INV_CELL_CW*INV_CELL_W+i%INV_CELL_CW+INV_MARGIN, i//INV_CELL_CH*INV_CELL_H+i//INV_CELL_CH+INV_MARGIN)
             if self.hover_cell_num==i:
@@ -86,17 +82,9 @@ class inv:
                 # normal
                 self.surface.blit(self.bgimg, pos)
         
-        # draw cells items
-        i=-1
-        for item in self.cells:
-            i+=1
-            pos = (i%10*INV_CELL_W+i%INV_CELL_CW+INV_MARGIN, i//INV_CELL_CH*INV_CELL_H+i//INV_CELL_CH+INV_MARGIN)
-            item_pos = (pos[0]+8, pos[1]+8)
-            #img
-            pic = pg.transform.scale(self.app.terrain.block_img[item['id']], (32, 32))
-            self.surface.blit(pic, item_pos)
+
         
-        self.app.screen.blit(self.surface, INV_POS)
+
 
         
 

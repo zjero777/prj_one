@@ -11,10 +11,9 @@ class inv_recipe(inv):
         super().__init__(app)
     
     def update(self):
-        if not self.app.is_modal(self): return
+        super().update()
       
-        keystate = pg.key.get_pressed()
-        if keystate[pg.K_ESCAPE]:
+        if self.keystate[pg.K_ESCAPE]:
             if self.first_pressed:
                 self.first_pressed = False 
                 self.is_open = False
@@ -22,12 +21,9 @@ class inv_recipe(inv):
         else:
             self.first_pressed = True
             
-        mouse_button = pg.mouse.get_pressed()
-        mouse_pos = pg.mouse.get_pos()
-
         if self.is_open:
-            self.hover_cell_num, _item = self.get_cell(mouse_pos)
-            if mouse_button[0]:
+            self.hover_cell_num, _item = self.get_cell(self.mouse_pos)
+            if self.mouse_button[0]:
                 if self.first_click:
                     self.first_click = False 
                     if not self.hover_cell_num is None and self.hover_cell_num<len(self.cells):
@@ -44,18 +40,7 @@ class inv_recipe(inv):
     
     def draw(self):
         if not self.is_open: return
-        self.surface.fill(pg.Color(33,40,45))
-
-        #  draw backpack cells
-        for i in range(INV_CELL_COUNT):
-            pos = (i%INV_CELL_CW*INV_CELL_W+i%INV_CELL_CW+INV_MARGIN, i//INV_CELL_CH*INV_CELL_H+i//INV_CELL_CH+INV_MARGIN)
-            if self.hover_cell_num==i:
-                # hover
-                self.surface.blit(self.bgimgactive, pos)
-            else:
-                # normal
-                self.surface.blit(self.bgimg, pos)
-            
+        super().draw()
         
         # draw backpack items
         i=-1
@@ -69,11 +54,6 @@ class inv_recipe(inv):
             if item==self.select_recipe:
                 rect_selection = (pos[0], pos[1], 48, 48)
                 pg.draw.rect(self.surface, pg.Color('yellow'), rect_selection, 1)
-
-            #count
-            # text = self.font.render(str(item['count']),True, pg.Color('white'))
-            # count_text_pos = (pos[0]+INV_CELL_W-text.get_width()-3, pos[1]+INV_CELL_H-text.get_height()-3)
-            # self.surface.blit(text, count_text_pos)
         
         self.app.screen.blit(self.surface, INV_POS)
 
