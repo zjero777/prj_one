@@ -12,10 +12,7 @@ class inv_recipe(inv):
     
     def update(self):
         if not self.app.is_modal(self): return
-        
-        # if self.is_openinv:
-        #     self.app.terrain.view_invinfo()        
-        
+      
         keystate = pg.key.get_pressed()
         if keystate[pg.K_ESCAPE]:
             if self.first_pressed:

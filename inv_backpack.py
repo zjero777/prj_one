@@ -16,9 +16,6 @@ class inv_backpack(inv):
     def update(self):
         if not self.app.is_modal(self): return
         
-        if self.is_open:
-            self.app.terrain.view_invinfo()
-        
         keystate = pg.key.get_pressed()
         if keystate[pg.K_e] and keystate[pg.K_f]:
             if self.first_pressed:
@@ -55,6 +52,8 @@ class inv_backpack(inv):
 
     
     def draw(self):
+        
+        if not self.is_open: return
         self.surface.fill(pg.Color(33,40,45)) 
 
         #  draw backpack cells

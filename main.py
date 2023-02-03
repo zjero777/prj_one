@@ -56,7 +56,7 @@ class game:
         
     
     def draw(self):
-        self.screen.fill(pg.Color('cyan'))        
+        # self.screen.fill(pg.Color('cyan'))        
         # self.screen.blit(self.surface, (0,0))
         self.terrain.draw() 
         # self.player.draw()
@@ -72,26 +72,20 @@ class game:
     def run(self):
         while self.is_runing:
             dt = self.clock.tick(FPS)/1000
+            fps = self.clock.get_fps()
+            self.info.debug((0,0), f'FPS:{int(fps)}')
             for event in pg.event.get():
                 # check for closing window
                 if event.type == pg.QUIT:
                     self.is_runing = False
-                    
-                # if event.type == pg.USEREVENT:
-                #     if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
-                #         if event.ui_element == 'panel.panel_info.button':
-                #             print('Hello World!')                
-                # self.mouse.process_events(event)
-                # self.field.process_events(event)
+
                 self.ui_tech.process_events(event)
                 self.manager.process_events(event)
          
-            dt = self.clock.tick(60)/1000.0
             self.manager.update(dt)                   
             self.update(dt)
             self.draw()
-            fps = self.clock.get_fps()
-            self.info.debug((0,0), f'FPS:{int(fps)}')
+
             pg.display.update()
     
     def load_resources(self):

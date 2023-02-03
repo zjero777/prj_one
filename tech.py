@@ -118,14 +118,13 @@ class ui_tech:
                         # remove lab
                         self.tech_sites.delete_selected()
                     elif event.ui_object_id == 'panel.panel_info.chg_recipe_button':
-                        if self.app.inv_recipe.is_open: return
+                        # if self.app.inv_recipe.is_open: return
                         self.show_recipes()
                 if event.ui_element == self.ok_button:
                     self.wnd.hide()
                     self.app.clear_modal()
                     
     def show_recipes(self):
-        
         self.app.inv_recipe.load_recipe(self.selected_factory.allow_recipe_list, self.selected_factory.recipe)
         self.app.inv_recipe.is_open = True
                
@@ -401,8 +400,7 @@ class ui_tech:
         self.tech_sites.update()
         keystate = pg.key.get_pressed()
         
-        if  (self.app.ui_tech_bp.visible or
-            self.app.player.inv.is_open):
+        if  self.app.ui_tech_bp.visible:
             return
 
 
@@ -415,7 +413,12 @@ class ui_tech:
 # start info
         self.app.info.start()
 
-        if self.app.inv_recipe.is_open:
+        if self.app.player.inv.is_open:
+            info = self.app.info
+            info.start()
+            info.append_text(f'<b>Инвентарь:</b>')
+            info.stop()
+        elif self.app.inv_recipe.is_open:
             self.app.inv_recipe.view_recipe_info()
         elif self.selected_site:
             self.view_tech_site_ui()
