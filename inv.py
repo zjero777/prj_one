@@ -72,6 +72,8 @@ class inv:
 
     
     def draw(self):
+        if not self.is_open: return
+        
         self.surface.fill(pg.Color(33,40,45))
 
         #  draw cells cells

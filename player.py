@@ -21,8 +21,7 @@ class player:
         self.inv.update()
     
     def draw(self):
-        if self.inv.is_open:
-            self.inv.draw()
+        self.inv.draw()
     
     # Place the item selected from the inventory on titlepos the ground
     # player.inv.selected_backpack_cell - selected inventory item 

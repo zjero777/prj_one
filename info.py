@@ -84,15 +84,7 @@ class info:
         # self.panel_info.rebuild()
 
     def update(self):
-
-        if pg.Rect(VIEW_RECT).collidepoint(self.app.mouse.pos) and not self.app.player.inv.is_open:
-
-            #  view terrain info
-            # if not self.app.player.inv.item is None:
-            #     self.app.terrain.view_Build_info(self.app.mouse.tile_pos)
-            # else:
-            #     self.app.terrain.view_Tileinfo(self.app.mouse.tile_pos)
-            pass
+        pass
 
 
     def draw(self):
