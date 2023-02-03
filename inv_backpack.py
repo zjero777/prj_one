@@ -14,26 +14,19 @@ class inv_backpack(inv):
         self.text_rect = pg.Rect((0, 0), (300, 300))
     
     def update(self):
-        if not self.app.is_modal(self): return
-        
-        keystate = pg.key.get_pressed()
-        if keystate[pg.K_e] and keystate[pg.K_f]:
+        super().update()
+        if self.keystate[pg.K_e] and self.keystate[pg.K_f]:
             if self.first_pressed:
                 self.first_pressed = False 
-                # if self.app.ui_tech.enabled: return
                 self.is_open = not self.is_open
                 if self.is_open:
                     self.app.ui_tech_bp.hide()
         else:
             self.first_pressed = True
             
-        mouse_button = pg.mouse.get_pressed()
-        mouse_pos = pg.mouse.get_pos()
-
         if self.is_open:
-            self.hover_cell_num, item = self.get_cell(mouse_pos)
-            # self.app.info.debug((0,60), f'{self.cells_cell_num}')
-            if mouse_button[0]:
+            self.hover_cell_num, item = self.get_cell(self.mouse_pos)
+            if self.mouse_button[0]:
                 if self.first_click:
                     self.first_click = False 
                     if not self.hover_cell_num is None and self.hover_cell_num<len(self.cells):
@@ -52,20 +45,9 @@ class inv_backpack(inv):
 
     
     def draw(self):
-        
         if not self.is_open: return
-        self.surface.fill(pg.Color(33,40,45)) 
+        super().draw()
 
-        #  draw backpack cells
-        for i in range(INV_CELL_COUNT):
-            pos = (i%INV_CELL_CW*INV_CELL_W+i%INV_CELL_CW+INV_MARGIN, i//INV_CELL_CH*INV_CELL_H+i//INV_CELL_CH+INV_MARGIN)
-            if self.hover_cell_num==i:
-                # hover
-                self.surface.blit(self.bgimgactive, pos)
-            else:
-                # normal
-                self.surface.blit(self.bgimg, pos)
-        
         # draw backpack items
         i=-1
         for item in self.cells:
