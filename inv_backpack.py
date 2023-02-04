@@ -8,7 +8,7 @@ from inv import *
 
 class inv_backpack(inv):
     def __init__(self, app, player):
-        super().__init__(app)
+        super().__init__(app, (-2, -2))
         self.player = player
         self.cells = [{'id':1,'count':20},{'id':16,'count':10},{'id':2, 'count':10},{'id':25,'count':10},{'id':4,'count':50},{'id':3,'count':50}]
         self.text_rect = pg.Rect((0, 0), (300, 300))
@@ -52,17 +52,20 @@ class inv_backpack(inv):
         i=-1
         for item in self.cells:
             i+=1
-            pos = (i%10*INV_CELL_W+i%INV_CELL_CW+INV_MARGIN, i//INV_CELL_CH*INV_CELL_H+i//INV_CELL_CH+INV_MARGIN)
+
+            pos = self.get_pos(i)
+
+            # pos = (i%10*self.inv_cell_h+i%self.inv_cell_cw+self.inv_margin, i//self.inv_cell_ch*self.inv_cell_h+i//self.inv_cell_ch+self.inv_margin)
             item_pos = (pos[0]+8, pos[1]+8)
             #img
             pic = pg.transform.scale(self.app.terrain.block_img[item['id']], (32, 32))
             self.surface.blit(pic, item_pos)
             #count
             text = self.font.render(str(item['count']),True, pg.Color('white'))
-            count_text_pos = (pos[0]+INV_CELL_W-text.get_width()-3, pos[1]+INV_CELL_H-text.get_height()-3)
+            count_text_pos = (pos[0]+self.inv_cell_h-text.get_width()-3, pos[1]+self.inv_cell_h-text.get_height()-3)
             self.surface.blit(text, count_text_pos)
         
-        self.app.screen.blit(self.surface, INV_POS)
+        self.app.screen.blit(self.surface, self.inv_pos)
 
         
     def incomplete_stack(self, item):
