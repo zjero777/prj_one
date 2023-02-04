@@ -8,7 +8,7 @@ from inv import inv
 
 class inv_recipe(inv):
     def __init__(self, app):
-        super().__init__(app)
+        super().__init__(app, (-3, -2), (2,5))
     
     def update(self):
         super().update()
@@ -46,7 +46,8 @@ class inv_recipe(inv):
         i=-1
         for item in self.cells:
             i+=1
-            pos = (i%10*INV_CELL_W+i%INV_CELL_CW+INV_MARGIN, i//INV_CELL_CH*INV_CELL_H+i//INV_CELL_CH+INV_MARGIN)
+            pos = self.get_pos(i)
+            # pos = (i%10*self.inv_cell_h+i%self.inv_cell_cw+self.inv_margin, i//self.inv_cell_ch*self.inv_cell_h+i//self.inv_cell_ch+self.inv_margin)
             item_pos = (pos[0]+8, pos[1]+8)
             #img
             pic = pg.transform.scale(self.app.data.recipe_img[item['id']], (32, 32))
@@ -55,19 +56,7 @@ class inv_recipe(inv):
                 rect_selection = (pos[0], pos[1], 48, 48)
                 pg.draw.rect(self.surface, pg.Color('yellow'), rect_selection, 1)
         
-        self.app.screen.blit(self.surface, INV_POS)
-
-    def get_cell(self, pos):
-        pos2=((pos[0]-INV_POS[0]-INV_MARGIN)//INV_CELL_W, (pos[1]-INV_POS[1]-INV_MARGIN)//INV_CELL_H)
-        cell=(pos[0]-INV_POS[0]-INV_MARGIN)//INV_CELL_W+(pos[1]-INV_POS[1]-INV_MARGIN)//INV_CELL_H*INV_CELL_CW
-        if cell<0 or cell>INV_CELL_COUNT or pos2[0]<0 or pos2[0]>INV_CELL_CW-1:
-            return(None, None)
-        else:
-            if cell>-1 and cell<len(self.cells):
-                block = self.cells[cell]
-            else:
-                block = None
-            return(cell,block)
+        self.app.screen.blit(self.surface, self.inv_pos)
 
     def load_recipe(self, allow_recipe_list, select_recipe):
         self.select_recipe = select_recipe
