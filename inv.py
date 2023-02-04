@@ -7,21 +7,7 @@ from options import *
 
 
 class inv:
-    # # inventory
-    # INV_MARGIN = 15
-    # INV_CELL_W = 48
-    # INV_CELL_H = 48
-    # INV_CELL_SIZE = (INV_CELL_W, INV_CELL_H)
-    # INV_CELL_COUNT = 100
-    # INV_CELL_CW = 10
-    # INV_CELL_CH = INV_CELL_COUNT // INV_CELL_CW
-    # INV_WIDTH = INV_CELL_W*INV_CELL_CW+(INV_CELL_CW-1)+INV_MARGIN*2
-    # INV_HIGHT = INV_CELL_H*INV_CELL_CH+(INV_CELL_CH-1)+INV_MARGIN*2
-    # INV_SIZE = (INV_WIDTH, INV_HIGHT)
-    # INV_POS = (FIELD_WIDTH // 2 - INV_WIDTH // 2+INV_MARGIN, FIELD_HIGHT // 2 - INV_HIGHT // 2+INV_MARGIN)
-    # INV_RECT = (INV_POS[0], INV_POS[1], INV_WIDTH, INV_HIGHT)
-
-    def __init__(self, app, pos=(-2, -2), inv_cells=(10, 10), inv_cell_h=48, inv_margin=15):
+    def __init__(self, app, pos=(-2, -2), inv_cells=(10, 10), inv_cell_h=48, inv_margin=15, bg_color=pg.Color(33, 40, 45), bg_hover_color=pg.Color(33, 40, 65)):
         '''
         pos x = -1 - left,  -2 - center, -3 rigth, y = -1 top, -2 center, -3 left
         '''
@@ -31,6 +17,7 @@ class inv:
         self.cells = []
         self.hover_cell_num = None
         self.is_open = False
+        self.is_hover = False
 
         # calculate const position and view
         self.inv_cell_cw, self.inv_cell_ch = inv_cells
@@ -62,9 +49,15 @@ class inv:
 
         self.surface = pg.Surface(self.inv_size)
         self.bgimg = pg.image.load(path.join(img_dir, 'invbg.png')).convert()
+        self.bgimg = pg.transform.scale(self.bgimg, self.inv_cell_size)
+        
         self.bgimgactive = pg.image.load(
             path.join(img_dir, 'invbgactive.png')).convert()
+        self.bgimgactive = pg.transform.scale(self.bgimgactive, self.inv_cell_size)
+        
         self.bgrect = self.bgimg.get_rect()
+        self.bg_color = bg_color
+        self.bg_hover_color = bg_hover_color
         self.font = pg.font.Font(None, 15)
 
         self.first_pressed = True
@@ -82,14 +75,15 @@ class inv:
         cell = (pos[0]-self.inv_pos_x-self.inv_margin)//(self.inv_cell_w+1) + \
             (pos[1]-self.inv_pos_y-self.inv_margin)//(self.inv_cell_h+1) * \
             self.inv_cell_cw
+        is_inv_hover = pg.Rect(self.inv_pos ,self.inv_size).collidepoint(pos)
         if cell < 0 or cell > self.inv_cell_count or pos2[0] < 0 or pos2[0] > self.inv_cell_cw-1:
-            return(None, None)
+            return(None, None, is_inv_hover)
         else:
             if cell > -1 and cell < len(self.cells):
                 block = self.cells[cell]
             else:
                 block = None
-            return(cell, block)
+            return(cell, block, is_inv_hover)
 
     def get_pos(self, cell_number):
         col = cell_number % self.inv_cell_cw
@@ -102,12 +96,17 @@ class inv:
         self.keystate = pg.key.get_pressed()
         self.mouse_button = pg.mouse.get_pressed()
         self.mouse_pos = pg.mouse.get_pos()
+        if not self.is_open: self.is_hover = False
 
     def draw(self):
         if not self.is_open:
             return
 
-        self.surface.fill(pg.Color(33, 40, 45))
+        if self.is_hover:
+            self.surface.fill(self.bg_hover_color)
+        else:
+            self.surface.fill(self.bg_color)
+        
 
         #  draw bg cells
         for i in range(self.inv_cell_count):

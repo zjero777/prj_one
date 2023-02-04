@@ -1,17 +1,20 @@
 import pygame as pg
 import pygame_gui
-from inv import *
-from mouse import mouse 
-from options import *
-from terrain import * 
-from info import *
-from player import *
-from factory import *
-from waterfall import *
-from tech import *
-from sequence import *
+
 from data import *
+from factory import *
+from info import *
+from inv import *
 from inv_recipe import *
+from inv_toolbar import inv_toolbar
+from mouse import mouse
+from options import *
+from player import *
+from sequence import *
+from tech import *
+from terrain import *
+from waterfall import *
+
 
 class game:
     def __init__(self):
@@ -28,6 +31,7 @@ class game:
         self.terrain = terrain(self, PLANET_WIDTH, PLANET_HIGHT)
         self.player = player(self)
         self.inv_recipe = inv_recipe(self)        
+        self.inv_toolbar = inv_toolbar(self)
         self.info = info(self)
         self.is_runing = True
         self.mouse = mouse(self)
@@ -52,6 +56,7 @@ class game:
         self.corall_growings.update()
         self.ui_tech.update()
         self.inv_recipe.update()
+        self.inv_toolbar.update()
         self.ui_tech_bp.update()
         
     
@@ -62,6 +67,7 @@ class game:
         # self.player.draw()
         self.player.draw()
         self.inv_recipe.draw()
+        self.inv_toolbar.draw()
         self.manager.draw_ui(self.screen)
         self.mouse.draw()  
         self.allsprites.draw(self.screen)

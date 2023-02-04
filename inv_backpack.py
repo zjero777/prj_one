@@ -25,7 +25,7 @@ class inv_backpack(inv):
             self.first_pressed = True
             
         if self.is_open:
-            self.hover_cell_num, item = self.get_cell(self.mouse_pos)
+            self.hover_cell_num, item, hover = self.get_cell(self.mouse_pos)
             if self.mouse_button[0]:
                 if self.first_click:
                     self.first_click = False 
@@ -45,6 +45,42 @@ class inv_backpack(inv):
 
     
     def draw(self):
+        # draw selected item on terrain
+        self.tile_pos = self.app.mouse.tile_pos   
+        self.pos = self.app.terrain.pos
+        
+        if self.tile_pos:
+            xyRect = pg.Rect((self.tile_pos[0]-self.pos[0]+HALF_WIDTH)*TILE,
+                            (self.tile_pos[1]-self.pos[1]+HALF_HIGHT)*TILE, TILE, TILE)
+
+            if not self.app.player.inv.is_open and self.app.player.inv.item:
+                # Ghost cursor
+                place = self.GetInfo(
+                    'name', self.field[self.tile_pos[0], self.tile_pos[1]])
+                build_item, b_type = self.Get_info_block_placed(
+                    self.app.player.inv.item, place)
+                is_operate = self.operate[self.tile_pos[0], self.tile_pos[1]]
+
+                if b_type and is_operate:
+                    # allow place
+                    img = self.Get_img(build_item, b_type).copy()
+                    img.set_alpha(172)
+                    self.surface.blit(img, xyRect)
+                else:
+                    # disallow place
+                    img = self.Get_img(build_item, 'block').copy()
+                    img.set_alpha(172)
+                    colorImage = pg.Surface(img.get_size()).convert_alpha()
+                    colorImage.fill(pg.Color('red'))
+                    img.blit(colorImage, (0, 0),
+                                special_flags=pg.BLEND_RGBA_MULT)
+                    self.surface.blit(
+                        img, xyRect, special_flags=pg.BLEND_RGBA_MIN)
+        
+        
+        
+        
+        # draw inv
         if not self.is_open: return
         super().draw()
 
@@ -65,6 +101,7 @@ class inv_backpack(inv):
             count_text_pos = (pos[0]+self.inv_cell_h-text.get_width()-3, pos[1]+self.inv_cell_h-text.get_height()-3)
             self.surface.blit(text, count_text_pos)
         
+        # blit on main screen
         self.app.screen.blit(self.surface, self.inv_pos)
 
         
