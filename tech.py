@@ -118,7 +118,7 @@ class ui_tech:
                         # remove lab
                         self.tech_sites.delete_selected()
                     elif event.ui_object_id == 'panel.panel_info.chg_recipe_button':
-                        # if self.app.inv_recipe.is_open: return
+                        if self.app.inv_recipe.is_open: return
                         self.show_recipes()
                 if event.ui_element == self.ok_button:
                     self.wnd.hide()
@@ -408,26 +408,25 @@ class ui_tech:
         mouse_button = pg.mouse.get_pressed()
         mouse_pos = pg.mouse.get_pos()
         mouse_tile_pos = self.app.terrain.mapping(mouse_pos)
-        if not mouse_tile_pos: return
 
 # start info
         self.app.info.start()
 
         if self.app.player.inv.is_open:
             info = self.app.info
-            info.start()
             info.append_text(f'<b>Инвентарь:</b>')
-            info.stop()
-        elif self.app.inv_recipe.is_open:
+        elif self.app.inv_recipe.is_hover:
             self.app.inv_recipe.view_recipe_info()
+        elif self.app.inv_toolbar.is_hover:
+            self.app.inv_toolbar.view_info()
+        elif not self.app.inv_toolbar.is_hover:
+            self.view_tech_site_ui()
+            self.view_factories_ui(mouse_tile_pos)
+            self.view_terrain_info(mouse_tile_pos)
         elif self.selected_site:
             self.view_tech_site_ui()
         elif self.app.factories.selected: 
             self.view_factories_ui(mouse_tile_pos)
-        else:
-            self.view_tech_site_ui()
-            self.view_factories_ui(mouse_tile_pos)
-            self.view_terrain_info(mouse_tile_pos)
 
 
 
@@ -435,7 +434,14 @@ class ui_tech:
 # stop info
 
         if  self.app.inv_recipe.is_open: return
-
+        if not mouse_tile_pos: return
+        if self.app.inv_toolbar.is_hover: return
+        
+        if self.app.inv_toolbar.selected_cell is None: return
+        if not self.app.inv_toolbar.selected_cell['id'] == TOOL_TECH: 
+            self.area = pg.Rect(0,0,0,0)
+            self.area.size = (1,1)
+            return
 
         if not mouse_button[0]:
             if mouse_button[2] and not self.first_pressed[2]:

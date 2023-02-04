@@ -272,6 +272,7 @@ class factory_list:
 
         
     def factory(self, tile_pos):
+        if not tile_pos: return
         for f in self.list:
             if pg.Rect(f.tile_pos,f.size).collidepoint(tile_pos):
                 return(f)

@@ -1,14 +1,16 @@
-from logging import warn
 from random import randrange
+
 import pygame as pg
 import pygame_gui as gui
+
+from inv import inv
 from mouse import *
 from options import *
-from inv import inv
+
 
 class inv_recipe(inv):
     def __init__(self, app):
-        super().__init__(app, (-3, -2), (2,5))
+        super().__init__(app, (-3, -2), (2,5), inv_cell_h=64,  bg_color=pg.Color('#1f1f1f'), bg_hover_color=pg.Color('#2f2f2f'), inv_margin=5)
     
     def update(self):
         super().update()
@@ -22,7 +24,7 @@ class inv_recipe(inv):
             self.first_pressed = True
             
         if self.is_open:
-            self.hover_cell_num, _item = self.get_cell(self.mouse_pos)
+            self.hover_cell_num, _item, self.is_hover = self.get_cell(self.mouse_pos)
             if self.mouse_button[0]:
                 if self.first_click:
                     self.first_click = False 
@@ -48,12 +50,13 @@ class inv_recipe(inv):
             i+=1
             pos = self.get_pos(i)
             # pos = (i%10*self.inv_cell_h+i%self.inv_cell_cw+self.inv_margin, i//self.inv_cell_ch*self.inv_cell_h+i//self.inv_cell_ch+self.inv_margin)
-            item_pos = (pos[0]+8, pos[1]+8)
+            icon_size = (self.inv_cell_size[0]*0.9, self.inv_cell_size[1]*0.9)
+            item_pos = (pos[0]+(self.inv_cell_w // 2 - icon_size[0] // 2), pos[1]+(self.inv_cell_h // 2 - icon_size[1] // 2))
             #img
-            pic = pg.transform.scale(self.app.data.recipe_img[item['id']], (32, 32))
+            pic = pg.transform.scale(self.app.data.recipe_img[item['id']], icon_size)
             self.surface.blit(pic, item_pos)
             if item==self.select_recipe:
-                rect_selection = (pos[0], pos[1], 48, 48)
+                rect_selection = (pos, self.inv_cell_size)
                 pg.draw.rect(self.surface, pg.Color('yellow'), rect_selection, 1)
         
         self.app.screen.blit(self.surface, self.inv_pos)
@@ -73,7 +76,7 @@ class inv_recipe(inv):
         
     def view_recipe_info(self):
         mouse_pos = pg.mouse.get_pos()
-        cell_num, recipe = self.get_cell(mouse_pos)
+        cell_num, recipe, is_hover = self.get_cell(mouse_pos)
         if cell_num is None: return
         if recipe is None: return
         name = recipe['name']
