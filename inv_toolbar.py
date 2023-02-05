@@ -14,7 +14,7 @@ class inv_toolbar(inv):
         self.is_open = True
         self.click = False
         self.append()
-        
+        self.select_building = None
     
     def update(self):
         super().update()
