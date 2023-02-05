@@ -299,10 +299,13 @@ class factory_list:
                 if factory_num!=-1: 
                     self.app.ui_tech.tech_sites.unselect()
                     self.app.factories.select(factory_num)
+                    self.app.inv_toolbar.select_building = self.selected
             
 
         if mouse_status_type==MOUSE_TYPE_CLICK and mouse_status_button==MOUSE_RBUTTON: 
-            self.app.factories.unselect()
+            if not self.app.factories.unselect(): #if no one select tech
+                if not self.app.inv_toolbar.select_building is None:
+                    self.app.inv_toolbar.unselect()
             self.app.mouse.setcursor(cursor_type.normal)
             
         if mouse_status_type==MOUSE_TYPE_DRAG and mouse_status_button==MOUSE_LBUTTON: 
@@ -326,8 +329,10 @@ class factory_list:
             self.active = self.list[num]
 
     def unselect(self):
+        if self.active is None: return(False)
         self.active = None
-
+        return(True)
+    
     def get_by_num(self, num):
         if num>-1 and num<len(self.list):
             return self.list[num]

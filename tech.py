@@ -88,9 +88,9 @@ class ui_tech:
         
     @property
     def selected_site(self):
-        if self.tech_sites.selected_site:
-            if self.tech_sites.selected_site.status != TECH_A_DELETE:
-                return self.tech_sites.selected_site
+        if self.tech_sites.selected:
+            if self.tech_sites.selected.status != TECH_A_DELETE:
+                return self.tech_sites.selected
         return None
 
     @property
@@ -437,9 +437,6 @@ class ui_tech:
         if not mouse_tile_pos: return
         if self.app.inv_toolbar.is_hover: return
         
-        if self.app.inv_toolbar.selected_cell is None: return
-        if not self.app.inv_toolbar.selected_cell['id'] == TOOL_TECH: 
-            return
         
         # control
         mouse_status_type = self.app.mouse.status['type']
@@ -453,11 +450,18 @@ class ui_tech:
                 if area_num!=-1: 
                     self.app.factories.unselect()
                     self.tech_sites.select(area_num)
-            
-
+                    self.app.inv_toolbar.select_building = self.selected_factory
+                    
         if mouse_status_type==MOUSE_TYPE_CLICK and mouse_status_button==MOUSE_RBUTTON: 
-            self.app.ui_tech.tech_sites.unselect()
+            if not self.tech_sites.unselect(): #if no one select tech
+                if self.app.inv_toolbar.select_building is None:
+                    self.app.inv_toolbar.unselect()
             self.app.mouse.setcursor(cursor_type.normal)
+
+        if self.app.inv_toolbar.selected_cell is None: return
+        if not self.app.inv_toolbar.selected_cell['id'] == TOOL_TECH: 
+            return
+
             
         if mouse_status_type==MOUSE_TYPE_DRAG and mouse_status_button==MOUSE_LBUTTON: 
             self.allow = (mouse_status_area.collidelist(self.app.factories.rect_list_all)==-1)
@@ -548,7 +552,7 @@ class tech_sites:
         return f_list
     
     @property
-    def selected_site(self):
+    def selected(self):
         return self.active
     
     def select(self, num):
@@ -556,7 +560,9 @@ class tech_sites:
             self.active = self.list[num]
 
     def unselect(self):
+        if self.active is None: return(False)
         self.active = None
+        return(True)
 
 
     def get_by_num(self, num):
@@ -628,7 +634,7 @@ class tech_area:
         screen_pos = self.app.terrain.demapping(self.rect.topleft)
         a_rect = pg.Rect(screen_pos, (self.rect.size[0]*TILE, self.rect.size[1]*TILE))
         if pg.Rect(VIEW_RECT).colliderect(a_rect):
-            if self.list.selected_site!=self:
+            if self.list.selected!=self:
                 surface.blit(self.pic, a_rect)
             else:
                 surface.blit(self.pic_selected, a_rect)
