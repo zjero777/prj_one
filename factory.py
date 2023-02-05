@@ -288,6 +288,27 @@ class factory_list:
             f.update()
             
         # control
+        mouse_status_type = self.app.mouse.status['type']
+        mouse_status_button = self.app.mouse.status['button']
+        mouse_status_area = self.app.mouse.status['area']
+
+        if mouse_status_type==MOUSE_TYPE_CLICK and mouse_status_button==MOUSE_LBUTTON: 
+            click_area_screen = pg.Rect((0,0),mouse_status_area.topleft)
+            if click_area_screen.colliderect(VIEW_RECT):
+                factory_num = mouse_status_area.collidelist(self.rect_list_all)
+                if factory_num!=-1: 
+                    self.app.ui_tech.tech_sites.unselect()
+                    self.app.factories.select(factory_num)
+            
+
+        if mouse_status_type==MOUSE_TYPE_CLICK and mouse_status_button==MOUSE_RBUTTON: 
+            self.app.factories.unselect()
+            self.app.mouse.setcursor(cursor_type.normal)
+            
+        if mouse_status_type==MOUSE_TYPE_DRAG and mouse_status_button==MOUSE_LBUTTON: 
+            pass
+        
+        
             
     @property
     def rect_list_all(self):

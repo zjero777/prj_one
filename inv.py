@@ -68,6 +68,15 @@ class inv:
         if self.selected_cell is None:
             return(None)
         return(self.cells[self.selected_cell])
+    
+    def unselect(self):
+        if self.selected_cell is None: exit
+        self.selected_cell = None
+        
+    def select(self, item_num):
+        if not self.cells: return
+        if item_num<0 or item_num>len(self.cells): return
+        self.selected_cell = self.cells[item_num]
 
     def get_cell(self, pos):
         pos2 = ((pos[0]-self.inv_pos_x-self.inv_margin)//(self.inv_cell_w+1),

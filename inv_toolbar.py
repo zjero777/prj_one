@@ -20,14 +20,14 @@ class inv_toolbar(inv):
         super().update()
       
         if self.is_open:
-            self.hover_cell_num, _item, self.is_hover = self.get_cell(self.mouse_pos)
+            self.hover_cell_num, item, self.is_hover = self.get_cell(self.mouse_pos)
             if self.mouse_button[0]:
                 if self.first_click:
                     self.click = False
                     self.first_click = False 
                     self.is_hover_cell = not self.hover_cell_num is None and self.hover_cell_num<len(self.cells)
                     if self.is_hover_cell:
-                        if _item['type'] == 'toggle' :
+                        if item['type'] == 'toggle' :
                             # select item
                             self.selected_cell = self.cells[self.hover_cell_num]
                 else: 

@@ -53,11 +53,11 @@ class ui_tech:
     def __init__(self, app):
         self.app = app
         
-        self.enabled = True
-        self.first_pressed = [False, False, False]
+        # self.enabled = True
+        # self.first_pressed = [False, False, False]
         
-        self.area = pg.Rect(0,0,0,0)
-        self.start = self.area
+        # self.area = pg.Rect(0,0,0,0)
+        # self.start = self.area
         self.allow = True
         self.on_click_delete_button = None
         self.control_buttons = []
@@ -439,107 +439,60 @@ class ui_tech:
         
         if self.app.inv_toolbar.selected_cell is None: return
         if not self.app.inv_toolbar.selected_cell['id'] == TOOL_TECH: 
-            self.area = pg.Rect(0,0,0,0)
-            self.area.size = (1,1)
             return
+        
+        # control
+        mouse_status_type = self.app.mouse.status['type']
+        mouse_status_button = self.app.mouse.status['button']
+        mouse_status_area = self.app.mouse.status['area']
 
-        if not mouse_button[0]:
-            if mouse_button[2] and not self.first_pressed[2]:
-                # Rigth mouse button
-                # first push button
-                self.first_pressed[2] = True
-                self.area.topleft = mouse_tile_pos
-                self.area.size = (1,1)
-                self.tech_sites.unselect()
+        if mouse_status_type==MOUSE_TYPE_CLICK and mouse_status_button==MOUSE_LBUTTON: 
+            click_area_screen = pg.Rect((0,0),mouse_status_area.topleft)
+            if click_area_screen.colliderect(VIEW_RECT):
+                area_num = mouse_status_area.collidelist(self.tech_sites.rect_list_all)
+                if area_num!=-1: 
+                    self.app.factories.unselect()
+                    self.tech_sites.select(area_num)
+            
+
+        if mouse_status_type==MOUSE_TYPE_CLICK and mouse_status_button==MOUSE_RBUTTON: 
+            self.app.ui_tech.tech_sites.unselect()
+            self.app.mouse.setcursor(cursor_type.normal)
+            
+        if mouse_status_type==MOUSE_TYPE_DRAG and mouse_status_button==MOUSE_LBUTTON: 
+            self.allow = (mouse_status_area.collidelist(self.app.factories.rect_list_all)==-1)
+            self.allow = self.allow and mouse_status_area.collidelist(self.tech_sites.rect_list_all)==-1
+            lookup = self.app.terrain.operate[mouse_status_area.left:mouse_status_area.right, mouse_status_area.top:mouse_status_area.bottom]
+            self.allow = self.allow and np.min(lookup)
+
+        if mouse_status_type==MOUSE_TYPE_DROP and mouse_status_button==MOUSE_LBUTTON: 
+            if self.allow:
+                content = self.app.terrain.building_map[mouse_status_area.left:mouse_status_area.right,
+                                            mouse_status_area.top:mouse_status_area.bottom]
+                self.tech_sites.add(mouse_status_area, content)
                 self.app.factories.unselect()
-
-                
-            elif self.first_pressed[2] and not mouse_button[2]:
-                # release button
-                self.first_pressed[2] = False
-                if self.area.size==(1,1):
-                    # click to cell
-                    click_area_screen = pg.Rect((0,0),mouse_pos)
-                    if click_area_screen.colliderect(VIEW_RECT):
-                        self.enabled = False
-                        self.app.mouse.setcursor(cursor_type.normal)
-
-                else:
-                    # add area
-                    # if self.allow:
-                        # content = self.app.terrain.building_map[self.area.left:self.area.right,
-                        #                             self.area.top:self.area.bottom]
-                        # self.tech_sites.add(self.area, content)
-                    self.area = pg.Rect(0,0,0,0)
-            elif mouse_button[2]:
-                # on drag
-                pass
-                # self.area.left = min(mouse_tile_pos[0], self.start.left)
-                # self.area.top = min(mouse_tile_pos[1], self.start.top)
-                # self.area.size = (abs(self.start.left-mouse_tile_pos[0])+1, abs(self.start.top-mouse_tile_pos[1])+1)
-                # self.allow = (self.area.collidelist(self.app.factories.rect_list_all)==-1)
-                # self.allow = self.allow and (self.area.collidelist(self.tech_sites.rect_list_all)==-1)
-                # lookup = self.app.terrain.operate[self.area.left:self.area.right, self.area.top:self.area.bottom]
-                # self.allow = self.allow and np.min(lookup)
-            
+            self.app.mouse.status['area'] = None
             
 
-        if not mouse_button[2]:
-            if mouse_button[0] and not self.first_pressed[0]:
-                # first push button
-                self.first_pressed[0] = True
-                self.area.topleft = mouse_tile_pos
-                self.area.size = (1,1)
-                self.start = self.area.copy()
-            elif self.first_pressed[0] and not mouse_button[0]:
-                # release button
-                self.first_pressed[0] = False
-                if self.area.size==(1,1):
-                    # click to cell
-                    click_area_screen = pg.Rect((0,0),mouse_pos)
-                    if click_area_screen.colliderect(VIEW_RECT):
-                        area_num = self.area.collidelist(self.tech_sites.rect_list_all)
-                        factory_num = self.area.collidelist(self.app.factories.rect_list_all)
-                        if area_num!=-1: 
-                            self.app.factories.unselect()
-                            self.tech_sites.select(area_num)
-                        if factory_num!=-1: 
-                            self.tech_sites.unselect()
-                            self.app.factories.select(factory_num)
-                            
-
-                else:
-                    # add area
-                    if self.allow:
-                        content = self.app.terrain.building_map[self.area.left:self.area.right,
-                                                    self.area.top:self.area.bottom]
-                        self.tech_sites.add(self.area, content)
-                        self.app.factories.unselect()
-                    self.area = pg.Rect(0,0,0,0)
-
-            elif mouse_button[0]:
-                # on drag
-                self.area.left = min(mouse_tile_pos[0], self.start.left)
-                self.area.top = min(mouse_tile_pos[1], self.start.top)
-                self.area.size = (abs(self.start.left-mouse_tile_pos[0])+1, abs(self.start.top-mouse_tile_pos[1])+1)
-                self.allow = (self.area.collidelist(self.app.factories.rect_list_all)==-1)
-                self.allow = self.allow and (self.area.collidelist(self.tech_sites.rect_list_all)==-1)
-                lookup = self.app.terrain.operate[self.area.left:self.area.right, self.area.top:self.area.bottom]
-                self.allow = self.allow and np.min(lookup)
-            
     def draw(self, surface):
         self.tech_sites.draw(surface)
         
+        if self.app.inv_toolbar.selected_cell is None: return
+        if not self.app.inv_toolbar.selected_cell['id'] == TOOL_TECH: 
+            return
         # draw cursor area
-        if self.area.size!=(1,1):
-            for i in range(self.area.left, self.area.right):
-                for j in range(self.area.top, self.area.bottom):
-                    screen_pos = self.app.terrain.demapping((i,j))
-                    f_rect = pg.Rect(screen_pos, (TILE, TILE))
-                    if self.allow:
-                        surface.blit(self.bg_blue, f_rect.topleft)
-                    else:
-                        surface.blit(self.bg_red, f_rect.topleft)
+        if self.app.mouse.status['area']:
+            if self.app.mouse.status['area'].size!=(1,1):
+                area = self.app.mouse.status['area']
+                for i in range(area.left, area.right):
+                    for j in range(area.top, area.bottom):
+                        screen_pos = self.app.terrain.demapping((i,j))
+                        f_rect = pg.Rect(screen_pos, (TILE, TILE))
+                        if self.allow:
+                            surface.blit(self.bg_blue, f_rect.topleft)
+                        else:
+                            surface.blit(self.bg_red, f_rect.topleft)
+        
         
     def refresh_site_content(self, tile_pos):
         
