@@ -2286,7 +2286,7 @@
             "icon": "tech_icon.png",
             "info": {
                 "name": "Place Tech Area",
-                "description": "Place a technology area for research and production"
+                "description": "Place a technology area for research"
             },
             "layout": {
                 "col": 2,

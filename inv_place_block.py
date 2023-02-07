@@ -6,18 +6,15 @@ from mouse import *
 from options import *
 from inv import *
 
-class inv_backpack(inv):
-    def __init__(self, app, player):
-        super().__init__(app, (-2, -2))
-        self.player = player
-        self.cells = [{'id':1,'count':20},{'id':16,'count':10},{'id':2, 'count':10},{'id':25,'count':10},{'id':4,'count':50},{'id':3,'count':50}]
-        self.text_rect = pg.Rect((0, 0), (300, 300))
+class inv_place_block(inv):
+    def __init__(self, app):
+        super().__init__(app)
     
     def update(self):
         super().update()
-        if self.keystate[pg.K_e] and self.keystate[pg.K_f]:
+        if self.keystate[pg.K_e]:
             if self.first_pressed:
-                self.first_pressed = False 
+                self.first_pressed = False
                 self.is_open = not self.is_open
                 if self.is_open:
                     self.app.ui_tech_bp.hide()
