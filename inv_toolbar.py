@@ -18,6 +18,8 @@ class inv_toolbar(inv):
     
     def update(self):
         super().update()
+        
+        if self.app.inv_recipe.is_open: return
       
         if self.is_open:
             self.hover_cell_num, item, self.is_hover = self.get_cell(self.mouse_pos)

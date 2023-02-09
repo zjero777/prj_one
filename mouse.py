@@ -42,20 +42,17 @@ class mouse:
             
 
     def update(self):
+        keystate = pg.key.get_pressed()
         self.pos = pg.mouse.get_pos()
         self.cursors[cursor_type.normal.value].SetRect(self.pos)
         self.cursors[cursor_type.dig.value].SetRect(self.pos)
         self.cursors[cursor_type.tech.value].SetRect(self.pos)
 
-        keystate = pg.key.get_pressed()
-        
-        
-        
         self.button = pg.mouse.get_pressed()
-        self.pos = pg.mouse.get_pos()
         self.tile_pos = self.app.terrain.mapping(self.pos)
         
         self.status['button'] = None
+        if not self.tile_pos: return
         
         # RIGHT BUTTON
         if not self.button[0]:
@@ -63,7 +60,9 @@ class mouse:
                 # Rigth mouse button
                 # first push button
                 self.first_pressed[2] = True
-                self.status = {'type':MOUSE_TYPE_BUTTON_DOWN, 'button': 2, 'area': pg.Rect(self.tile_pos, (1,1))}
+                self.status = {'type':MOUSE_TYPE_BUTTON_DOWN, 'button': 2}
+                self.status['area'] = pg.Rect(self.tile_pos, (1,1))
+                
                 
             elif self.first_pressed[2] and not self.button[2]:
                 # release button
@@ -82,7 +81,11 @@ class mouse:
                     # self.status['area'] = None
             elif self.button[2]:
                 # on drag
+                # self.status['type'] = MOUSE_TYPE_DRAG
+                # self.status['button'] = 2
+                # self.status['area'] = pg.Rect((min(self.tile_pos[0], self.start[0]),min(self.tile_pos[1], self.start[1])), (abs(self.start[0]-self.tile_pos[0])+1, abs(self.start[1]-self.tile_pos[1])+1))
                 pass
+
 
             
             

@@ -14,8 +14,12 @@ class inv_recipe(inv):
     
     def update(self):
         super().update()
+        if not self.is_open: return
       
-        if self.keystate[pg.K_ESCAPE]:
+        mouse_status_type = self.app.mouse.status['type']
+        mouse_status_button = self.app.mouse.status['button']
+      
+        if self.keystate[pg.K_ESCAPE] or (mouse_status_type == MOUSE_TYPE_CLICK and mouse_status_button==MOUSE_RBUTTON):
             if self.first_pressed:
                 self.first_pressed = False 
                 self.is_open = False
@@ -23,21 +27,21 @@ class inv_recipe(inv):
         else:
             self.first_pressed = True
             
-        if self.is_open:
-            self.hover_cell_num, _item, self.is_hover = self.get_cell(self.mouse_pos)
-            if self.mouse_button[0]:
-                if self.first_click:
-                    self.first_click = False 
-                    if not self.hover_cell_num is None and self.hover_cell_num<len(self.cells):
-                        # select item
-                        selected_factory = self.app.factories.selected
-                        selected_factory.recipe = self.cells[self.hover_cell_num]
-                        selected_factory.command_step = 0
-                        selected_factory.status = FSTAT_CHG_RECIPE                        
-                        self.is_open = False
-                        self.clear()
-            else:
-                self.first_click = True
+        
+        self.hover_cell_num, _item, self.is_hover = self.get_cell(self.mouse_pos)
+        if self.mouse_button[0]:
+            if self.first_click:
+                self.first_click = False 
+                if not self.hover_cell_num is None and self.hover_cell_num<len(self.cells):
+                    # select item
+                    selected_factory = self.app.factories.selected
+                    selected_factory.recipe = self.cells[self.hover_cell_num]
+                    selected_factory.command_step = 0
+                    selected_factory.status = FSTAT_CHG_RECIPE                        
+                    self.is_open = False
+                    self.clear()
+        else:
+            self.first_click = True
 
     
     def draw(self):
