@@ -333,9 +333,10 @@ class terrain:
             self.app.player.go_spawn()
          
 
-        if  self.app.inv_recipe.is_open: return
+        if self.app.inv_recipe.is_open: return
         if self.app.inv_toolbar.is_hover: return
-        if  self.app.ui_tech_bp.visible: return
+        if self.app.ui_tech_bp.visible: return
+        
 
         if not self.app.inv_toolbar.selected_cell is None: 
             if not self.app.inv_toolbar.selected_cell['id']==TOOL_REMOVE: return

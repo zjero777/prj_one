@@ -287,7 +287,9 @@ class factory_list:
         for f in self.list:
             f.update()
             
+        if self.app.inv_recipe.is_open: return
         # control
+        
         mouse_status_type = self.app.mouse.status['type']
         mouse_status_button = self.app.mouse.status['button']
         mouse_status_area = self.app.mouse.status['area']
