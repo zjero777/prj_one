@@ -16,7 +16,7 @@ class inv_recipe(inv):
         super().update()
         if not self.is_open: return
       
-        mouse_status_type = self.app.mouse.status['type']
+        mouse_status_type = self.app.mouse.status['tile_action']
         mouse_status_button = self.app.mouse.status['button']
       
         if self.keystate[pg.K_ESCAPE] or (mouse_status_type == MOUSE_TYPE_CLICK and mouse_status_button==MOUSE_RBUTTON):

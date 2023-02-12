@@ -18,26 +18,28 @@ class inv_toolbar(inv):
     
     def update(self):
         super().update()
-        
+        if not self.is_open: return
         if self.app.inv_recipe.is_open: return
       
-        if self.is_open:
-            self.hover_cell_num, item, self.is_hover = self.get_cell(self.mouse_pos)
-            if self.mouse_button[0]:
-                if self.first_click:
-                    self.click = False
-                    self.first_click = False 
-                    self.is_hover_cell = not self.hover_cell_num is None and self.hover_cell_num<len(self.cells)
-                    if self.is_hover_cell:
-                        if item['type'] == 'toggle' :
-                            # select item
-                            self.selected_cell = self.cells[self.hover_cell_num]
-                else: 
-                    if not self.mouse_button[0]:
-                        self.click = True
-                    
-            else:
-                self.first_click = True
+        mouse_status_type = self.app.mouse.status['tile_action']
+        mouse_status_button = self.app.mouse.status['button']
+      
+        self.hover_cell_num, item, self.is_hover = self.get_cell(self.mouse_pos)
+        if self.mouse_button[0]:
+            if self.first_click:
+                self.click = False
+                self.first_click = False 
+                self.is_hover_cell = not self.hover_cell_num is None and self.hover_cell_num<len(self.cells)
+                if self.is_hover_cell:
+                    if item['type'] == 'toggle' :
+                        # select item
+                        self.selected_cell = self.cells[self.hover_cell_num]
+            else: 
+                if not self.mouse_button[0]:
+                    self.click = True
+                
+        else:
+            self.first_click = True
 
     
     def draw(self):

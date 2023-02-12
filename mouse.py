@@ -9,7 +9,7 @@ class mouse:
     def __init__(self, app):
         self.app = app
 
-        self.status = {'type':None, 'button': None, 'area': None}
+        self.status = {'action':None, 'tile_action':None, 'button': None, 'area': None}
         self.first_pressed = [False, False, False]
         
         self.init_animate_cursors()
@@ -52,7 +52,7 @@ class mouse:
         self.tile_pos = self.app.terrain.mapping(self.pos)
         
         self.status['button'] = None
-        if not self.tile_pos: return
+        # if not self.tile_pos: return
         
         # RIGHT BUTTON
         if not self.button[0]:
@@ -60,23 +60,34 @@ class mouse:
                 # Rigth mouse button
                 # first push button
                 self.first_pressed[2] = True
-                self.status = {'type':MOUSE_TYPE_BUTTON_DOWN, 'button': 2}
-                self.status['area'] = pg.Rect(self.tile_pos, (1,1))
-                
-                
+                self.status['tile_action'] = MOUSE_TYPE_BUTTON_DOWN
+                self.status['action'] = MOUSE_TYPE_BUTTON_DOWN
+                self.status['button'] = 2
+                if self.tile_pos: 
+                    self.status['area'] = pg.Rect(self.tile_pos, (1,1))
+                self.status['rect'] = pg.Rect(self.pos, (1,1))
+
             elif self.first_pressed[2] and not self.button[2]:
                 # release button
                 self.first_pressed[2] = False
                 if self.status['area'].size==(1,1):
-                    # click
-                    click_area_screen = pg.Rect((0,0),self.pos)
-                    if click_area_screen.colliderect(VIEW_RECT):
-                        self.status['type'] = MOUSE_TYPE_CLICK
+                    if self.status['rect'].size==(1,1):
+                        # click
+                        self.status['tile_action'] = MOUSE_TYPE_CLICK
+                        self.status['action'] = MOUSE_TYPE_CLICK
                         self.status['button'] = 2
                         self.app.mouse.setcursor(cursor_type.normal)
+                    else:
+                        # drop rect
+                        self.status['tile_action'] = MOUSE_TYPE_CLICK
+                        self.status['action'] = MOUSE_TYPE_DROP
+                        self.status['button'] = 2
+                        self.app.mouse.setcursor(cursor_type.normal)
+                        # click_area_screen = pg.Rect((0,0),self.pos)
+                        # if click_area_screen.colliderect(VIEW_RECT):
                 else:
-                    # drop
-                    self.status['type'] = MOUSE_TYPE_DROP
+                    # drop tile
+                    self.status['tile_action'] = MOUSE_TYPE_DROP
                     self.status['button'] = 2
                     # self.status['area'] = None
             elif self.button[2]:
@@ -94,22 +105,43 @@ class mouse:
             if self.button[0] and not self.first_pressed[0]:
                 # first push button - drag
                 self.first_pressed[0] = True
-                self.status = {'type':MOUSE_TYPE_BUTTON_DOWN, 'button': 0, 'area': pg.Rect(self.tile_pos, (1,1))}
-                self.start = self.status['area'].topleft
+                self.status['tile_action'] = MOUSE_TYPE_BUTTON_DOWN
+                self.status['action'] = MOUSE_TYPE_BUTTON_DOWN
+                self.status['button'] = 0
+                if self.tile_pos: 
+                    self.status['area'] = pg.Rect(self.tile_pos, (1,1))
+                    self.start_tile = self.tile_pos
+                self.start_pos = self.pos
             elif self.first_pressed[0] and not self.button[0]:
                 # release button
                 self.first_pressed[0] = False
-                if self.status['area'].size==(1,1):
-                    # click
-                    self.status = {'type':MOUSE_TYPE_CLICK, 'button': 0, 'area': pg.Rect(self.tile_pos, (1,1))}
+                self.status['button'] = 0
+                if self.status['rect'].size==(1,1):
+                    # click point
+                    self.status['action'] = MOUSE_TYPE_CLICK
+                    self.status['rect'] = pg.Rect(self.pos, (1,1))
                 else:
-                    # drop
-                    self.status['type'] = MOUSE_TYPE_DROP
-                    self.status['button'] = 0
+                    # drop rect
+                    self.status['action'] = MOUSE_TYPE_DROP
+                
+                if self.status['area']: #'area' in self.status.keys():
+                    if self.status['area'].size==(1,1):
+                        # click tile
+                        self.status['tile_action'] = MOUSE_TYPE_CLICK
+                        if self.tile_pos: 
+                            self.status['area'] = pg.Rect(self.tile_pos, (1,1))
+                    else:
+                        # drop tile
+                        self.status['tile_action'] = MOUSE_TYPE_DROP
+                    
+                    
             elif self.button[0]:
                 # on drag - process
-                self.status['type'] = MOUSE_TYPE_DRAG
-                self.status['area'] = pg.Rect((min(self.tile_pos[0], self.start[0]),min(self.tile_pos[1], self.start[1])), (abs(self.start[0]-self.tile_pos[0])+1, abs(self.start[1]-self.tile_pos[1])+1))
+                self.status['tile_action'] = MOUSE_TYPE_DRAG
+                self.status['action'] = MOUSE_TYPE_DRAG
+                if self.tile_pos and self.start_tile: 
+                    self.status['area'] = pg.Rect((min(self.tile_pos[0], self.start_tile[0]),min(self.tile_pos[1], self.start_tile[1])), (abs(self.start_tile[0]-self.tile_pos[0])+1, abs(self.start_tile[1]-self.tile_pos[1])+1))
+                self.status['rect'] = pg.Rect((min(self.pos[0], self.start_pos[0]),min(self.pos[1], self.start_pos[1])), (abs(self.start_pos[0]-self.pos[0])+1, abs(self.start_pos[1]-self.pos[1])+1))
                 self.status['button'] = 0
         
         

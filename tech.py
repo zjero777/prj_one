@@ -434,15 +434,17 @@ class ui_tech:
 # stop info
 
         if  self.app.inv_recipe.is_open: return
-        if not mouse_tile_pos: return
+        # if not mouse_tile_pos: return
         if self.app.inv_toolbar.is_hover: return
         
         
         # control
-        mouse_status_type = self.app.mouse.status['type']
+        mouse_status_type = self.app.mouse.status['tile_action']
+        mouse_status_action = self.app.mouse.status['action']
         mouse_status_button = self.app.mouse.status['button']
         mouse_status_area = self.app.mouse.status['area']
 
+        
         if mouse_status_type==MOUSE_TYPE_CLICK and mouse_status_button==MOUSE_LBUTTON: 
             click_area_screen = pg.Rect((0,0),mouse_status_area.topleft)
             if click_area_screen.colliderect(VIEW_RECT):
@@ -464,18 +466,24 @@ class ui_tech:
 
             
         if mouse_status_type==MOUSE_TYPE_DRAG and mouse_status_button==MOUSE_LBUTTON: 
-            self.allow = (mouse_status_area.collidelist(self.app.factories.rect_list_all)==-1)
-            self.allow = self.allow and mouse_status_area.collidelist(self.tech_sites.rect_list_all)==-1
-            lookup = self.app.terrain.operate[mouse_status_area.left:mouse_status_area.right, mouse_status_area.top:mouse_status_area.bottom]
-            self.allow = self.allow and np.min(lookup)
-
-        if mouse_status_type==MOUSE_TYPE_DROP and mouse_status_button==MOUSE_LBUTTON: 
+            if mouse_status_area:
+                self.allow = (mouse_status_area.collidelist(self.app.factories.rect_list_all)==-1)
+                self.allow = self.allow and mouse_status_area.collidelist(self.tech_sites.rect_list_all)==-1
+                lookup = self.app.terrain.operate[mouse_status_area.left:mouse_status_area.right, mouse_status_area.top:mouse_status_area.bottom]
+                self.allow = self.allow and np.min(lookup)
+                self.allow = self.allow and mouse_status_area.size!=(1,1)
+            else: 
+                self.allow = False
+            
+        self.app.info.debug((0,10), self.app.mouse.status)
+        if mouse_status_type==MOUSE_TYPE_DROP and mouse_status_button==MOUSE_LBUTTON or mouse_status_action==MOUSE_TYPE_DROP and mouse_status_button==MOUSE_LBUTTON: 
             if self.allow:
                 content = self.app.terrain.building_map[mouse_status_area.left:mouse_status_area.right,
                                             mouse_status_area.top:mouse_status_area.bottom]
                 self.tech_sites.add(mouse_status_area, content)
                 self.app.factories.unselect()
             self.app.mouse.status['area'] = None
+            self.app.mouse.status['rect'] = None
             
 
     def draw(self, surface):
