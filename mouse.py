@@ -108,10 +108,14 @@ class mouse:
                 self.status['tile_action'] = MOUSE_TYPE_BUTTON_DOWN
                 self.status['action'] = MOUSE_TYPE_BUTTON_DOWN
                 self.status['button'] = 0
+                self.start_pos = self.pos
                 if self.tile_pos: 
                     self.status['area'] = pg.Rect(self.tile_pos, (1,1))
                     self.start_tile = self.tile_pos
-                self.start_pos = self.pos
+                else:
+                    self.status['area'] = self.mouse_rect_to_tile_area(self.app.terrain, pg.Rect(self.start_pos, (1,1)))
+                    self.start_tile = self.mouse_point_to_tile_point(self.app.terrain, self.start_pos)
+                    
             elif self.first_pressed[0] and not self.button[0]:
                 # release button
                 self.first_pressed[0] = False
@@ -137,12 +141,14 @@ class mouse:
                     
             elif self.button[0]:
                 # on drag - process
+                self.status['button'] = 0
                 self.status['tile_action'] = MOUSE_TYPE_DRAG
                 self.status['action'] = MOUSE_TYPE_DRAG
+                self.status['rect'] = pg.Rect((min(self.pos[0], self.start_pos[0]),min(self.pos[1], self.start_pos[1])), (abs(self.start_pos[0]-self.pos[0])+1, abs(self.start_pos[1]-self.pos[1])+1))
                 if self.tile_pos and self.start_tile: 
                     self.status['area'] = pg.Rect((min(self.tile_pos[0], self.start_tile[0]),min(self.tile_pos[1], self.start_tile[1])), (abs(self.start_tile[0]-self.tile_pos[0])+1, abs(self.start_tile[1]-self.tile_pos[1])+1))
-                self.status['rect'] = pg.Rect((min(self.pos[0], self.start_pos[0]),min(self.pos[1], self.start_pos[1])), (abs(self.start_pos[0]-self.pos[0])+1, abs(self.start_pos[1]-self.pos[1])+1))
-                self.status['button'] = 0
+                else:
+                    self.status['area'] = self.mouse_rect_to_tile_area(self.app.terrain, self.status['rect'])
         
         
 
@@ -242,7 +248,25 @@ class mouse:
         #      self.app.player.stop_demolition()
 
         
+    def mouse_rect_to_tile_area(self, terrain, mouse_rect: pg.Rect):
+        topright = (terrain.pos[0]+mouse_rect[0]//TILE-HALF_WIDTH, terrain.pos[1]+(mouse_rect[1]-P_UP)//TILE -
+                   HALF_HIGHT)
+        size = (mouse_rect.width//TILE, mouse_rect.width//TILE)
+        tile = pg.Rect(topright, size)
+        if tile.left<0: tile.left = 0
+        if tile.top<0: tile.top = 0
+        if tile.right>PLANET_WIDTH-1: tile.right = PLANET_WIDTH-1
+        if tile.left>PLANET_HIGHT-1: tile.left = PLANET_HIGHT-1
+        return(tile)
         
+    def mouse_point_to_tile_point(self, terrain, mouse_point: pg.Vector2):
+        topright = pg.Vector2(terrain.pos[0]+mouse_point[0]//TILE-HALF_WIDTH, terrain.pos[1]+(mouse_point[1]-P_UP)//TILE -
+                   HALF_HIGHT)
+        if topright[0]<0: topright[0] = 0
+        if topright[1]<0: topright[1] = 0
+        if topright[0]>PLANET_WIDTH-1: topright[0] = PLANET_WIDTH-1
+        if topright[1]>PLANET_HIGHT-1: topright[1] = PLANET_HIGHT-1
+        return(topright)
         
     def setcursor(self, idx):
         self.app.allsprites = pg.sprite.Group(self.cursors[idx.value])
