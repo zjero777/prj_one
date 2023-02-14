@@ -12,7 +12,7 @@ class inv_place_block(inv):
     
     def update(self):
         super().update()
-        if self.keystate[pg.K_e]:
+        if self.keystate[pg.K_e] and self.app.inv_toolbar.selected_cell:
             if self.first_pressed:
                 self.first_pressed = False
                 self.is_open = not self.is_open

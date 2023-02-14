@@ -5,6 +5,7 @@ from data import *
 from factory import *
 from info import *
 from inv import *
+from inv_place_block import inv_place_block
 from inv_recipe import *
 from inv_toolbar import inv_toolbar
 from mouse import mouse
@@ -32,6 +33,7 @@ class game:
         self.player = player(self)
         self.inv_recipe = inv_recipe(self)        
         self.inv_toolbar = inv_toolbar(self)
+        self.inv_place_block = inv_place_block(self)
         self.info = info(self)
         self.is_runing = True
         self.mouse = mouse(self)
@@ -57,6 +59,7 @@ class game:
         self.ui_tech.update()
         self.inv_recipe.update()
         self.inv_toolbar.update()
+        self.inv_place_block.update()
         self.ui_tech_bp.update()
         
     
@@ -68,6 +71,7 @@ class game:
         self.player.draw()
         self.inv_recipe.draw()
         self.inv_toolbar.draw()
+        self.inv_place_block.draw()
         self.manager.draw_ui(self.screen)
         self.mouse.draw()  
         self.allsprites.draw(self.screen)

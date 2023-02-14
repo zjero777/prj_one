@@ -288,6 +288,7 @@ class factory_list:
             f.update()
             
         if self.app.inv_recipe.is_open: return
+        if self.app.inv_toolbar.is_hover: return
         # control
         
         mouse_status_type = self.app.mouse.status['tile_action']
