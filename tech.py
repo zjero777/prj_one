@@ -397,6 +397,8 @@ class ui_tech:
         
         if not self.app.is_modal(self): return
         
+        
+        
         self.tech_sites.update()
         keystate = pg.key.get_pressed()
         
@@ -419,6 +421,8 @@ class ui_tech:
             self.app.inv_recipe.view_recipe_info()
         elif self.app.inv_toolbar.is_hover:
             self.app.inv_toolbar.view_info()
+        elif self.app.inv_place_block.is_hover:
+            self.app.inv_place_block.view_info()
         elif not self.app.inv_toolbar.is_hover:
             self.view_tech_site_ui()
             self.view_factories_ui(mouse_tile_pos)
@@ -433,7 +437,9 @@ class ui_tech:
         self.app.info.stop()
 # stop info
 
-        if  self.app.inv_recipe.is_open: return
+        if self.app.inv_recipe.is_open: return
+        if self.app.inv_place_block.is_open: return        
+        
         if self.app.inv_toolbar.is_hover: return
         
         
@@ -538,7 +544,7 @@ class tech_sites:
         # self.img_mark = ss.load_strip(pg.Rect(0,0,64,64), 2)
         
             
-        self.data = app.terrain.data['factory_type']
+        self.data = app.data.data['factory_type']
         # self.selected_site = None
         # close bp all factory 
         for item in self.data:

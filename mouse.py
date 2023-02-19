@@ -279,8 +279,8 @@ class mouse:
         
     
     def draw(self):
-        if self.item and self.app.player.inv.is_open:
-            pic = pg.transform.scale(self.app.terrain.block_img[self.item], (32, 32))
+        if self.item:
+            pic = pg.transform.scale(self.app.data.block_img[self.item], (32, 32))
             self.app.screen.blit(pic, pg.Rect(self.pos,self.pos).move(10,20))
         # i=self.cursor.value
         # self.app.screen.blit(self.cursors[i], self.pos)

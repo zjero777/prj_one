@@ -33,7 +33,6 @@ class game:
         self.player = player(self)
         self.inv_recipe = inv_recipe(self)        
         self.inv_toolbar = inv_toolbar(self)
-        self.inv_place_block = inv_place_block(self)
         self.info = info(self)
         self.is_runing = True
         self.mouse = mouse(self)
@@ -44,6 +43,7 @@ class game:
         self.corall_growings = corall_growings(self)
         self.ui_tech_bp = UI_tech_blueprints(self)
         self.ui_tech = ui_tech(self)
+        self.inv_place_block = inv_place_block(self)
         self.clear_modal()
                 
     def update(self, dt):

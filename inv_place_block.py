@@ -9,6 +9,8 @@ from inv import *
 class inv_place_block(inv):
     def __init__(self, app):
         super().__init__(app)
+        # self.available_blocks = []
+        self.update_available_blocks()
     
     def update(self):
         super().update()
@@ -32,6 +34,8 @@ class inv_place_block(inv):
                     self.select(self.hover_cell_num)
                     # self.selected_cell = self.hover_cell_num
                     self.app.mouse.setcursor_with_item(self.hover_item)
+                    self.app.inv_toolbar.set_image(0, self.hover_item, self.app.data.block_img)
+                    
         else:
             self.first_click = True
 
@@ -80,23 +84,7 @@ class inv_place_block(inv):
         # draw inv
         if not self.is_open: return
         super().draw()
-
-        # draw backpack items
-        i=-1
-        for item in self.cells:
-            i+=1
-
-            pos = self.get_pos(i)
-
-            # pos = (i%10*self.inv_cell_h+i%self.inv_cell_cw+self.inv_margin, i//self.inv_cell_ch*self.inv_cell_h+i//self.inv_cell_ch+self.inv_margin)
-            item_pos = (pos[0]+8, pos[1]+8)
-            #img
-            pic = pg.transform.scale(self.app.terrain.block_img[item['id']], (32, 32))
-            self.surface.blit(pic, item_pos)
-            #count
-            text = self.font.render(str(item['count']),True, pg.Color('white'))
-            count_text_pos = (pos[0]+self.inv_cell_h-text.get_width()-3, pos[1]+self.inv_cell_h-text.get_height()-3)
-            self.surface.blit(text, count_text_pos)
+        self.draw_items(self.app.data.block_img)
         
         # blit on main screen
         self.app.screen.blit(self.surface, self.inv_pos)
@@ -193,4 +181,47 @@ class inv_place_block(inv):
             if block['id']>0:
                 self.add_item(block.copy())
             
+    def view_info(self):
+        mouse_pos = pg.mouse.get_pos()
+        cell_num, item, hover = self.get_cell(mouse_pos)
+        if item is None: return
+        item = self.app.data.get_bdata('id', item['id'])
+        name = item['name']
+        self.app.info.append_text(f'Название: {name}')
+        self.app.info.append_pic(self.app.data.block_img[item['id']])
+        # name = recipe['name']
+        # self.app.info.append_text(f'Рецепт: {name}')
+        # self.app.info.append_pic(self.app.data.recipe_img[recipe['id']])
+        # if 'in' in dict.keys(recipe):
+        #     self.app.info.append_text('Вход:')
+        #     self.app.info.append_list_items(recipe['in'])
+        # if 'out' in dict.keys(recipe):
+        #     self.app.info.append_text('Выход:')
+        #     self.app.info.append_list_items(recipe['out'])
+        # process = recipe['time']
+        # self.app.info.append_text(
+        #     f'Производство: {process:0.1f} сек')
+    
+    def delete_id(self, list, id):
+        for item in list:
+            if item['id'] == id: list.remove(item)
+    
+    def update_available_blocks(self):
+        self.cells = []
+        all_block_types = self.app.data.data['block_type']
+        
+        all_factory_types = self.app.data.data['factory_type']
+        for f_item in all_factory_types:
+            if f_item['open'] and 'use_recipes' in f_item.keys():
+                recipe_id_types = f_item['use_recipes']['allowed_id']
+                for recipe_id in recipe_id_types:
+                    recipe = self.app.data.get_recipe_by_id(recipe_id)
+                    blocks = recipe['out']
+                    for block in blocks:
+                        if {'id':block['id']} not in self.cells:
+                            self.cells.append({'id':block['id']})
+        #                     self.delete_id(all_block_types, block['id'])
+        # for block in all_block_types:
+        #     if {'id':block['id']} not in self.cells:
+        #         self.cells.append({'id':block['id']})
             
