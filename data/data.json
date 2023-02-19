@@ -2258,10 +2258,8 @@
             "id": 0,
             "type": "toggle",
             "icon": "place_icon.png",
-            "info": {
-                "name": "Place Block",
-                "description": "Place a block at a designated location"
-            },
+            "name": "place_block",
+            "description": "Place a block at a designated location",
             "layout": {
                 "col": 0,
                 "row": 0
@@ -2271,10 +2269,8 @@
             "id": 1,
             "type": "toggle",
             "icon": "delete_icon.png",
-            "info": {
-                "name": "Delete Objects",
-                "description": "Remove placed blocks and factories"
-            },
+            "name": "delete_objects",
+            "description": "Remove placed blocks and factories",
             "layout": {
                 "col": 1,
                 "row": 0
@@ -2284,10 +2280,8 @@
             "id": 2,
             "type": "toggle",
             "icon": "tech_icon.png",
-            "info": {
-                "name": "Place Tech Area",
-                "description": "Place a technology area for research"
-            },
+            "name": "place_tech",
+            "description": "Place a technology area for research",
             "layout": {
                 "col": 2,
                 "row": 0
@@ -2297,10 +2291,8 @@
             "id": 3,
             "type": "action",
             "icon": "settings_icon.png",
-            "info": {
-                "name": "Settings",
-                "description": "Access game settings and options"
-            },
+            "name": "settings",
+            "description": "Access game settings and options",
             "layout": {
                 "col": 3,
                 "row": 0
@@ -2310,10 +2302,8 @@
             "id": 4,
             "type": "action",
             "icon": "qsave_icon.png",
-            "info": {
-                "name": "Quick Save",
-                "description": "Save the current game state quickly"
-            },
+            "name": "quick_save",
+            "description": "Save the current game state quickly",
             "layout": {
                 "col": 4,
                 "row": 0
@@ -2323,10 +2313,8 @@
             "id": 5,
             "type": "action",
             "icon": "qload_icon.png",
-            "info": {
-                "name": "Quick Load",
-                "description": "Load a previously saved game quickly"
-            },
+            "name": "quick_load",
+            "description": "Load a previously saved game quickly",
             "layout": {
                 "col": 5,
                 "row": 0

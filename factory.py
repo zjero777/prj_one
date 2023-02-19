@@ -290,6 +290,8 @@ class factory_list:
         
         if self.app.inv_toolbar.is_hover: return
         if self.app.inv_recipe.is_open: return
+        if self.app.inv_place_block.is_open: return        
+        
         # control
         mouse_status_type = self.app.mouse.status['tile_action']
         mouse_status_button = self.app.mouse.status['button']

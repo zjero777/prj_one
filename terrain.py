@@ -335,6 +335,8 @@ class terrain:
 
         if self.app.inv_recipe.is_open: return
         if self.app.inv_toolbar.is_hover: return
+        if self.app.inv_place_block.is_open: return
+        
         if self.app.ui_tech_bp.visible: return
         
 
