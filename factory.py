@@ -287,13 +287,22 @@ class factory_list:
         for f in self.list:
             f.update()
             
-        if self.app.inv_recipe.is_open: return
-        if self.app.inv_toolbar.is_hover: return
-        # control
         
+        if self.app.inv_toolbar.is_hover: return
+        if self.app.inv_recipe.is_open: return
+        # control
         mouse_status_type = self.app.mouse.status['tile_action']
         mouse_status_button = self.app.mouse.status['button']
         mouse_status_area = self.app.mouse.status['area']
+        
+        # unselect
+        if mouse_status_type==MOUSE_TYPE_CLICK and mouse_status_button==MOUSE_RBUTTON: 
+            
+            if not self.app.factories.unselect(): #if no one select tech
+                if not self.app.inv_toolbar.select_building is None:
+                    self.app.inv_toolbar.unselect()
+            self.app.mouse.setcursor(cursor_type.normal)
+        
 
         if mouse_status_type==MOUSE_TYPE_CLICK and mouse_status_button==MOUSE_LBUTTON: 
             click_area_screen = pg.Rect((0,0),mouse_status_area.topleft)
@@ -305,11 +314,6 @@ class factory_list:
                     self.app.inv_toolbar.select_building = self.selected
             
 
-        if mouse_status_type==MOUSE_TYPE_CLICK and mouse_status_button==MOUSE_RBUTTON: 
-            if not self.app.factories.unselect(): #if no one select tech
-                if not self.app.inv_toolbar.select_building is None:
-                    self.app.inv_toolbar.unselect()
-            self.app.mouse.setcursor(cursor_type.normal)
             
         if mouse_status_type==MOUSE_TYPE_DRAG and mouse_status_button==MOUSE_LBUTTON: 
             pass

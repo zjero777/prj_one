@@ -19,6 +19,7 @@ class player:
         
     def update(self):
         self.inv.update()
+        
     
     def draw(self):
         self.inv.draw()
@@ -26,7 +27,7 @@ class player:
     # Place the item selected from the inventory on titlepos the ground
     # player.inv.selected_backpack_cell - selected inventory item 
     def build(self, field):
-        if not self.inv.selected_cell is None:
+        if not self.inv.selected_cell_num is None:
             item = self.inv.item
             place = field.GetInfo('name', field.field[field.tile_pos[0], field.tile_pos[1]])
             build_item, build_type = field.Get_info_block_placed(item, place)   

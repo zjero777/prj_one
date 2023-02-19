@@ -12,31 +12,31 @@ class inv_place_block(inv):
     
     def update(self):
         super().update()
-        if self.keystate[pg.K_e] and self.app.inv_toolbar.selected_cell:
-            if self.first_pressed:
-                self.first_pressed = False
-                self.is_open = not self.is_open
-                if self.is_open:
-                    self.app.ui_tech_bp.hide()
-        else:
-            self.first_pressed = True
+        if not self.is_open: return
+        if not self.is_hover: return
+        
+        # if self.keystate[pg.K_e] and self.app.inv_toolbar.selected_cell:
+        #     if self.first_pressed:
+        #         self.first_pressed = False
+        #         self.is_open = not self.is_open
+        #         if self.is_open:
+        #             self.app.ui_tech_bp.hide()
+        # else:
+        #     self.first_pressed = True
             
-        if self.is_open:
-            self.hover_cell_num, item, hover = self.get_cell(self.mouse_pos)
-            if self.mouse_button[0]:
-                if self.first_click:
-                    self.first_click = False 
-                    if not self.hover_cell_num is None and self.hover_cell_num<len(self.cells):
-                        # select item
-                        self.selected_cell = self.hover_cell_num
-                        self.app.mouse.setcursor_with_item(item)
-            else:
-                self.first_click = True
+        if self.mouse_button[0]:
+            if self.first_click:
+                self.first_click = False 
+                if not self.hover_cell_num is None and self.hover_cell_num<len(self.cells):
+                    # select item
+                    self.select(self.hover_cell_num)
+                    # self.selected_cell = self.hover_cell_num
+                    self.app.mouse.setcursor_with_item(self.hover_item)
         else:
-            self.app.mouse.setcursor_noitem()    
+            self.first_click = True
 
-        if not self.selected_cell is None:
-            self.app.mouse.setcursor_with_item(self.cells[self.selected_cell])
+        if not self.selected_cell_num is None:
+            self.app.mouse.setcursor_with_item(self.item)
         else:
             self.app.mouse.setcursor_noitem()    
 
@@ -126,12 +126,12 @@ class inv_place_block(inv):
             self.append(item, count)
 
     def delete_selected_backpack_cell(self):
-        if self.cells[self.selected_cell]['count'] == 1: 
-            del self.cells[self.selected_cell]
-            self.selected_cell = None
+        if self.item['count'] == 1: 
+            del self.item
+            self.selected_cell_num = None
             # self.item = {}
-        elif self.cells[self.selected_cell]['count'] > 1:
-            self.cells[self.selected_cell]['count'] -= 1
+        elif self.item['count'] > 1:
+            self.item['count'] -= 1
     
     def item_exist(self, item):
         use_item = 0
@@ -169,11 +169,11 @@ class inv_place_block(inv):
         if finditem['count']==block['count']: 
             item = self.item
             self.cells.remove(finditem)
-            self.selected_cell = None
+            self.selected_cell_num = None
             idx=0
             for i in self.cells:
                 if i==item:
-                    self.selected_cell = idx
+                    self.selected_cell_num = idx
                     break
                 idx+=1
                     

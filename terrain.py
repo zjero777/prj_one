@@ -338,8 +338,8 @@ class terrain:
         if self.app.ui_tech_bp.visible: return
         
 
-        if not self.app.inv_toolbar.selected_cell is None: 
-            if not self.app.inv_toolbar.selected_cell['id']==TOOL_REMOVE: return
+        if not self.app.inv_toolbar.item is None: 
+            if not self.app.inv_toolbar.item['id']==TOOL_REMOVE: return
             
         mouse_status_type = self.app.mouse.status['tile_action']
         mouse_status_button = self.app.mouse.status['button']
@@ -402,7 +402,7 @@ class terrain:
             xyRect = pg.Rect((self.tile_pos[0]-self.pos[0]+HALF_WIDTH)*TILE,
                              (self.tile_pos[1]-self.pos[1]+HALF_HIGHT)*TILE, TILE, TILE)
             # cursor
-            if self.app.player.inv.selected_cell is None and not self.app.inv_toolbar.is_hover and not self.app.inv_recipe.is_hover:
+            if self.app.player.inv.item is None and not self.app.inv_toolbar.is_hover and not self.app.inv_recipe.is_hover:
                 if not self.app.player.inv.is_open: # and not self.app.inv_recipe.is_open:
                     pg.draw.rect(self.surface, pg.Color('gray'), xyRect, 1)
         

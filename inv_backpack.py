@@ -31,15 +31,16 @@ class inv_backpack(inv):
                     self.first_click = False 
                     if not self.hover_cell_num is None and self.hover_cell_num<len(self.cells):
                         # select item
-                        self.selected_cell = self.hover_cell_num
+                        self.select(self.hover_cell_num)
+                        # self.selected_cell = self.hover_cell_num
                         self.app.mouse.setcursor_with_item(item)
             else:
                 self.first_click = True
         else:
             self.app.mouse.setcursor_noitem()    
 
-        if not self.selected_cell is None:
-            self.app.mouse.setcursor_with_item(self.cells[self.selected_cell])
+        if not self.item is None:
+            self.app.mouse.setcursor_with_item(self.item)
         else:
             self.app.mouse.setcursor_noitem()    
 
@@ -129,12 +130,12 @@ class inv_backpack(inv):
             self.append(item, count)
 
     def delete_selected_backpack_cell(self):
-        if self.cells[self.selected_cell]['count'] == 1: 
-            del self.cells[self.selected_cell]
-            self.selected_cell = None
+        if self.items['count'] == 1: 
+            del self.item
+            self.selected_cell_num = None
             # self.item = {}
-        elif self.cells[self.selected_cell]['count'] > 1:
-            self.cells[self.selected_cell]['count'] -= 1
+        elif self.item['count'] > 1:
+            self.item['count'] -= 1
     
     def item_exist(self, item):
         use_item = 0
@@ -172,11 +173,11 @@ class inv_backpack(inv):
         if finditem['count']==block['count']: 
             item = self.item
             self.cells.remove(finditem)
-            self.selected_cell = None
+            self.selected_cell_num = None
             idx=0
             for i in self.cells:
                 if i==item:
-                    self.selected_cell = idx
+                    self.selected_cell_num = idx
                     break
                 idx+=1
                     
