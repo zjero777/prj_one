@@ -18,22 +18,23 @@ class inv_toolbar(inv):
     
     def update(self):
         super().update()
-        if not self.is_open: return
+        # if not self.is_open: return
+        if not self.is_hover: return
         if self.app.inv_recipe.is_open: return
       
         mouse_status_type = self.app.mouse.status['tile_action']
         mouse_status_button = self.app.mouse.status['button']
       
-        self.hover_cell_num, item, self.is_hover = self.get_cell(self.mouse_pos)
         if self.mouse_button[0]:
             if self.first_click:
                 self.click = False
                 self.first_click = False 
                 self.is_hover_cell = not self.hover_cell_num is None and self.hover_cell_num<len(self.cells)
                 if self.is_hover_cell:
-                    if item['type'] == 'toggle' :
+                    if self.hover_item['type'] == 'toggle' :
                         # select item
-                        self.selected_cell = self.cells[self.hover_cell_num]
+                        self.select(self.hover_cell_num)
+                        # self.selected_cell = self.hover_item
             else: 
                 if not self.mouse_button[0]:
                     self.click = True
@@ -45,20 +46,21 @@ class inv_toolbar(inv):
     def draw(self):
         if not self.is_open: return
         super().draw()
-        
-       # draw items
-        i=-1
-        for item in self.cells:
-            i+=1
-            pos = self.get_pos(i)
-            icon_size = (self.inv_cell_size[0]*0.9, self.inv_cell_size[1]*0.9)
-            item_pos = (pos[0]+(self.inv_cell_w // 2 - icon_size[0] // 2), pos[1]+(self.inv_cell_h // 2 - icon_size[1] // 2))
-            #img
-            pic = pg.transform.scale(self.app.data.toolbar_img[item['id']], icon_size)
-            self.surface.blit(pic, item_pos)
-            if item==self.selected_cell:
-                rect_selection = (pos, self.inv_cell_size)
-                pg.draw.rect(self.surface, pg.Color('yellow'), rect_selection, 1)
+        self.draw_items(self.app.data.toolbar_img)        
+       
+    #    # draw items
+    #     i=-1
+    #     for item in self.cells:
+    #         i+=1
+    #         pos = self.get_pos(i)
+    #         icon_size = (self.inv_cell_size[0]*0.9, self.inv_cell_size[1]*0.9)
+    #         item_pos = (pos[0]+(self.inv_cell_w // 2 - icon_size[0] // 2), pos[1]+(self.inv_cell_h // 2 - icon_size[1] // 2))
+    #         #img
+    #         pic = pg.transform.scale(self.app.data.toolbar_img[item['id']], icon_size)
+    #         self.surface.blit(pic, item_pos)
+    #         if item==self.selected_cell:
+    #             rect_selection = (pos, self.inv_cell_size)
+    #             pg.draw.rect(self.surface, pg.Color('yellow'), rect_selection, 1)
         
         self.app.screen.blit(self.surface, self.inv_pos)
         

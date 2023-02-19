@@ -434,7 +434,6 @@ class ui_tech:
 # stop info
 
         if  self.app.inv_recipe.is_open: return
-        # if not mouse_tile_pos: return
         if self.app.inv_toolbar.is_hover: return
         
         
@@ -460,8 +459,8 @@ class ui_tech:
                     self.app.inv_toolbar.unselect()
             self.app.mouse.setcursor(cursor_type.normal)
 
-        if self.app.inv_toolbar.selected_cell is None: return
-        if not self.app.inv_toolbar.selected_cell['id'] == TOOL_TECH: 
+        if self.app.inv_toolbar.item is None: return
+        if not self.app.inv_toolbar.item['id'] == TOOL_TECH: 
             return
 
             
@@ -489,8 +488,8 @@ class ui_tech:
     def draw(self, surface):
         self.tech_sites.draw(surface)
         
-        if self.app.inv_toolbar.selected_cell is None: return
-        if not self.app.inv_toolbar.selected_cell['id'] == TOOL_TECH: 
+        if self.app.inv_toolbar.item is None: return
+        if not self.app.inv_toolbar.item['id'] == TOOL_TECH: 
             return
         # draw cursor area
         if self.app.mouse.status['area']:
