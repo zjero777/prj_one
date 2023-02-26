@@ -84,7 +84,7 @@ class inv_place_block(inv):
         # draw inv
         if not self.is_open: return
         super().draw()
-        self.draw_items(self.app.data.block_img)
+        self.draw_items()
         
         # blit on main screen
         self.app.screen.blit(self.surface, self.inv_pos)
@@ -101,6 +101,7 @@ class inv_place_block(inv):
             
     def append(self, item, count=1):
         self.cells.append({'id':int(item), 'count':count})
+        pass
         
     def stack(self, item, stack_number, count=1):
         self.cells[stack_number]['id'] = item
@@ -188,7 +189,7 @@ class inv_place_block(inv):
         item = self.app.data.get_bdata('id', item['id'])
         name = item['name']
         self.app.info.append_text(f'Название: {name}')
-        self.app.info.append_pic(self.app.data.block_img[item['id']])
+        self.app.info.append_pic(item['img'])
         # name = recipe['name']
         # self.app.info.append_text(f'Рецепт: {name}')
         # self.app.info.append_pic(self.app.data.recipe_img[recipe['id']])
@@ -216,10 +217,14 @@ class inv_place_block(inv):
                 recipe_id_types = f_item['use_recipes']['allowed_id']
                 for recipe_id in recipe_id_types:
                     recipe = self.app.data.get_recipe_by_id(recipe_id)
-                    blocks = recipe['out']
-                    for block in blocks:
-                        if {'id':block['id']} not in self.cells:
-                            self.cells.append({'id':block['id']})
+                    blocks_id = recipe['out']
+                    for block_item in blocks_id:
+                        block = self.app.data.get_block_by_id(block_item['id'])
+                        if block and not block in self.cells:
+                            # if {'id':block_item['id']} not in self.cells:
+                            
+                            self.cells.append(block)
+                            block['img'] = (pg.image.load(path.join(img_dir, recipe['pic'])).convert_alpha())                                                                            
         #                     self.delete_id(all_block_types, block['id'])
         # for block in all_block_types:
         #     if {'id':block['id']} not in self.cells:

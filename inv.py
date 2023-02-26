@@ -119,8 +119,8 @@ class inv:
                 # normal
                 self.surface.blit(self.bgimg, pos)
         
-    def draw_items(self, img_array):
-        if img_array is None: return
+    def draw_items(self):
+        # if img_array is None: return
         i=-1
         for item in self.cells:
             i+=1
@@ -129,7 +129,7 @@ class inv:
             icon_size = (self.inv_cell_size[0]*0.9, self.inv_cell_size[1]*0.9)
             item_pos = (pos[0]+(self.inv_cell_w // 2 - icon_size[0] // 2), pos[1]+(self.inv_cell_h // 2 - icon_size[1] // 2))
             #img
-            pic = pg.transform.scale(img_array[item['id']], icon_size)
+            pic = pg.transform.scale(item['img'], icon_size)
             self.surface.blit(pic, item_pos)
             if item==self.item:
                 rect_selection = (pos, self.inv_cell_size)
