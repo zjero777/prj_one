@@ -34,12 +34,13 @@ class inv_toolbar(inv):
             if self.first_click:
                 self.click = False
                 self.first_click = False 
-                self.is_hover_cell = not self.hover_cell_num is None and self.hover_cell_num<len(self.cells)
-                if self.is_hover_cell:
+                # self.is_hover_cell = not self.hover_cell_num is None and self.hover_cell_num<len(self.cells)
+                if self.hover_item:
                     if self.hover_item['type'] == 'toggle' :
                         # select item
                         self.select(self.hover_cell_num)
-                        self.app.inv_place_block.is_open = True
+                        if self.item['name'] == 'place_block':
+                            self.app.inv_place_block.is_open = True
                         
             else: 
                 if not self.mouse_button[0]:
