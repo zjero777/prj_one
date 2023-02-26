@@ -53,7 +53,7 @@ class inv_toolbar(inv):
     def draw(self):
         if not self.is_open: return
         super().draw()
-        self.draw_items()        
+        # self.draw_items()        
        
        # draw items
         # i=-1

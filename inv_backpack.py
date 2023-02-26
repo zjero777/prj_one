@@ -36,13 +36,13 @@ class inv_backpack(inv):
                         self.app.mouse.setcursor_with_item(item)
             else:
                 self.first_click = True
-        else:
-            self.app.mouse.setcursor_noitem()    
+        # else:
+        #     self.app.mouse.setcursor_noitem()    
 
-        if not self.item is None:
-            self.app.mouse.setcursor_with_item(self.item)
-        else:
-            self.app.mouse.setcursor_noitem()    
+        # if not self.item is None:
+        #     self.app.mouse.setcursor_with_item(self.item)
+        # else:
+        #     self.app.mouse.setcursor_noitem()    
 
     
     def draw(self):

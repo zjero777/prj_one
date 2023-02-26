@@ -29,6 +29,13 @@ class data:
                 return i
         return None
 
+    def get_tool_by_name(self, name):    
+        for i in self.data['toolbar']:
+            if i['name']==name: 
+                return i
+        return None
+
+
 
     def init_sprites(self):
         for img in self.data['factory_type']:

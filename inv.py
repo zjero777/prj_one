@@ -146,9 +146,8 @@ class inv:
         
         self.draw_cells()
 
-        # self.draw_items(None)
+        self.draw_items()
 
-    def set_image(self, cell_num, img_id, img_array):
-        pass
-        self.cells[cell_num]
+    def set_image(self, cell, img):
+        cell['img'] = img
         

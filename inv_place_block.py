@@ -34,15 +34,17 @@ class inv_place_block(inv):
                     self.select(self.hover_cell_num)
                     # self.selected_cell = self.hover_cell_num
                     self.app.mouse.setcursor_with_item(self.hover_item)
-                    self.app.inv_toolbar.set_image(0, self.hover_item, self.app.data.block_img)
+                    place_block_tool_id = self.app.data.get_tool_by_name('place_block')
+                    self.app.inv_toolbar.set_image(place_block_tool_id, self.hover_item['img'])
+                    self.is_open = False
                     
         else:
             self.first_click = True
 
-        if not self.selected_cell_num is None:
-            self.app.mouse.setcursor_with_item(self.item)
-        else:
-            self.app.mouse.setcursor_noitem()    
+        # if not self.selected_cell_num is None:
+        #     self.app.mouse.setcursor_with_item(self.item)
+        # else:
+        #     self.app.mouse.setcursor_noitem()    
 
     
     def draw(self):
@@ -54,20 +56,22 @@ class inv_place_block(inv):
             xyRect = pg.Rect((self.tile_pos[0]-self.pos[0]+HALF_WIDTH)*TILE,
                             (self.tile_pos[1]-self.pos[1]+HALF_HIGHT)*TILE, TILE, TILE)
 
-            if not self.app.player.inv.is_open and self.app.player.inv.item:
-                # Ghost cursor
-                place = self.app.terrain.GetInfo(
-                    'name', self.app.terrain.field[self.tile_pos[0], self.tile_pos[1]])
-                build_item, b_type = self.app.terrain.Get_info_block_placed(
-                    self.app.player.inv.item, place)
-                is_operate = self.app.terrain.operate[self.tile_pos[0], self.tile_pos[1]]
+            # Ghost cursor
+            place = self.app.terrain.GetInfo(
+                'name', self.app.terrain.field[self.tile_pos[0], self.tile_pos[1]])
+            build_item, b_type = self.app.terrain.Get_info_block_placed(
+                self.app.player.inv.item, place)
+            
+            
+            is_operate = self.app.terrain.operate[self.tile_pos[0], self.tile_pos[1]]
 
-                if b_type and is_operate:
-                    # allow place
-                    img = self.app.terrain.Get_img(build_item, b_type).copy()
-                    img.set_alpha(172)
-                    self.surface.blit(img, xyRect)
-                else:
+            if b_type and is_operate:
+                # allow place
+                img = self.app.terrain.Get_img(build_item, b_type).copy()
+                img.set_alpha(172)
+                self.surface.blit(img, xyRect)
+            else:
+                if build_item: 
                     # disallow place
                     img = self.app.terrain.Get_img(build_item, 'block').copy()
                     img.set_alpha(172)
@@ -77,14 +81,14 @@ class inv_place_block(inv):
                                 special_flags=pg.BLEND_RGBA_MULT)
                     self.surface.blit(
                         img, xyRect, special_flags=pg.BLEND_RGBA_MIN)
-        
-        
+    
+    
         
         
         # draw inv
         if not self.is_open: return
         super().draw()
-        self.draw_items()
+        # self.draw_items()
         
         # blit on main screen
         self.app.screen.blit(self.surface, self.inv_pos)

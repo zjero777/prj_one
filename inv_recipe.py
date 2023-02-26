@@ -53,7 +53,7 @@ class inv_recipe(inv):
     def draw(self):
         if not self.is_open: return
         super().draw()
-        self.draw_items()
+        # self.draw_items()
         self.app.screen.blit(self.surface, self.inv_pos)
 
     def load_recipe(self, allow_recipe_list, select_recipe):
