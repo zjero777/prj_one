@@ -73,6 +73,7 @@ class inv:
         if self.selected_cell_num is None: return
         self.selected_cell_num = None
         
+        
     def select(self, item_num):
         if not self.cells: return
         if item_num<0 or item_num>len(self.cells): return
@@ -151,3 +152,8 @@ class inv:
     def set_image(self, cell, img):
         cell['img'] = img
         
+    def open(self):
+        self.is_open = True
+        
+    def close(self):
+        self.is_open = False

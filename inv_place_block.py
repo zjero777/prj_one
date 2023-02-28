@@ -11,10 +11,25 @@ class inv_place_block(inv):
         super().__init__(app)
         # self.available_blocks = []
         self.update_available_blocks()
+        
+    def open(self):
+        super().open()
+        if self.item:
+            self.app.mouse.setcursor_with_item(self.item)
     
     def update(self):
         super().update()
         if not self.is_open: return
+
+        mouse_status_type = self.app.mouse.status['action']
+        mouse_status_button = self.app.mouse.status['button']
+        # mouse_status_area = self.app.mouse.status['area']
+
+        
+        if (mouse_status_type==MOUSE_TYPE_CLICK and mouse_status_button==MOUSE_RBUTTON) or (self.keystate[pg.K_e]) or (self.keystate[pg.K_ESCAPE]): # Rigth mouse button click
+            self.close()
+        
+        
         if not self.is_hover: return
         
         # if self.keystate[pg.K_e] and self.app.inv_toolbar.selected_cell:
@@ -26,20 +41,25 @@ class inv_place_block(inv):
         # else:
         #     self.first_pressed = True
             
-        if self.mouse_button[0]:
-            if self.first_click:
-                self.first_click = False 
-                if not self.hover_cell_num is None and self.hover_cell_num<len(self.cells):
-                    # select item
-                    self.select(self.hover_cell_num)
-                    # self.selected_cell = self.hover_cell_num
-                    self.app.mouse.setcursor_with_item(self.hover_item)
-                    place_block_tool_id = self.app.data.get_tool_by_name('place_block')
-                    self.app.inv_toolbar.set_image(place_block_tool_id, self.hover_item['img'])
-                    self.is_open = False
+
+        if mouse_status_type==MOUSE_TYPE_CLICK and mouse_status_button==MOUSE_LBUTTON: # Rigth mouse button click
+        # if self.mouse_button[0]:
+            # if self.first_click:
+            #     self.first_click = False 
+            if not self.hover_cell_num is None and self.hover_cell_num<len(self.cells):
+                # select item
+                self.select(self.hover_cell_num)
+                # self.selected_cell = self.hover_cell_num
+                self.app.mouse.setcursor_with_item(self.hover_item)
+                place_block_tool_id = self.app.data.get_tool_by_name('place_block')
+                self.app.inv_toolbar.set_image(place_block_tool_id, self.hover_item['img'])
+                self.close()
+                
+
+            
                     
-        else:
-            self.first_click = True
+        # else:
+        #     self.first_click = True
 
         # if not self.selected_cell_num is None:
         #     self.app.mouse.setcursor_with_item(self.item)

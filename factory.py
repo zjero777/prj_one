@@ -303,6 +303,7 @@ class factory_list:
             if not self.app.factories.unselect(): #if no one select tech
                 if not self.app.inv_toolbar.select_building is None:
                     self.app.inv_toolbar.unselect()
+                    self.app.mouse.setcursor_noitem()
             self.app.mouse.setcursor(cursor_type.normal)
         
 

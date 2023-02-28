@@ -349,7 +349,9 @@ class terrain:
 
         if mouse_status_type==MOUSE_TYPE_CLICK and mouse_status_button==MOUSE_RBUTTON: # Rigth mouse button click
             self.app.inv_toolbar.unselect()
-            self.app.mouse.setcursor(cursor_type.normal)
+            self.app.mouse.setcursor_noitem()
+            # self.app.mouse.setcursor(cursor_type.normal)
+
             
         if mouse_status_type==MOUSE_TYPE_DRAG and mouse_status_button==MOUSE_LBUTTON: # Rigth mouse button click
             pass

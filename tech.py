@@ -463,6 +463,7 @@ class ui_tech:
             if not self.tech_sites.unselect(): #if no one select tech
                 if self.app.inv_toolbar.select_building is None:
                     self.app.inv_toolbar.unselect()
+                    self.app.mouse.setcursor_noitem()
             self.app.mouse.setcursor(cursor_type.normal)
 
         if self.app.inv_toolbar.item is None: return
