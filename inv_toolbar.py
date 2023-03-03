@@ -31,26 +31,30 @@ class inv_toolbar(inv):
         mouse_status_button = self.app.mouse.status['button']
       
         if mouse_status_type==MOUSE_TYPE_CLICK and mouse_status_button==MOUSE_LBUTTON: # Rigth mouse button click      
-        # if self.mouse_button[0]:
-            # if self.first_click:
-            #     self.click = False
-            #     self.first_click = False 
-                # self.is_hover_cell = not self.hover_cell_num is None and self.hover_cell_num<len(self.cells)
             if self.hover_item:
                 if self.hover_item['type'] == 'toggle' :
-                    # select item
-                    self.select(self.hover_cell_num)
-                    if self.item['name'] == 'place_block':
-                       
-                        # self.app.inv_place_block.item
-                        self.app.inv_place_block.open()
+                    if self.hover_item['name'] == 'place_block':
+                        if (not (self.app.inv_place_block.item is None) and (self.selected_cell_num == 0)) or self.app.inv_place_block.item is None:
+                            # select item
+                            self.select(self.hover_cell_num)
+                            if self.app.inv_place_block.item:
+                                self.app.mouse.setcursor_with_item(self.app.inv_place_block.item)
+                            
+                            self.app.inv_place_block.open()
+                        else:
+                            self.select(self.hover_cell_num)
+                            if self.app.inv_place_block.item:
+                                self.app.mouse.setcursor_with_item(self.app.inv_place_block.item)
+                            
+                    else:
+                        self.select(self.hover_cell_num)
+                        self.app.mouse.setcursor_noitem()
                         
-        #     else: 
-        #         if not self.mouse_button[0]:
-        #             self.click = True
                 
-        # else:
-        #     self.first_click = True
+
+
+                            
+
 
     
     def draw(self):

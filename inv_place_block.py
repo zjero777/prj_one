@@ -14,8 +14,6 @@ class inv_place_block(inv):
         
     def open(self):
         super().open()
-        if self.item:
-            self.app.mouse.setcursor_with_item(self.item)
     
     def update(self):
         super().update()
