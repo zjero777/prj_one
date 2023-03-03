@@ -246,7 +246,7 @@ class inv_place_block(inv):
                             # if {'id':block_item['id']} not in self.cells:
                             
                             self.cells.append(block)
-                            block['img'] = (pg.image.load(path.join(img_dir, recipe['pic'])).convert_alpha())                                                                            
+                            block['img'] = (pg.image.load(path.join(img_dir, block['pic'])).convert_alpha())                                                                            
         #                     self.delete_id(all_block_types, block['id'])
         # for block in all_block_types:
         #     if {'id':block['id']} not in self.cells:

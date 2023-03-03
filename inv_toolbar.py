@@ -34,7 +34,7 @@ class inv_toolbar(inv):
             if self.hover_item:
                 if self.hover_item['type'] == 'toggle' :
                     if self.hover_item['name'] == 'place_block':
-                        if (not (self.app.inv_place_block.item is None) and (self.selected_cell_num == 0)) or self.app.inv_place_block.item is None:
+                        if (not (self.app.inv_place_block.item is None) and (self.selected_cell_num == TOOL_PLACE)) or self.app.inv_place_block.item is None:
                             # select item
                             self.select(self.hover_cell_num)
                             if self.app.inv_place_block.item:
@@ -51,7 +51,9 @@ class inv_toolbar(inv):
                         self.app.mouse.setcursor_noitem()
                         
                 
-
+        if self.app.inv_toolbar.item is None: return
+        if not self.app.inv_toolbar.item['id'] == TOOL_PLACE: 
+            return
 
                             
 
