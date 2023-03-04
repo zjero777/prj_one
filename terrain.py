@@ -35,7 +35,7 @@ class terrain:
         self.surface = pg.Surface((FIELD_WIDTH, FIELD_HIGHT))
         self.field = np.zeros((width, height), dtype='i')
         self.dark_cover = np.ones((width, height), dtype=np.bool)
-        self.fog_of_war = np.ones((width, height), dtype=np.bool)
+        # self.fog_of_war = np.ones((width, height), dtype=np.bool)
         self.operate = np.zeros((width, height), dtype=np.int)
         self.building_map = np.zeros((width, height), dtype='i')
         self.first_click = True
@@ -387,6 +387,10 @@ class terrain:
         
         # draw tech areas
         self.app.ui_tech.draw(self.surface)
+        
+        # draw place areas
+        self.app.player.draw(self.surface)
+
 
         # # draw selection
         # if self.selection != [-1, -1]:

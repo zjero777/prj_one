@@ -1,8 +1,10 @@
-from numpy import cos, sin
+import numpy as np
 import pygame as pg
 import pygame_gui as gui
-from options import *
+from numpy import cos, sin
+
 from inv_backpack import *
+from options import *
 from terrain import terrain
 
 
@@ -17,12 +19,87 @@ class player:
         self.warmup = 0
         self.pos = ()        
         
+    def get_place_fit(self, terrain, area: pg.Rect):
+        lookup = terrain.building_map[area.left:area.left+area.width, area.top:area.top+area.height]
+        result = (lookup == 0)
+        # for find_x in range(area.left, area.right):
+        #     for find_y in range(area.top, area.bottom):
+        #         if not terrain.onMap(find_x, find_y):
+        #             continue
+                # lookup = self.building_map[find_x:find_x +
+                #                             factory_width, find_y:find_y + factory_hight]
+                # if np.all(lookup == factory_plan):
+                #     self.app.factories.add(
+                #         bp, self.building_map, find_x, find_y)
+        return result        
+        
+        
     def update(self):
-        self.inv.update()
+        # self.inv.update()
+        if self.app.inv_recipe.is_open: return
+        if self.app.inv_place_block.is_open: return        
+        if self.app.inv_toolbar.is_hover: return
+
+        # control
+        mouse_status_type = self.app.mouse.status['tile_action']
+        mouse_status_action = self.app.mouse.status['action']
+        mouse_status_button = self.app.mouse.status['button']
+        mouse_status_area = self.app.mouse.status['area']
+
+        
+        # place block
+        # if self.app.inv_toolbar.item is None: return
+        if not self.app.inv_toolbar.item is None and self.app.inv_toolbar.item['id'] == TOOL_PLACE: 
+            if mouse_status_type==MOUSE_TYPE_DRAG and mouse_status_button==MOUSE_LBUTTON: 
+                if mouse_status_area:
+                    self.place_pos = mouse_status_area.topleft
+                    self.place_fit = self.get_place_fit(self.app.terrain, mouse_status_area)
+                    pass
+                    # self.allow = (mouse_status_area.collidelist(self.app.factories.rect_list_all)==-1)
+                    # self.allow = self.allow and mouse_status_area.collidelist(self.tech_sites.rect_list_all)==-1
+                    # lookup = self.app.terrain.operate[mouse_status_area.left:mouse_status_area.right, mouse_status_area.top:mouse_status_area.bottom]
+                    # self.allow = self.allow and np.min(lookup)
+                    # self.allow = self.allow and mouse_status_area.size!=(1,1)
+                # else: 
+                    # self.allow = False
+                
+            self.app.info.debug((0,10), self.app.mouse.status)
+
+            if mouse_status_type==MOUSE_TYPE_DROP and mouse_status_button==MOUSE_LBUTTON or mouse_status_action==MOUSE_TYPE_DROP and mouse_status_button==MOUSE_LBUTTON: 
+                # if self.allow:
+                #     content = self.app.terrain.building_map[mouse_status_area.left:mouse_status_area.right,
+                #                                 mouse_status_area.top:mouse_status_area.bottom]
+                #     self.tech_sites.add(mouse_status_area, content)
+                #     self.app.factories.unselect()
+                self.app.mouse.status['area'] = None
+                self.app.mouse.status['rect'] = None
+            
+            
+            
+        
+        
+        # remove
         
     
-    def draw(self):
-        self.inv.draw()
+    def draw(self, surface):
+        # self.inv.draw()
+        
+        
+        if self.app.inv_toolbar.item is None: return
+        if not self.app.inv_toolbar.item['id'] == TOOL_TECH: 
+            return
+        # draw place block cursor area
+        if self.place_fit:
+            area = self.app.mouse.status['area']
+            for i in range(area.left, area.right):
+                for j in range(area.top, area.bottom):
+                    screen_pos = self.app.terrain.demapping((i,j))
+                    f_rect = pg.Rect(screen_pos, (TILE, TILE))
+                    if self.allow:
+                        surface.blit(self.bg_blue, f_rect.topleft)
+                    else:
+                        surface.blit(self.bg_red, f_rect.topleft)
+        
     
     # Place the item selected from the inventory on titlepos the ground
     # player.inv.selected_backpack_cell - selected inventory item 

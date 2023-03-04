@@ -439,7 +439,6 @@ class ui_tech:
 
         if self.app.inv_recipe.is_open: return
         if self.app.inv_place_block.is_open: return        
-        
         if self.app.inv_toolbar.is_hover: return
         
         

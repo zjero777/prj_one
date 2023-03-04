@@ -68,7 +68,6 @@ class game:
         # self.screen.blit(self.surface, (0,0))
         self.terrain.draw() 
         # self.player.draw()
-        self.player.draw()
         self.inv_recipe.draw()
         self.inv_toolbar.draw()
         self.inv_place_block.draw()

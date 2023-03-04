@@ -51,9 +51,6 @@ class inv_toolbar(inv):
                         self.app.mouse.setcursor_noitem()
                         
                 
-        if self.app.inv_toolbar.item is None: return
-        if not self.app.inv_toolbar.item['id'] == TOOL_PLACE: 
-            return
 
                             
 
