@@ -308,6 +308,7 @@ class factory_list:
         
 
         if mouse_status_type==MOUSE_TYPE_CLICK and mouse_status_button==MOUSE_LBUTTON: 
+            if mouse_status_area is None: return
             click_area_screen = pg.Rect((0,0),mouse_status_area.topleft)
             if click_area_screen.colliderect(VIEW_RECT):
                 factory_num = mouse_status_area.collidelist(self.rect_list_all)

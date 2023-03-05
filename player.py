@@ -17,21 +17,69 @@ class player:
         self.start_dig = 0
         self.demolition = False
         self.warmup = 0
-        self.pos = ()        
+        self.pos = ()  
+        self.place_fit = None      
         
-    def get_place_fit(self, terrain, area: pg.Rect):
-        lookup = terrain.building_map[area.left:area.left+area.width, area.top:area.top+area.height]
-        result = (lookup == 0)
+    def Get_info_block_placed(self, place_item, place):
+        if not place_item: return
+        terrain = self.app.data.get_terrain_by_id(place)
+        result_item = place_item
+        result_type = ''
+        rules = place_item.get('build', False)
+        if rules:
+            rule = rules.get(terrain['name'])
+            if rule:  # {'id':'1','count':3}
+                result_type = rule.get('type')
+                if not result_type:
+                    result_type = 'block'
+                result_item_name = rule.get('result')
+                if result_type == 'block':
+                    result_item = self.app.data.get_block_by_name(result_item_name)
+                else:
+                    result_item = self.app.data.get_terrain_by_name(result_item_name)
+            elif rule == {}:  # {}
+                result_type = 'block'
+        return(result_item, result_type)
+        
+    def get_place_block(self, lookup, place_item):
+        result = np.zeros(lookup.shape, 'int')
+        for i, row in enumerate(lookup):
+            for j, el in enumerate(row):
+                item, use_type = self.Get_info_block_placed(place_item, el)
+                if use_type=='block':
+                    result[i,j] = item['id']
+        return result
+
+    def get_place_field(self, lookup, place_item):
+        result = np.zeros(lookup.shape, 'int')
+        for i, row in enumerate(lookup):
+            for j, el in enumerate(row):
+                item, use_type = self.Get_info_block_placed(place_item, el)
+                if use_type=='terrain':
+                    result[i,j] = item['id']
+        return result
+
+    def get_place_fit(self, terrain, area: pg.Rect, place_item):
+        building_lookup = terrain.building_map[area.left:area.left+area.width, area.top:area.top+area.height]
+        field_lookup = terrain.field[area.left:area.left+area.width, area.top:area.top+area.height]
+        # calc place block 0-no block placed, !=0 set new block
+        block_result = self.get_place_block(field_lookup, place_item)
+        # calc place field 0-no field change, !=0 change field
+        field_result = self.get_place_field(field_lookup, place_item)
+        # calc allow
+        building_result = np.logical_and((building_lookup == 0), (np.logical_or((block_result != 0),(field_result != 0))))
+        result = {'allow': building_result, 'block': block_result, 'field': field_result}
+        
         # for find_x in range(area.left, area.right):
         #     for find_y in range(area.top, area.bottom):
         #         if not terrain.onMap(find_x, find_y):
         #             continue
-                # lookup = self.building_map[find_x:find_x +
-                #                             factory_width, find_y:find_y + factory_hight]
-                # if np.all(lookup == factory_plan):
-                #     self.app.factories.add(
-                #         bp, self.building_map, find_x, find_y)
-        return result        
+        #         lookup = self.building_map[find_x:find_x +
+        #                                     factory_width, find_y:find_y + factory_hight]
+        #         if np.all(lookup == factory_plan):
+        #             self.app.factories.add(
+        #                 bp, self.building_map, find_x, find_y)
+        return result
         
         
     def update(self):
@@ -53,7 +101,7 @@ class player:
             if mouse_status_type==MOUSE_TYPE_DRAG and mouse_status_button==MOUSE_LBUTTON: 
                 if mouse_status_area:
                     self.place_pos = mouse_status_area.topleft
-                    self.place_fit = self.get_place_fit(self.app.terrain, mouse_status_area)
+                    self.place_fit = self.get_place_fit(self.app.terrain, mouse_status_area, self.app.inv_place_block.item)
                     pass
                     # self.allow = (mouse_status_area.collidelist(self.app.factories.rect_list_all)==-1)
                     # self.allow = self.allow and mouse_status_area.collidelist(self.tech_sites.rect_list_all)==-1
@@ -86,19 +134,23 @@ class player:
         
         
         if self.app.inv_toolbar.item is None: return
-        if not self.app.inv_toolbar.item['id'] == TOOL_TECH: 
+        if not self.app.inv_toolbar.item['id'] == TOOL_PLACE: 
             return
         # draw place block cursor area
-        if self.place_fit:
-            area = self.app.mouse.status['area']
-            for i in range(area.left, area.right):
-                for j in range(area.top, area.bottom):
-                    screen_pos = self.app.terrain.demapping((i,j))
+        if not self.place_fit is None:
+            # area = self.app.mouse.status['area']
+            for i, row in enumerate(self.place_fit['allow']):
+                for j, el in enumerate(row):
+                    screen_pos = self.app.terrain.demapping((i+self.place_pos[0],j+self.place_pos[1]))
                     f_rect = pg.Rect(screen_pos, (TILE, TILE))
-                    if self.allow:
-                        surface.blit(self.bg_blue, f_rect.topleft)
-                    else:
-                        surface.blit(self.bg_red, f_rect.topleft)
+                    if el:
+                        if self.place_fit['block'][i,j] !=0:
+                            surface.blit(self.app.data.get_block_by_id(self.place_fit['block'][i,j])['img'], f_rect.topleft)    
+                        if self.place_fit['field'][i,j] !=0:
+                            surface.blit(self.app.data.get_terrain_by_id(self.place_fit['field'][i,j])['img'], f_rect.topleft)    
+                            
+            self.place_pos = None
+            self.place_fit = None
         
     
     # Place the item selected from the inventory on titlepos the ground

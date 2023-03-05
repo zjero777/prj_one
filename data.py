@@ -29,12 +29,30 @@ class data:
                 return i
         return None
 
+    def get_terrain_by_id(self, id):    
+        for i in self.data['terrain_type']:
+            if i['id']==id: 
+                return i
+        return None
+
+    def get_terrain_by_name(self, id):    
+        for i in self.data['terrain_type']:
+            if i['name']==id: 
+                return i
+        return None
+
+
     def get_tool_by_name(self, name):    
         for i in self.data['toolbar']:
             if i['name']==name: 
                 return i
         return None
 
+    def get_block_by_name(self, name):    
+        for i in self.data['block_type']:
+            if i['name']==name: 
+                return i
+        return None
 
 
     def init_sprites(self):
@@ -42,9 +60,23 @@ class data:
             self.factory_img[img['id']] = (pg.image.load(
                 path.join(img_dir, img['pic'])).convert_alpha())
 
-        # for img in self.data['block_type']:
-        #     self.block_img[img['id']] = (pg.image.load(
-        #         path.join(img_dir, img['pic'])).convert_alpha())
+        for item in self.data['terrain_type']:
+            item['img'] = (pg.image.load(path.join(img_dir, item['pic'])).convert_alpha())
+
+        for item in self.data['block_type']:
+            item['img'] = (pg.image.load(path.join(img_dir, item['pic'])).convert_alpha())
+
+        for item in self.data['factory_type']:
+            item['img'] = (pg.image.load(path.join(img_dir, item['pic'])).convert_alpha())
+
+        for item in self.data['recipes']:
+            item['img'] = (pg.image.load(path.join(img_dir, item['pic'])).convert_alpha())
+            
+        for item in self.data['toolbar']:
+            item['img'] = (pg.image.load(path.join(img_dir, item['icon'])).convert_alpha())
+            
+            
+        
 
         
     def get_bdata(self, key, stroke):
