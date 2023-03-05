@@ -102,29 +102,13 @@ class player:
                 if mouse_status_area:
                     self.place_pos = mouse_status_area.topleft
                     self.place_fit = self.get_place_fit(self.app.terrain, mouse_status_area, self.app.inv_place_block.item)
-                    pass
-                    # self.allow = (mouse_status_area.collidelist(self.app.factories.rect_list_all)==-1)
-                    # self.allow = self.allow and mouse_status_area.collidelist(self.tech_sites.rect_list_all)==-1
-                    # lookup = self.app.terrain.operate[mouse_status_area.left:mouse_status_area.right, mouse_status_area.top:mouse_status_area.bottom]
-                    # self.allow = self.allow and np.min(lookup)
-                    # self.allow = self.allow and mouse_status_area.size!=(1,1)
-                # else: 
-                    # self.allow = False
-                
+               
             self.app.info.debug((0,10), self.app.mouse.status)
 
             if mouse_status_type==MOUSE_TYPE_DROP and mouse_status_button==MOUSE_LBUTTON or mouse_status_action==MOUSE_TYPE_DROP and mouse_status_button==MOUSE_LBUTTON: 
-                # if self.allow:
-                #     content = self.app.terrain.building_map[mouse_status_area.left:mouse_status_area.right,
-                #                                 mouse_status_area.top:mouse_status_area.bottom]
-                #     self.tech_sites.add(mouse_status_area, content)
-                #     self.app.factories.unselect()
                 self.app.mouse.status['area'] = None
                 self.app.mouse.status['rect'] = None
-            
-            
-            
-        
+     
         
         # remove
         
