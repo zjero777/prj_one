@@ -69,16 +69,6 @@ class player:
         # calc allow
         building_result = np.logical_and((building_lookup == 0), (np.logical_or((block_result != 0),(field_result != 0))))
         result = {'allow': building_result, 'block': block_result, 'field': field_result}
-        
-        # for find_x in range(area.left, area.right):
-        #     for find_y in range(area.top, area.bottom):
-        #         if not terrain.onMap(find_x, find_y):
-        #             continue
-        #         lookup = self.building_map[find_x:find_x +
-        #                                     factory_width, find_y:find_y + factory_hight]
-        #         if np.all(lookup == factory_plan):
-        #             self.app.factories.add(
-        #                 bp, self.building_map, find_x, find_y)
         return result
         
         
