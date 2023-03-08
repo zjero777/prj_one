@@ -75,7 +75,7 @@ class inv_place_block(inv):
                             (self.tile_pos[1]-self.pos[1]+HALF_HIGHT)*TILE, TILE, TILE)
 
             # Ghost cursor
-            place = self.app.terrain.GetInfo(
+            place = self.app.data.GetInfo(
                 'name', self.app.terrain.field[self.tile_pos[0], self.tile_pos[1]])
             build_item, b_type = self.app.terrain.Get_info_block_placed(
                 self.app.player.inv.item, place)

@@ -273,10 +273,10 @@ class ui_tech:
         if not pg.Rect(VIEW_RECT).collidepoint(self.app.mouse.pos): return
 
         if not tilepos:
-            pic_idx = self.app.terrain.FindTInfo('id', 'hyperspace')
-            data = self.app.terrain.GetInfo('name', pic_idx)
+            pic_idx = self.app.data.FindTInfo('id', 'hyperspace')
+            data = self.app.data.GetInfo('name', pic_idx)
             # self.app.info.set(self.text, pic_idx)
-            self.app.info.append_pic(self.app.terrain.field_img[pic_idx][0])
+            self.app.info.append_pic(self.app.data.data['terrain_type'][pic_idx]['img'])
             self.app.info.append_text(f'<b>{data}</b><br>(???,???)')
             return
 
@@ -287,14 +287,14 @@ class ui_tech:
         select_terrain = self.app.terrain.field[tilepos[0], tilepos[1]]
         select_building = self.app.terrain.building_map[tilepos[0], tilepos[1]]
 
-        terrain_data = self.app.terrain.GetTData('id', select_terrain)
+        terrain_data = self.app.data.GetTData('id', select_terrain)
         terrain_name = terrain_data['name']
-        terrain_pic = self.app.terrain.field_img[select_terrain][0]
+        terrain_pic = terrain_data['img']
 
         self.app.info.append_pic(terrain_pic)
         self.app.info.append_text(f'<b>{terrain_name}</b><br>{tilepos}</b>')
 
-        if strtobool(self.app.terrain.GetTileInfo('allow_dig', tilepos)) and select_building == 0:
+        if strtobool(self.app.data.GetTileInfo(self.app.terrain, 'allow_dig', tilepos)) and select_building == 0:
             time = terrain_data['dig']['time']
             loot = terrain_data['dig']['loot']
             self.app.info.append_text('Ожидаемые ресурсы:')
@@ -302,7 +302,7 @@ class ui_tech:
             self.app.info.append_text(f'Время добычи(сек): {time}')
 
         if select_building > 0:
-            block_data = self.app.terrain.GetBData('id', select_building)
+            block_data = self.app.data.GetBData('id', select_building)
             block_name = block_data['name']
             time = block_data['demolition']
             loot = select_building

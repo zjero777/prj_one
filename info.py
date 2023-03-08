@@ -194,7 +194,7 @@ class info:
         item_rect = pg.Rect((justify, top_pos), (-1, -1))
         itemui= UIItem(
             relative_rect=item_rect,
-            image_surface=self.app.terrain.block_img[item['id']],
+            image_surface=self.app.data.data['block_type'][item['id']]['img'],
             count=item['count'],
             manager=self.app.manager,
             container=self.panel_info,
@@ -205,7 +205,7 @@ class info:
     def _create_items_list(self, block_list):
         list = []
         for item in block_list:
-            image_surface=self.app.terrain.block_img[int(item['id'])]
+            image_surface=self.app.data.data['block_type'][int(item['id'])]['img']
             list.append({'img':image_surface, 'count': item['count']})
         return(list)
         
@@ -325,7 +325,7 @@ class info:
         
 
     def append_item(self, item, object_id='item_label_b', justify='left'):
-        item_pic = self.app.terrain.block_img[item['id']]
+        item_pic = self.app.data.data['block_type'][item['id']]['img']
         item_count = item['count']
         if len(self.msg_info_list) < self.msg_line+1:
             element, hight = self._create_item_info(item, self.top, object_id, justify)

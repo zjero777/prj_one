@@ -1,4 +1,3 @@
-from cgitb import reset
 from distutils.util import strtobool
 from math import ceil
 from sys import flags
@@ -7,7 +6,6 @@ import pygame as pg
 import random as rnd
 import json
 import pygame_gui as gui
-import cv2
 
 
 from pygame.event import Event
@@ -15,7 +13,6 @@ from factory import factory_list
 
 from info import info
 from options import *
-from utils import convert_opencv_img_to_pygame, cvimage_grayscale
 from waterfall import *
 
 
@@ -38,13 +35,12 @@ class terrain:
         # self.fog_of_war = np.ones((width, height), dtype=np.bool)
         self.operate = np.zeros((width, height), dtype=np.int)
         self.building_map = np.zeros((width, height), dtype='i')
+        self.bp_field = np.zeros((width, height), dtype=np.int)
+        self.bp_block = np.zeros((width, height), dtype=np.int)
         self.first_click = True
         self.tile_pos = ()
-        f = open('data/data.json', encoding='utf-8')
-        self.data = json.load(f)
-        f.close
 
-        self.field.fill(self.FindTInfo('id', 'ground'))
+        self.field.fill(self.app.data.FindTInfo('id', 'ground'))
 
         for i in range(5000):
             self.field[rnd.randint(0, PLANET_WIDTH-1),
@@ -75,22 +71,6 @@ class terrain:
         #    self.field[0,i] = 1
         #   self.field[99,i] = 1
 
-        self.field_img = [[0, 0] for i in self.data['terrain_type']]
-        for img in self.data['terrain_type']:
-            pic = pg.image.load(
-                path.join(img_dir, img['pic'])).convert_alpha()
-            cvimg = cv2.imread(path.join(img_dir, img['pic']))
-            gray_image = cvimage_grayscale(cvimg)
-            pic_gray = convert_opencv_img_to_pygame(gray_image)
-            self.field_img[img['id']][0] = pic
-            self.field_img[img['id']][1] = pic_gray
-
-        self.block_img = [0 for i in self.data['block_type']]
-        for img in self.data['block_type']:
-            self.block_img[img['id']] = (pg.image.load(
-                path.join(img_dir, img['pic'])).convert_alpha())
-        self.block_img_rect = self.block_img[1].get_rect()
-
         self.field_bg = pg.image.load(
             path.join(img_dir, 'bg.jpg')).convert_alpha()
         self.field_bgrect = self.field_bg.get_rect()
@@ -99,6 +79,7 @@ class terrain:
         pg.draw.rect(self.bg_blue, pg.Color(64,128,255,128), (0,0,TILE, TILE))
         self.bg_red = pg.Surface((TILE,TILE), pg.SRCALPHA)
         pg.draw.rect(self.bg_red, pg.Color(255,32,128,128), (0,0,TILE, TILE))
+
         
 
     def onMap(self, tile_x, tile_y):
@@ -156,46 +137,6 @@ class terrain:
         # self.text = f'Coordinate {self.selection}<br>{data}'
 
         # self.app.info.set(self.text, pic)
-    def GetTileInfo(self, name, tilepos):
-        if not tilepos:
-            pic_idx = self.FindTInfo('id', 'hyperspace')
-            return (self.GetInfo(name, pic_idx))
-
-        return(self.data.get('terrain_type')[self.field[tilepos[0], tilepos[1]]][name])
-
-    def GetInfo(self, name, id):
-        return(self.data.get('terrain_type')[id][name])
-
-    def FindBInfo(self, name, stroke):
-        for item in self.data.get('block_type'):
-            if item['name'] == stroke:
-                return(item[name])
-
-    def GetBData(self, key, stroke):
-        for item in self.data.get('block_type'):
-            if item[key] == stroke:
-                return(item)
-
-    def GetTData(self, key, stroke):
-        for item in self.data.get('terrain_type'):
-            if item[key] == stroke:
-                return(item)
-
-    def GetFData(self, key, stroke):
-        for item in self.data.get('factory_type'):
-            if item[key] == stroke:
-                return(item)
-
-    def FindTInfo(self, name, stroke):
-        for item in self.data.get('terrain_type'):
-            if item['name'] == stroke:
-                return(item[name])
-
-    def FindInfo(self, name, stroke, b_type):
-        if b_type == 'block':
-            return(self.FindBInfo(name, stroke))
-        elif b_type == 'terrain':
-            return(self.FindTInfo(name, stroke))
 
     def Get_info_block_placed(self, use_item, place):
         result_item = use_item
@@ -370,16 +311,16 @@ class terrain:
                     continue
                 xyRect = pg.Rect(
                     (x-self.pos[0]+HALF_WIDTH)*TILE, (y-self.pos[1]+HALF_HIGHT)*TILE, TILE, TILE)
+                
                 if self.field[x, y] > 0:
+                    field = self.app.data.data['terrain_type'][self.field[x, y]]
                     if self.operate[x, y]:
-                        self.surface.blit(
-                            self.field_img[self.field[x, y]][0], xyRect)
+                        self.surface.blit(field['img'], xyRect)
                     else:
-                        self.surface.blit(
-                            self.field_img[self.field[x, y]][1], xyRect)
+                        self.surface.blit(field['img_bw'], xyRect)
                 if self.building_map[x, y] > 0:
-                    self.surface.blit(
-                        self.block_img[self.building_map[x, y]], xyRect)
+                    factory = self.app.data.data['block_type'][self.building_map[x, y]]
+                    self.surface.blit(factory['img'], xyRect)
                 # self.app.info.debug(xyRect.move(0,P_UP), self.building_map[x,y])
 
         # draw factory
@@ -423,7 +364,7 @@ class terrain:
                     (x-self.pos[0]+HALF_WIDTH)*TILE, (y-self.pos[1]+HALF_HIGHT)*TILE, TILE, TILE)
 
                 if self.dark_cover[x, y]:
-                    self.surface.blit(self.field_img[0][0], xyRect)
+                    self.surface.blit(self.app.data.data['terrain_type'][0]['img'], xyRect)
 
         # draw cursor area
         # if self.app.mouse.status['area']:

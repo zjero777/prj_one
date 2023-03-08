@@ -62,15 +62,24 @@ class player:
     def get_place_fit(self, terrain, area: pg.Rect, place_item):
         building_lookup = terrain.building_map[area.left:area.left+area.width, area.top:area.top+area.height]
         field_lookup = terrain.field[area.left:area.left+area.width, area.top:area.top+area.height]
+        operate_lookup = terrain.operate[area.left:area.left+area.width, area.top:area.top+area.height]
         # calc place block 0-no block placed, !=0 set new block
         block_result = self.get_place_block(field_lookup, place_item)
         # calc place field 0-no field change, !=0 change field
         field_result = self.get_place_field(field_lookup, place_item)
         # calc allow
-        building_result = np.logical_and((building_lookup == 0), (np.logical_or((block_result != 0),(field_result != 0))))
+        building_result = np.logical_and(np.logical_and((building_lookup == 0), (np.logical_or((block_result != 0),(field_result != 0)))) , (operate_lookup !=0))
         result = {'allow': building_result, 'block': block_result, 'field': field_result}
         return result
         
+    def set_place(self, terrain, fit, area):
+        bp_field_lookup = terrain.bp_field[area.left:area.left+area.width, area.top:area.top+area.height]
+        bp_block_lookup = terrain.bp_block[area.left:area.left+area.width, area.top:area.top+area.height]
+        for i, row in enumerate(fit['allow']):
+            for j, el in enumerate(row):
+                if el:
+                    if fit['field'][i,j]>0: bp_field_lookup[i,j] = fit['field'][i,j]
+                    if fit['block'][i,j]>0: bp_block_lookup[i,j] = fit['block'][i,j]
         
     def update(self):
         # self.inv.update()
@@ -90,14 +99,19 @@ class player:
         if not self.app.inv_toolbar.item is None and self.app.inv_toolbar.item['id'] == TOOL_PLACE: 
             if mouse_status_type==MOUSE_TYPE_DRAG and mouse_status_button==MOUSE_LBUTTON: 
                 if mouse_status_area:
-                    self.place_pos = mouse_status_area.topleft
-                    self.place_fit = self.get_place_fit(self.app.terrain, mouse_status_area, self.app.inv_place_block.item)
+                    self.place_rect = mouse_status_area
+                    self.place_fit = self.get_place_fit(self.app.terrain, self.place_rect, self.app.inv_place_block.item)
                
             self.app.info.debug((0,10), self.app.mouse.status)
 
             if mouse_status_type==MOUSE_TYPE_DROP and mouse_status_button==MOUSE_LBUTTON or mouse_status_action==MOUSE_TYPE_DROP and mouse_status_button==MOUSE_LBUTTON: 
+                self.set_place(self.app.terrain, self.place_fit, self.place_rect)
                 self.app.mouse.status['area'] = None
                 self.app.mouse.status['rect'] = None
+                self.place_rect = None
+                self.place_fit = None     
+                           
+                
      
         
         # remove
@@ -115,7 +129,7 @@ class player:
             # area = self.app.mouse.status['area']
             for i, row in enumerate(self.place_fit['allow']):
                 for j, el in enumerate(row):
-                    screen_pos = self.app.terrain.demapping((i+self.place_pos[0],j+self.place_pos[1]))
+                    screen_pos = self.app.terrain.demapping((i+self.place_rect[0],j+self.place_rect[1]))
                     f_rect = pg.Rect(screen_pos, (TILE, TILE))
                     if el:
                         if self.place_fit['block'][i,j] !=0:
@@ -123,8 +137,7 @@ class player:
                         if self.place_fit['field'][i,j] !=0:
                             surface.blit(self.app.data.get_terrain_by_id(self.place_fit['field'][i,j])['img'], f_rect.topleft)    
                             
-            self.place_pos = None
-            self.place_fit = None
+        
         
     
     # Place the item selected from the inventory on titlepos the ground
@@ -208,7 +221,7 @@ class player:
         self.set_spawn(pos)
         terra = self.app.terrain
 
-        bp = terra.GetFData('name', 'escape_pod')
+        bp = self.app.data.GetFData('name', 'escape_pod')
         b_map = terra.building_map
 
         main_factory=self.app.factories.add(bp, b_map, pos[0], pos[1])
@@ -219,7 +232,7 @@ class player:
         self.go_pos(terra, pos)
         self.set_spawn(pos)
         
-        bp = terra.GetFData('name', 'miller')
+        bp = self.app.data.GetFData('name', 'miller')
         factory=self.app.factories.add(bp, b_map, pos[0]+4, pos[1])
         factory.create_storage_in(factory.incom_recipe)
         factory.in_storage.add_items([{'id':1,'count':20}])
@@ -244,12 +257,12 @@ class player:
             r = randrange(0, rad)
             x = r * cos(angle)
             y = r * sin(angle)
-            self.app.terrain.field[round(pos[0]+x-0.5),round(pos[1]+y-0.5)] = self.app.terrain.GetTData('name', 'scorched_ground')['id']
+            self.app.terrain.field[round(pos[0]+x-0.5),round(pos[1]+y-0.5)] = self.app.data.GetTData('name', 'scorched_ground')['id']
             
     def add_water(self, pos, rad):
         angle = randrange(0, 360)
         x = rad * cos(angle)
         y = rad * sin(angle)
-        self.app.terrain.field[round(pos[0]+x-0.5),round(pos[1]+y-0.5)] = self.app.terrain.GetTData('name', 'water')['id']
+        self.app.terrain.field[round(pos[0]+x-0.5),round(pos[1]+y-0.5)] = self.app.data.GetTData('name', 'water')['id']
         
             
