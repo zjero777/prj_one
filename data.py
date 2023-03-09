@@ -1,6 +1,8 @@
 import json
+from PIL import ImageFilter, Image
 
 import cv2
+import numpy as np
 import pygame as pg
 
 from options import *
@@ -62,6 +64,12 @@ class data:
         return None
 
 
+    def get_img(self, id, img_type):
+        for i in self.data[img_type]:
+            if i['id']==id: 
+                return i['img']
+        
+
     def init_sprites(self):
         for img in self.data['factory_type']:
             self.factory_img[img['id']] = (pg.image.load(
@@ -72,8 +80,25 @@ class data:
             cvimg = cv2.imread(path.join(img_dir, item['pic']))
             item['img_bw'] = convert_opencv_img_to_pygame(cvimage_grayscale(cvimg))
             
+            img = pg.image.load(path.join(img_dir, item['pic'])).convert_alpha()
+            blueprint = pg.Surface(img.get_size(), pg.SRCALPHA)
+            blueprint.fill((255, 0, 0, 80))
+            img.blit(blueprint, (0, 0), special_flags=pg.BLEND_RGBA_SUB)
+            item['img_bp'] = img
+            
+            
         for item in self.data['block_type']:
             item['img'] = (pg.image.load(path.join(img_dir, item['pic'])).convert_alpha())
+            
+            img = pg.image.load(path.join(img_dir, item['pic'])).convert_alpha()
+            blueprint = pg.Surface(img.get_size(), pg.SRCALPHA)
+            blueprint.fill((255, 0, 0, 80))
+            img.blit(blueprint, (0, 0), special_flags=pg.BLEND_RGBA_SUB)
+            item['img_bp'] = img
+            
+
+    
+            
 
         for item in self.data['factory_type']:
             item['img'] = (pg.image.load(path.join(img_dir, item['pic'])).convert_alpha())

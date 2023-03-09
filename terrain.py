@@ -321,7 +321,29 @@ class terrain:
                 if self.building_map[x, y] > 0:
                     factory = self.app.data.data['block_type'][self.building_map[x, y]]
                     self.surface.blit(factory['img'], xyRect)
+                    
+                    
+                if self.bp_block[x,y]:
+                    block = self.app.data.data['block_type'][self.bp_block[x,y]]
+                    self.surface.blit(block['img_bp'], xyRect)
+
+                if self.bp_field[x,y]:
+                    field = self.app.data.data['terrain_type'][self.bp_field[x,y]]
+                    self.surface.blit(field['img_bp'], xyRect)
+
+                    
                 # self.app.info.debug(xyRect.move(0,P_UP), self.building_map[x,y])
+
+
+                    # # disallow place
+                    # img = self.app.terrain.Get_img(build_item, 'block').copy()
+                    # img.set_alpha(172)
+                    # colorImage = pg.Surface(img.get_size()).convert_alpha()
+                    # colorImage.fill(pg.Color('red'))
+                    # img.blit(colorImage, (0, 0),
+                    #             special_flags=pg.BLEND_RGBA_MULT)
+                    # self.surface.blit(
+                    #     img, xyRect, special_flags=pg.BLEND_RGBA_MIN)
 
         # draw factory
         self.app.factories.draw(self.surface)
@@ -329,24 +351,10 @@ class terrain:
         # draw tech areas
         self.app.ui_tech.draw(self.surface)
         
-        # draw place areas
+        # draw place areas cursor
         self.app.player.draw(self.surface)
 
-
-        # # draw selection
-        # if self.selection != [-1, -1]:
-        #     xyRect = pg.Rect((self.selection[0]-self.pos[0]+HALF_WIDTH)*TILE,
-        #                      (self.selection[1]-self.pos[1]+HALF_HIGHT)*TILE, TILE, TILE)
-        #     pg.draw.rect(self.surface, pg.Color('yellow'), xyRect, 3)
-
-        # draw dig_site
-        # if self.dig_site:
-        #     xyRect = pg.Rect((self.dig_site[1]-self.pos[1]+HALF_WIDTH)*TILE,
-        #                      (self.dig_site[0]-self.pos[0]+HALF_HIGHT)*TILE, TILE, TILE)
-        #     pg.draw.rect(self.surface, pg.Color('gray'), xyRect, 1)
-
         # draw pointed field
-        # if self.app.player.inv.selected_backpack_cell:
         if self.tile_pos:
             xyRect = pg.Rect((self.tile_pos[0]-self.pos[0]+HALF_WIDTH)*TILE,
                              (self.tile_pos[1]-self.pos[1]+HALF_HIGHT)*TILE, TILE, TILE)
@@ -366,22 +374,11 @@ class terrain:
                 if self.dark_cover[x, y]:
                     self.surface.blit(self.app.data.data['terrain_type'][0]['img'], xyRect)
 
-        # draw cursor area
-        # if self.app.mouse.status['area']:
-        #     if self.app.mouse.status['area'].size!=(1,1):
-        #         area = self.app.mouse.status['area']
-        #         for i in range(area.left, area.right):
-        #             for j in range(area.top, area.bottom):
-        #                 screen_pos = self.app.terrain.demapping((i,j))
-        #                 f_rect = pg.Rect(screen_pos, (TILE, TILE))
-        #                 if self.allow:
-        #                     self.surface.blit(self.bg_blue, f_rect.topleft)
-        #                 else:
-        #                     self.surface.blit(self.bg_red, f_rect.topleft)
-
+        
 
         # draw in viewport
         self.app.screen.blit(self.surface, VIEW_RECT)
+        
 
     def dig_succes(self, player, tile_pos):
         self.app.player.stop_dig()

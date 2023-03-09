@@ -120,10 +120,18 @@ class player:
     def draw(self, surface):
         # self.inv.draw()
         
-        
         if self.app.inv_toolbar.item is None: return
         if not self.app.inv_toolbar.item['id'] == TOOL_PLACE: 
             return
+        
+        self.tile_pos = self.app.mouse.tile_pos
+        
+        # draw cursor place block
+        xyRect = pg.Rect((self.tile_pos[0]-self.pos[0]+HALF_WIDTH)*TILE,
+                            (self.tile_pos[1]-self.pos[1]+HALF_HIGHT)*TILE, TILE, TILE)
+        pg.draw.rect(surface, pg.Color('gray'), xyRect, 1) 
+        
+        
         # draw place block cursor area
         if not self.place_fit is None:
             # area = self.app.mouse.status['area']
@@ -133,9 +141,9 @@ class player:
                     f_rect = pg.Rect(screen_pos, (TILE, TILE))
                     if el:
                         if self.place_fit['block'][i,j] !=0:
-                            surface.blit(self.app.data.get_block_by_id(self.place_fit['block'][i,j])['img'], f_rect.topleft)    
+                            surface.blit(self.app.data.get_block_by_id(self.place_fit['block'][i,j])['img_bp'], f_rect.topleft)    
                         if self.place_fit['field'][i,j] !=0:
-                            surface.blit(self.app.data.get_terrain_by_id(self.place_fit['field'][i,j])['img'], f_rect.topleft)    
+                            surface.blit(self.app.data.get_terrain_by_id(self.place_fit['field'][i,j])['img_bp'], f_rect.topleft)    
                             
         
         
