@@ -64,12 +64,16 @@ class player:
         building_lookup = terrain.building_map[area.left:area.left+area.width, area.top:area.top+area.height]
         field_lookup = terrain.field[area.left:area.left+area.width, area.top:area.top+area.height]
         operate_lookup = terrain.operate[area.left:area.left+area.width, area.top:area.top+area.height]
+        bp_block_lookup = terrain.bp_block[area.left:area.left+area.width, area.top:area.top+area.height]
+        bp_field_lookup = terrain.bp_field[area.left:area.left+area.width, area.top:area.top+area.height]
         # calc place block 0-no block placed, !=0 set new block
         block_result = self.get_place_block(field_lookup, place_item)
         # calc place field 0-no field change, !=0 change field
         field_result = self.get_place_field(field_lookup, place_item)
         # calc allow
         building_result = np.logical_and(np.logical_and((building_lookup == 0), (np.logical_or((block_result != 0),(field_result != 0)))) , (operate_lookup !=0))
+        # calc bp
+        building_result = np.logical_and(building_result, np.logical_and((bp_block_lookup == 0), (bp_field_lookup == 0)))
         result = {'allow': building_result, 'block': block_result, 'field': field_result}
         return result
         
@@ -99,7 +103,7 @@ class player:
         
         # place block
         # if self.app.inv_toolbar.item is None: return
-        if not self.app.inv_toolbar.item is None and self.app.inv_toolbar.item['id'] == TOOL_PLACE: 
+        if not self.app.inv_toolbar.item is None and self.app.inv_toolbar.item['id'] == TOOL_PLACE and self.app.inv_place_block.item: 
             if mouse_status_area:
                 self.one_place_rect = pg.Rect(self.app.mouse.tile_pos, (1,1))
                 self.one_place_fit = self.get_place_fit(self.app.terrain, self.one_place_rect, self.app.inv_place_block.item)
@@ -112,12 +116,15 @@ class player:
 
             if mouse_status_type==MOUSE_TYPE_DROP and mouse_status_button==MOUSE_LBUTTON or mouse_status_action==MOUSE_TYPE_DROP and mouse_status_button==MOUSE_LBUTTON: 
                 self.set_place(self.app.terrain, self.place_fit, self.place_rect)
-                self.app.mouse.status['area'] = None
-                self.app.mouse.status['rect'] = None
+                # self.app.mouse.status['area'] = None
+                # self.app.mouse.status['rect'] = None
                 self.place_rect = None
                 self.place_fit = None     
                            
-                
+            if mouse_status_type==MOUSE_TYPE_CLICK and mouse_status_button==MOUSE_LBUTTON:
+                self.set_place(self.app.terrain, self.one_place_fit, self.one_place_rect)
+                self.one_place_rect = None
+                self.one_place_fit = None     
      
         
         # remove
@@ -127,8 +134,14 @@ class player:
         # self.inv.draw()
         
         if self.app.inv_toolbar.item is None: return
+        if self.app.inv_toolbar.is_hover: 
+            self.place_rect = None
+            self.place_fit = None                
+            return
         if not self.app.inv_toolbar.item['id'] == TOOL_PLACE: 
             return
+        
+        
         
         self.tile_pos = self.app.mouse.tile_pos
         if not self.tile_pos: return
