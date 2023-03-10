@@ -18,7 +18,8 @@ class player:
         self.demolition = False
         self.warmup = 0
         self.pos = ()  
-        self.place_fit = None      
+        self.place_fit = None    
+        self.one_place_fit = None  
         
     def Get_info_block_placed(self, place_item, place):
         if not place_item: return
@@ -92,17 +93,22 @@ class player:
         mouse_status_action = self.app.mouse.status['action']
         mouse_status_button = self.app.mouse.status['button']
         mouse_status_area = self.app.mouse.status['area']
-
+        
+        
+        
         
         # place block
         # if self.app.inv_toolbar.item is None: return
         if not self.app.inv_toolbar.item is None and self.app.inv_toolbar.item['id'] == TOOL_PLACE: 
+            if mouse_status_area:
+                self.one_place_rect = pg.Rect(self.app.mouse.tile_pos, (1,1))
+                self.one_place_fit = self.get_place_fit(self.app.terrain, self.one_place_rect, self.app.inv_place_block.item)
+            
             if mouse_status_type==MOUSE_TYPE_DRAG and mouse_status_button==MOUSE_LBUTTON: 
                 if mouse_status_area:
                     self.place_rect = mouse_status_area
                     self.place_fit = self.get_place_fit(self.app.terrain, self.place_rect, self.app.inv_place_block.item)
                
-            self.app.info.debug((0,10), self.app.mouse.status)
 
             if mouse_status_type==MOUSE_TYPE_DROP and mouse_status_button==MOUSE_LBUTTON or mouse_status_action==MOUSE_TYPE_DROP and mouse_status_button==MOUSE_LBUTTON: 
                 self.set_place(self.app.terrain, self.place_fit, self.place_rect)
@@ -125,12 +131,23 @@ class player:
             return
         
         self.tile_pos = self.app.mouse.tile_pos
-        
+        if not self.tile_pos: return
+        # self.app.info.debug((0,10), self.tile_pos)        
         # draw cursor place block
-        xyRect = pg.Rect((self.tile_pos[0]-self.pos[0]+HALF_WIDTH)*TILE,
-                            (self.tile_pos[1]-self.pos[1]+HALF_HIGHT)*TILE, TILE, TILE)
+        xyRect = pg.Rect(self.app.terrain.demapping(self.tile_pos), (TILE, TILE))
         pg.draw.rect(surface, pg.Color('gray'), xyRect, 1) 
-        
+        if not self.one_place_fit is None:
+            for i, row in enumerate(self.one_place_fit['allow']):
+                for j, el in enumerate(row):
+                    screen_pos = self.app.terrain.demapping((i+self.one_place_rect[0],j+self.one_place_rect[1]))
+                    f_rect = pg.Rect(screen_pos, (TILE, TILE))
+                    if el:
+                        if self.one_place_fit['block'][i,j] !=0:
+                            surface.blit(self.app.data.get_block_by_id(self.one_place_fit['block'][i,j])['img_bp'], f_rect.topleft)    
+                        if self.one_place_fit['field'][i,j] !=0:
+                            surface.blit(self.app.data.get_terrain_by_id(self.one_place_fit['field'][i,j])['img_bp'], f_rect.topleft)    
+            
+            
         
         # draw place block cursor area
         if not self.place_fit is None:

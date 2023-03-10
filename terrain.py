@@ -119,6 +119,7 @@ class terrain:
             return (tilepos)
 
     def demapping(self, tile_pos):
+        if not tile_pos: return
         if not self.onMap(tile_pos[0], tile_pos[1]):
             return()
         screen_pos = (
@@ -287,6 +288,8 @@ class terrain:
         mouse_status_type = self.app.mouse.status['tile_action']
         mouse_status_button = self.app.mouse.status['button']
         mouse_status_area = self.app.mouse.status['area']
+        if mouse_status_area:
+            self.tile_pos = pg.Rect(mouse_status_area).topleft
 
         if mouse_status_type==MOUSE_TYPE_CLICK and mouse_status_button==MOUSE_RBUTTON: # Rigth mouse button click
             self.app.inv_toolbar.unselect()
@@ -354,14 +357,15 @@ class terrain:
         # draw place areas cursor
         self.app.player.draw(self.surface)
 
-        # draw pointed field
-        if self.tile_pos:
-            xyRect = pg.Rect((self.tile_pos[0]-self.pos[0]+HALF_WIDTH)*TILE,
-                             (self.tile_pos[1]-self.pos[1]+HALF_HIGHT)*TILE, TILE, TILE)
-            # cursor
-            if self.app.player.inv.item is None and not self.app.inv_toolbar.is_hover and not self.app.inv_recipe.is_hover:
-                if not self.app.player.inv.is_open: # and not self.app.inv_recipe.is_open:
-                    pg.draw.rect(self.surface, pg.Color('gray'), xyRect, 1)
+        # # draw pointed field
+        # if self.tile_pos:
+        #     xyRect = pg.Rect((self.tile_pos[0]-self.pos[0]+HALF_WIDTH)*TILE,
+        #                      (self.tile_pos[1]-self.pos[1]+HALF_HIGHT)*TILE, TILE, TILE)
+        #     # cursor
+        #     if self.app.player.inv.item is None and not self.app.inv_toolbar.is_hover and not self.app.inv_recipe.is_hover:
+        #         if not self.app.player.inv.is_open: # and not self.app.inv_recipe.is_open:
+        #             # self.surface.blit(self.app.data.data['block_type'][1]['img_bp'], xyRect)
+        #             pg.draw.rect(self.surface, pg.Color('gray'), xyRect, 1)
         
         # dark cover
         for y in range(self.pos[1]-HALF_HIGHT, self.pos[1]+HALF_HIGHT+1):
