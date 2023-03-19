@@ -79,6 +79,9 @@ class terrain:
         pg.draw.rect(self.bg_blue, pg.Color(64,128,255,128), (0,0,TILE, TILE))
         self.bg_red = pg.Surface((TILE,TILE), pg.SRCALPHA)
         pg.draw.rect(self.bg_red, pg.Color(255,32,128,128), (0,0,TILE, TILE))
+        # dig cursor mark
+        self.dig_mark = pg.image.load(path.join(img_dir, 'dig_plan.png')).convert_alpha()
+        self.rem_block_mark = pg.image.load(path.join(img_dir, 'rem_block_plan.png')).convert_alpha()
 
         
 

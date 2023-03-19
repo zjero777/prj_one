@@ -19,7 +19,13 @@ class player:
         self.warmup = 0
         self.pos = ()  
         self.place_fit = None    
+        self.place_rect = None  
         self.one_place_fit = None  
+        self.one_place_rect = None  
+        self.remove_fit = None    
+        self.remove_rect = None  
+        self.remove_start = None
+        
         
     def Get_info_block_placed(self, place_item, place):
         if not place_item: return
@@ -60,6 +66,15 @@ class player:
                     result[i,j] = item['id']
         return result
 
+    def get_dig_field(self, lookup):
+        result = np.zeros(lookup.shape, 'bool')
+        for i, row in enumerate(lookup):
+            for j, el in enumerate(row):
+                terrain = self.app.data.get_terrain_by_id(el)
+                result[i,j] = terrain['allow_dig']=='True'
+        return result
+        
+
     def get_place_fit(self, terrain, area: pg.Rect, place_item):
         building_lookup = terrain.building_map[area.left:area.left+area.width, area.top:area.top+area.height]
         field_lookup = terrain.field[area.left:area.left+area.width, area.top:area.top+area.height]
@@ -77,6 +92,46 @@ class player:
         result = {'allow': building_result, 'block': block_result, 'field': field_result}
         return result
         
+    def get_remove_fit(self, terrain, area: pg.Rect, start_pos):
+        building_lookup = terrain.building_map[area.left:area.left+area.width, area.top:area.top+area.height]
+        field_lookup = terrain.field[area.left:area.left+area.width, area.top:area.top+area.height]
+        operate_lookup = terrain.operate[area.left:area.left+area.width, area.top:area.top+area.height]
+        bp_block_lookup = terrain.bp_block[area.left:area.left+area.width, area.top:area.top+area.height]
+        bp_field_lookup = terrain.bp_field[area.left:area.left+area.width, area.top:area.top+area.height]
+        is_bp = terrain.bp_block[start_pos] != 0 or terrain.bp_field[start_pos] != 0
+        is_block = False
+        is_factory = False
+        is_field = False
+        
+        if not is_bp:
+            is_block = terrain.building_map[start_pos] > 0 
+            is_factory = terrain.building_map[start_pos] == -1
+        if not (is_block or is_factory):
+            is_field = terrain.field[start_pos] != 0
+        # bp_lookup = np.logical_or((bp_block_lookup == 1), (bp_field_lookup == 1))
+        if is_bp:
+            # blueprint
+            bp_lookup = bp_block_lookup + bp_field_lookup
+            remove_result = np.logical_and(bp_lookup!=0, operate_lookup!=0)
+        elif is_factory:
+            # building
+            remove_result = np.logical_and(building_lookup==-1, operate_lookup!=0)
+        elif is_block:
+            # block
+            remove_result = np.logical_and(building_lookup>0, operate_lookup !=0)
+        elif is_field:
+            # field
+            # calc dig field 0-no dig field , !=0 dig field
+            field_result = self.get_dig_field(field_lookup)
+            field_result = np.logical_and(field_result, building_lookup==0)
+            remove_result = np.logical_and( field_result, operate_lookup!=0)
+        else:
+            remove_result = np.logical_and(field_lookup!=0, operate_lookup!=0)
+
+        result = {'remove': remove_result, 'is_block': is_block, 'is_bp': is_bp, 'is_factory': is_factory, 'is_field': is_field}
+        return result
+        
+    
     def set_place(self, terrain, fit, area):
         bp_field_lookup = terrain.bp_field[area.left:area.left+area.width, area.top:area.top+area.height]
         bp_block_lookup = terrain.bp_block[area.left:area.left+area.width, area.top:area.top+area.height]
@@ -98,11 +153,7 @@ class player:
         mouse_status_button = self.app.mouse.status['button']
         mouse_status_area = self.app.mouse.status['area']
         
-        
-        
-        
         # place block
-        # if self.app.inv_toolbar.item is None: return
         if not self.app.inv_toolbar.item is None and self.app.inv_toolbar.item['id'] == TOOL_PLACE and self.app.inv_place_block.item: 
             if mouse_status_area:
                 self.one_place_rect = pg.Rect(self.app.mouse.tile_pos, (1,1))
@@ -126,9 +177,51 @@ class player:
                 self.one_place_rect = None
                 self.one_place_fit = None     
      
-        
         # remove
+        if not self.app.inv_toolbar.item is None and self.app.inv_toolbar.item['id'] == TOOL_REMOVE: 
+            if mouse_status_type==MOUSE_TYPE_BUTTON_DOWN and mouse_status_button==MOUSE_LBUTTON: 
+                if mouse_status_area:
+                    self.remove_start = mouse_status_area.topleft
+
+
+            if mouse_status_type==MOUSE_TYPE_DRAG and mouse_status_button==MOUSE_LBUTTON: 
+                if mouse_status_area:
+                    self.remove_rect = mouse_status_area
+                    self.remove_fit = self.get_remove_fit(self.app.terrain, self.remove_rect, self.remove_start)
+                    
+
+    
+    def draw_place_fit(self, surface, place_rect, place_fit):
+        if not place_fit is None:
+            for i, row in enumerate(place_fit['allow']):
+                for j, el in enumerate(row):
+                    screen_pos = self.app.terrain.demapping((i+place_rect[0],j+place_rect[1]))
+                    f_rect = pg.Rect(screen_pos, (TILE, TILE))
+                    if el:
+                        if place_fit['block'][i,j] !=0:
+                            surface.blit(self.app.data.get_block_by_id(place_fit['block'][i,j])['img_bp'], f_rect.topleft)    
+                        if place_fit['field'][i,j] !=0:
+                            surface.blit(self.app.data.get_terrain_by_id(place_fit['field'][i,j])['img_bp'], f_rect.topleft)          
         
+    def draw_remove_fit(self, surface, remove_rect, remove_fit):
+        if not remove_fit is None:
+            for i, row in enumerate(remove_fit['remove']):
+                for j, el in enumerate(row):
+                    screen_pos = self.app.terrain.demapping((i+remove_rect[0],j+remove_rect[1]))
+                    f_rect = pg.Rect(screen_pos, (TILE, TILE))
+                    if el:
+                        if remove_fit['is_block']:
+                            # remove block cursor
+                            surface.blit(self.app.terrain.rem_block_mark, f_rect.topleft)    
+                        # if place_fit['field'][i,j] !=0:
+                        #     surface.blit(self.app.data.get_terrain_by_id(place_fit['field'][i,j])['img_bp'], f_rect.topleft)          
+                        if remove_fit['is_factory']:
+                            # remove block cursor
+                            surface.blit(self.app.terrain.dig_mark, f_rect.topleft)    
+                        if remove_fit['is_field']:
+                            # remove block cursor
+                            surface.blit(self.app.terrain.dig_mark, f_rect.topleft)    
+    
     
     def draw(self, surface):
         # self.inv.draw()
@@ -138,45 +231,20 @@ class player:
             self.place_rect = None
             self.place_fit = None                
             return
-        if not self.app.inv_toolbar.item['id'] == TOOL_PLACE: 
-            return
-        
-        
-        
+
         self.tile_pos = self.app.mouse.tile_pos
         if not self.tile_pos: return
-        # self.app.info.debug((0,10), self.tile_pos)        
-        # draw cursor place block
         xyRect = pg.Rect(self.app.terrain.demapping(self.tile_pos), (TILE, TILE))
         pg.draw.rect(surface, pg.Color('gray'), xyRect, 1) 
-        if not self.one_place_fit is None:
-            for i, row in enumerate(self.one_place_fit['allow']):
-                for j, el in enumerate(row):
-                    screen_pos = self.app.terrain.demapping((i+self.one_place_rect[0],j+self.one_place_rect[1]))
-                    f_rect = pg.Rect(screen_pos, (TILE, TILE))
-                    if el:
-                        if self.one_place_fit['block'][i,j] !=0:
-                            surface.blit(self.app.data.get_block_by_id(self.one_place_fit['block'][i,j])['img_bp'], f_rect.topleft)    
-                        if self.one_place_fit['field'][i,j] !=0:
-                            surface.blit(self.app.data.get_terrain_by_id(self.one_place_fit['field'][i,j])['img_bp'], f_rect.topleft)    
+        
+        if self.app.inv_toolbar.item['id'] == TOOL_PLACE: 
+            # self.app.info.debug((0,10), self.tile_pos)        
+            # draw cursor place block
+            self.draw_place_fit(surface, self.one_place_rect, self.one_place_fit)
+            self.draw_place_fit(surface, self.place_rect, self.place_fit)
             
-            
-        
-        # draw place block cursor area
-        if not self.place_fit is None:
-            # area = self.app.mouse.status['area']
-            for i, row in enumerate(self.place_fit['allow']):
-                for j, el in enumerate(row):
-                    screen_pos = self.app.terrain.demapping((i+self.place_rect[0],j+self.place_rect[1]))
-                    f_rect = pg.Rect(screen_pos, (TILE, TILE))
-                    if el:
-                        if self.place_fit['block'][i,j] !=0:
-                            surface.blit(self.app.data.get_block_by_id(self.place_fit['block'][i,j])['img_bp'], f_rect.topleft)    
-                        if self.place_fit['field'][i,j] !=0:
-                            surface.blit(self.app.data.get_terrain_by_id(self.place_fit['field'][i,j])['img_bp'], f_rect.topleft)    
-                            
-        
-        
+        if self.app.inv_toolbar.item['id'] == TOOL_REMOVE:
+            self.draw_remove_fit(surface, self.remove_rect, self.remove_fit)
     
     # Place the item selected from the inventory on titlepos the ground
     # player.inv.selected_backpack_cell - selected inventory item 

@@ -86,7 +86,6 @@ class data:
             img.blit(blueprint, (0, 0), special_flags=pg.BLEND_RGBA_SUB)
             item['img_bp'] = img
             
-            
         for item in self.data['block_type']:
             item['img'] = (pg.image.load(path.join(img_dir, item['pic'])).convert_alpha())
             
@@ -96,10 +95,6 @@ class data:
             img.blit(blueprint, (0, 0), special_flags=pg.BLEND_RGBA_SUB)
             item['img_bp'] = img
             
-
-    
-            
-
         for item in self.data['factory_type']:
             item['img'] = (pg.image.load(path.join(img_dir, item['pic'])).convert_alpha())
 
@@ -109,8 +104,6 @@ class data:
         for item in self.data['toolbar']:
             item['img'] = (pg.image.load(path.join(img_dir, item['icon'])).convert_alpha())
             
-
-
         # self.block_img = [0 for i in self.data['block_type']]
         # for img in self.data['block_type']:
         #     self.block_img[img['id']] = (pg.image.load(
