@@ -329,13 +329,18 @@ class terrain:
                     self.surface.blit(factory['img'], xyRect)
                     
                     
-                if self.bp_block[x,y]:
+                if self.bp_block[x,y]>0:
                     block = self.app.data.data['block_type'][self.bp_block[x,y]]
                     self.surface.blit(block['img_bp'], xyRect)
+                elif self.bp_block[x,y]==-1:
+                    self.surface.blit(self.app.terrain.rem_block_mark, xyRect)
+                    
 
-                if self.bp_field[x,y]:
+                if self.bp_field[x,y]>0:
                     field = self.app.data.data['terrain_type'][self.bp_field[x,y]]
                     self.surface.blit(field['img_bp'], xyRect)
+                elif self.bp_field[x,y]==-1:
+                    self.surface.blit(self.app.terrain.dig_mark, xyRect)
 
                     
                 # self.app.info.debug(xyRect.move(0,P_UP), self.building_map[x,y])

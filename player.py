@@ -106,7 +106,8 @@ class player:
         if not is_bp:
             is_block = terrain.building_map[start_pos] > 0 
             is_factory = terrain.building_map[start_pos] == -1
-        if not (is_block or is_factory):
+            
+        if not (is_block or is_factory or is_bp):
             is_field = terrain.field[start_pos] != 0
         # bp_lookup = np.logical_or((bp_block_lookup == 1), (bp_field_lookup == 1))
         if is_bp:
@@ -124,7 +125,9 @@ class player:
             # calc dig field 0-no dig field , !=0 dig field
             field_result = self.get_dig_field(field_lookup)
             field_result = np.logical_and(field_result, building_lookup==0)
-            remove_result = np.logical_and( field_result, operate_lookup!=0)
+            field_result = np.logical_and(field_result, bp_block_lookup==0)
+            field_result = np.logical_and(field_result, bp_field_lookup==0)
+            remove_result = np.logical_and(field_result, operate_lookup!=0)
         else:
             remove_result = np.logical_and(field_lookup!=0, operate_lookup!=0)
 
@@ -140,6 +143,21 @@ class player:
                 if el:
                     if fit['field'][i,j]>0: bp_field_lookup[i,j] = fit['field'][i,j]
                     if fit['block'][i,j]>0: bp_block_lookup[i,j] = fit['block'][i,j]
+
+    def set_remove(self, terrain, fit, area):
+        bp_field_lookup = terrain.bp_field[area.left:area.left+area.width, area.top:area.top+area.height]
+        bp_block_lookup = terrain.bp_block[area.left:area.left+area.width, area.top:area.top+area.height]
+        for i, row in enumerate(fit['remove']):
+            for j, el in enumerate(row):
+                if el:
+                    if fit['is_bp']:
+                        bp_field_lookup[i,j] = 0
+                        bp_block_lookup[i,j] = 0
+                    if fit['is_block']:
+                        bp_block_lookup[i,j] = -1
+                    if fit['is_field']:
+                        bp_field_lookup[i,j] = -1
+
         
     def update(self):
         # self.inv.update()
@@ -189,6 +207,12 @@ class player:
                     self.remove_rect = mouse_status_area
                     self.remove_fit = self.get_remove_fit(self.app.terrain, self.remove_rect, self.remove_start)
                     
+            if mouse_status_type==MOUSE_TYPE_DROP and mouse_status_button==MOUSE_LBUTTON or mouse_status_action==MOUSE_TYPE_DROP and mouse_status_button==MOUSE_LBUTTON or (mouse_status_type==MOUSE_TYPE_CLICK and mouse_status_button==MOUSE_LBUTTON): 
+                self.set_remove(self.app.terrain, self.remove_fit, self.remove_rect)
+                self.remove_start = None
+                self.remove_rect = None
+                self.remove_fit = None     
+                
 
     
     def draw_place_fit(self, surface, place_rect, place_fit):
@@ -220,7 +244,17 @@ class player:
                             surface.blit(self.app.terrain.dig_mark, f_rect.topleft)    
                         if remove_fit['is_field']:
                             # remove block cursor
-                            surface.blit(self.app.terrain.dig_mark, f_rect.topleft)    
+                            surface.blit(self.app.terrain.dig_mark, f_rect.topleft)
+                        if remove_fit['is_bp']:
+                            # remove bp cursor
+                            field_id = self.app.terrain.field[i+remove_rect.topleft[0], j+remove_rect.topleft[1]]
+                            block_id = self.app.terrain.building_map[i+remove_rect.topleft[0], j+remove_rect.topleft[1]]
+                            if field_id > 0:
+                                terrain = self.app.data.get_terrain_by_id(field_id)
+                                surface.blit(terrain['img'], f_rect.topleft)
+                            if block_id > 0:
+                                block = self.app.data.get_block_by_id(block_id)
+                                surface.blit(block['img'], f_rect.topleft)
     
     
     def draw(self, surface):
@@ -342,6 +376,16 @@ class player:
         factory=self.app.factories.add(bp, b_map, pos[0]+4, pos[1])
         factory.create_storage_in(factory.incom_recipe)
         factory.in_storage.add_items([{'id':1,'count':20}])
+        
+        item = self.app.data.GetBData('name', 'mound')
+        # area = pg.Rect((pos[0]+6, pos[1]), (2,2))
+        # fit = self.get_place_fit(self.app.terrain, area, item)
+        # self.set_place(self.app.terrain, fit, area)
+        
+        self.app.terrain.field[pos[0]-6,pos[1]-3] = self.app.data.GetTData('name', 'water')['id']
+        area = pg.Rect((pos[0]-7, pos[1]-3), (2,2))
+        fit = self.get_place_fit(self.app.terrain, area, item)
+        self.set_place(self.app.terrain, fit, area)
 
         
         
