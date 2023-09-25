@@ -151,6 +151,8 @@ class factory:
                 result_command = self.inspect_free_place_and_store(self.out_storage, self.outcom_recipe) # if store result res
             self.msg = self.data.seq_prod.get_msg(self.command_step, result_command)
             self.command_step = self.data.seq_prod.go_next(self.command_step, result_command)
+        if self.status == FSTAT_REMOVE:
+            pass
             
     def inspect_free_place_and_store(self, storage: storage, recipe):
         if storage.add_resources_by_recipe(recipe): 
@@ -296,6 +298,10 @@ class factory_list:
         mouse_status_type = self.app.mouse.status['tile_action']
         mouse_status_button = self.app.mouse.status['button']
         mouse_status_area = self.app.mouse.status['area']
+
+        if not self.app.inv_toolbar.item is None: 
+            if self.app.inv_toolbar.item['id']==TOOL_REMOVE: return
+
         
         # unselect
         if mouse_status_type==MOUSE_TYPE_CLICK and mouse_status_button==MOUSE_RBUTTON: 
@@ -306,7 +312,7 @@ class factory_list:
                     self.app.mouse.setcursor_noitem()
             self.app.mouse.setcursor(cursor_type.normal)
         
-
+            
         if mouse_status_type==MOUSE_TYPE_CLICK and mouse_status_button==MOUSE_LBUTTON: 
             if mouse_status_area is None: return
             click_area_screen = pg.Rect((0,0),mouse_status_area.topleft)

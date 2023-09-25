@@ -288,6 +288,7 @@ class terrain:
         if not self.app.inv_toolbar.item is None: 
             if not self.app.inv_toolbar.item['id']==TOOL_REMOVE: return
             
+            
         mouse_status_type = self.app.mouse.status['tile_action']
         mouse_status_button = self.app.mouse.status['button']
         mouse_status_area = self.app.mouse.status['area']

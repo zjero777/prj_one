@@ -93,6 +93,7 @@ class player:
         return result
         
     def get_remove_fit(self, terrain, area: pg.Rect, start_pos):
+        # if not start_pos: return
         building_lookup = terrain.building_map[area.left:area.left+area.width, area.top:area.top+area.height]
         field_lookup = terrain.field[area.left:area.left+area.width, area.top:area.top+area.height]
         operate_lookup = terrain.operate[area.left:area.left+area.width, area.top:area.top+area.height]
@@ -145,8 +146,12 @@ class player:
                     if fit['block'][i,j]>0: bp_block_lookup[i,j] = fit['block'][i,j]
 
     def set_remove(self, terrain, fit, area):
+        if not area: return
         bp_field_lookup = terrain.bp_field[area.left:area.left+area.width, area.top:area.top+area.height]
         bp_block_lookup = terrain.bp_block[area.left:area.left+area.width, area.top:area.top+area.height]
+        # if fit['is_bp']:
+
+        
         for i, row in enumerate(fit['remove']):
             for j, el in enumerate(row):
                 if el:
@@ -172,21 +177,23 @@ class player:
         mouse_status_area = self.app.mouse.status['area']
         
         # place block
+        
         if not self.app.inv_toolbar.item is None and self.app.inv_toolbar.item['id'] == TOOL_PLACE and self.app.inv_place_block.item: 
-            if mouse_status_area:
+            if mouse_status_area and self.app.mouse.tile_pos:
                 self.one_place_rect = pg.Rect(self.app.mouse.tile_pos, (1,1))
                 self.one_place_fit = self.get_place_fit(self.app.terrain, self.one_place_rect, self.app.inv_place_block.item)
             
             if mouse_status_type==MOUSE_TYPE_DRAG and mouse_status_button==MOUSE_LBUTTON: 
-                if mouse_status_area:
+                if mouse_status_area and self.app.mouse.tile_pos:
                     self.place_rect = mouse_status_area
                     self.place_fit = self.get_place_fit(self.app.terrain, self.place_rect, self.app.inv_place_block.item)
                
 
             if mouse_status_type==MOUSE_TYPE_DROP and mouse_status_button==MOUSE_LBUTTON or mouse_status_action==MOUSE_TYPE_DROP and mouse_status_button==MOUSE_LBUTTON: 
-                self.set_place(self.app.terrain, self.place_fit, self.place_rect)
-                # self.app.mouse.status['area'] = None
-                # self.app.mouse.status['rect'] = None
+                if self.app.mouse.tile_pos:
+                    self.set_place(self.app.terrain, self.place_fit, self.place_rect)
+                    # self.app.mouse.status['area'] = None
+                    # self.app.mouse.status['rect'] = None
                 self.place_rect = None
                 self.place_fit = None     
                            
@@ -203,12 +210,13 @@ class player:
 
 
             if mouse_status_type==MOUSE_TYPE_DRAG and mouse_status_button==MOUSE_LBUTTON: 
-                if mouse_status_area:
+                if mouse_status_area and self.app.mouse.tile_pos and self.remove_start:
                     self.remove_rect = mouse_status_area
                     self.remove_fit = self.get_remove_fit(self.app.terrain, self.remove_rect, self.remove_start)
                     
             if mouse_status_type==MOUSE_TYPE_DROP and mouse_status_button==MOUSE_LBUTTON or mouse_status_action==MOUSE_TYPE_DROP and mouse_status_button==MOUSE_LBUTTON or (mouse_status_type==MOUSE_TYPE_CLICK and mouse_status_button==MOUSE_LBUTTON): 
-                self.set_remove(self.app.terrain, self.remove_fit, self.remove_rect)
+                if self.app.mouse.tile_pos and self.remove_start:
+                    self.set_remove(self.app.terrain, self.remove_fit, self.remove_rect)
                 self.remove_start = None
                 self.remove_rect = None
                 self.remove_fit = None     
