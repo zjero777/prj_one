@@ -3,8 +3,8 @@
         "id": 0,
         "name":"inspect_in",
         "go_succ": 1,
-        "go_fail": 0,
-        "msg_fail": "Не хватает ресурсов для производства"
+        "go_fail": 4,
+        "msg_fail": "Не хватает ресурсов"
     },
     {            
         "id": 1,
@@ -23,9 +23,15 @@
     {            
         "id": 3,
         "name":"inspect_out",
-        "go_succ": 0,
+        "go_succ": 4,
         "go_fail": 3,
         "msg_fail": "Некуда класть"
 
-    }
+    },
+    {            
+        "id": 4,
+        "name":"inspect_on_remove",
+        "go_fail": 0,
+        "msg_fail": "Не хватает ресурсов"
+    }    
 ]

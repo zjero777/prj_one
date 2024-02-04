@@ -1,0 +1,19 @@
+[
+    {            
+        "id": 0,
+        "name":"purge_in",
+        "go_succ": 1,
+        "msg_fail": "something in input storage, wait for purge in"
+    },
+    {            
+        "id": 1,
+        "name":"purge_out",
+        "go_succ": 2,
+        "msg_fail": "something in output storage, wait for purge out"
+    },
+    {            
+        "id": 2,
+        "name":"allow_remove",
+        "msg_fail":"Wait for remove..."
+    }
+]

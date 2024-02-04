@@ -21,7 +21,7 @@ class data:
         
         self.seq_chg_recipe = sequence(self, 'data/chg_recipe.json')
         self.seq_prod = sequence(self, 'data/prod.json')
-        # self.seq_remove = sequence(self)
+        self.seq_remove = sequence(self, 'data/remove.json')
 
 
         

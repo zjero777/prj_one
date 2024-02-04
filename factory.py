@@ -19,6 +19,7 @@ class factory:
         self.storage = None
         self.in_storage = None
         self.out_storage = None
+        self.on_remove = False
         self._allow_recipe_list = []
         
         if 'plan' in blueprint.keys():
@@ -54,6 +55,9 @@ class factory:
         self.pause = False
         self.timer = pg.time
         self.time = 0
+    
+    def set_on_remove(self):
+        self.on_remove = True
 
     def remove(self, b_map):
         self.working = False
@@ -124,13 +128,16 @@ class factory:
             elif self.command_step == CHG_CHANGE_OUT:
                     result_command = self.create_storage_out(self.outcom_recipe)
             elif self.command_step == CHG_PURGE_IN:
-                    result_command = self.inspect_storage(self.in_storage, self.incom_recipe)
+                    # todo do request for transport items
+                    result_command = False #self.inspect_storage(self.in_storage, self.incom_recipe)
             elif self.command_step == CHG_PURGE_OUT:
-                    result_command = self.inspect_storage(self.out_storage, self.outcom_recipe)
+                    # todo do request for transport items
+                    result_command = False #self.inspect_storage(self.out_storage, self.outcom_recipe)
             elif self.command_step == CHG_ALLOW_RECIPE:
                     result_command = True
-                    self.command_step = 0
+                    self.command_step = PROD_INSPECT_ON_REMOVE
                     self.status = FSTAT_PROD
+                    return
             self.msg = self.data.seq_chg_recipe.get_msg(self.command_step, result_command)
             self.command_step = self.data.seq_chg_recipe.go_next(self.command_step, result_command)
         if self.status == FSTAT_PROD: 
@@ -149,10 +156,28 @@ class factory:
                 result_command = self.prod_in_progress()  # if complete
             elif self.command_step == PROD_INSPECT_OUT:
                 result_command = self.inspect_free_place_and_store(self.out_storage, self.outcom_recipe) # if store result res
+            elif self.command_step == PROD_INSPECT_ON_REMOVE:
+                result_command = self.on_remove
+                if self.on_remove:
+                    self.status = FSTAT_REMOVE
+                    self.command_step = RMV_PURGE_IN
+                    return
             self.msg = self.data.seq_prod.get_msg(self.command_step, result_command)
             self.command_step = self.data.seq_prod.go_next(self.command_step, result_command)
         if self.status == FSTAT_REMOVE:
-            pass
+            if self.command_step is None: return
+            if self.recipe is None: return
+            command = self.data.seq_remove.get_command(self.command_step)
+            if self.command_step == RMV_PURGE_IN:
+                    # todo do request for transport items
+                    result_command = False #self.inspect_storage(self.in_storage, self.incom_recipe)
+            elif self.command_step == RMV_PURGE_OUT:
+                    # todo do request for transport items
+                    result_command = False #self.inspect_storage(self.in_storage, self.incom_recipe)
+            elif self.command_step == RMV_ALLOW_REMOVE:
+                    result_command = True
+            self.msg = self.data.seq_remove.get_msg(self.command_step, result_command)
+            self.command_step = self.data.seq_remove.go_next(self.command_step, result_command)
             
     def inspect_free_place_and_store(self, storage: storage, recipe):
         if storage.add_resources_by_recipe(recipe): 

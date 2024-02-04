@@ -149,7 +149,8 @@ class player:
         if not area: return
         bp_field_lookup = terrain.bp_field[area.left:area.left+area.width, area.top:area.top+area.height]
         bp_block_lookup = terrain.bp_block[area.left:area.left+area.width, area.top:area.top+area.height]
-        # if fit['is_bp']:
+        
+        
 
         
         for i, row in enumerate(fit['remove']):
@@ -162,6 +163,11 @@ class player:
                         bp_block_lookup[i,j] = -1
                     if fit['is_field']:
                         bp_field_lookup[i,j] = -1
+                    if fit['is_factory']:
+                        factory = self.app.factories.factory((i+area.left, j+area.top))
+                        factory.set_on_remove()
+                            
+                        
 
         
     def update(self):
@@ -383,7 +389,8 @@ class player:
         bp = self.app.data.GetFData('name', 'miller')
         factory=self.app.factories.add(bp, b_map, pos[0]+4, pos[1])
         factory.create_storage_in(factory.incom_recipe)
-        factory.in_storage.add_items([{'id':1,'count':20}])
+        factory.in_storage.add_items([{'id':2,'count':20}])
+        
         
         item = self.app.data.GetBData('name', 'mound')
         # area = pg.Rect((pos[0]+6, pos[1]), (2,2))
